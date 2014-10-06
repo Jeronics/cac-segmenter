@@ -1,0 +1,153 @@
+-------Initialize internal variables by default-----
+DILATE_SIZE: 10.000000
+ALLOW_CROSSINGS: 1.000000.
+MAX_MOVE: 10.000000.
+COST_MOVE: 1000.000000.
+COST_LENGTH: 0.000000.
+HISTOGRAM_K: 256.000000.
+HISTOGRAM_INTERVAL: 256.000000.
+HISTOGRAM_STRIDE: 256.000000.
+----------------------------------------------------
+DILATE_SIZE: 600.000000
+ALLOW_CROSSINGS: 0.000000.
+MAX_MOVE: 5.000000.
+COST_LENGTH: 0.000000.
+HISTOGRAM_INTERVAL: 128.000000.
+Nintervals: 128
+CL stride: 256
+STRID: cac_hist_evaluate1.
+sigma2_prev_int = 1097.424072  sigma2_prev_ext = 1554.107056
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   0 : fx = 6.622900E-01, gnorm = 6.849278E-06, step = 0.000000E+00
+
+********************* Iteration 001, f = 6.622900e-01
+step = 5.000000e-01
+sigma2_prev_int = 849.447937  sigma2_prev_ext = 1566.831421
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   1 : fx = 6.224232E-01, gnorm = 4.352965E-06, step = 5.000000E-01
+
+********************* Iteration 002, f = 6.224232e-01
+step = 5.000000e-01
+sigma2_prev_int = 630.771179  sigma2_prev_ext = 1556.739136
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   2 : fx = 5.750768E-01, gnorm = 9.997570E-06, step = 5.000000E-01
+
+********************* Iteration 003, f = 5.750768e-01
+step = 5.000000e-01
+sigma2_prev_int = 470.090057  sigma2_prev_ext = 1547.838379
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   3 : fx = 5.141737E-01, gnorm = 1.233726E-05, step = 5.000000E-01
+
+********************* Iteration 004, f = 5.141737e-01
+step = 5.000000e-01
+sigma2_prev_int = 435.439301  sigma2_prev_ext = 1533.209839
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   4 : fx = 4.867222E-01, gnorm = 2.260841E-06, step = 5.000000E-01
+
+********************* Iteration 005, f = 4.867222e-01
+step = 5.000000e-01
+sigma2_prev_int = 508.350647  sigma2_prev_ext = 1541.791748
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   5 : fx = 5.372922E-01, gnorm = 1.549628E-05, step = 5.000000E-01
+
+********************* Iteration 006, f = 5.372922e-01
+step = 5.000000e-01
+sigma2_prev_int = 431.552948  sigma2_prev_ext = 1562.616211
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   6 : fx = 4.947350E-01, gnorm = 2.352954E-06, step = 5.000000E-01
+
+********************* Iteration 007, f = 4.947350e-01
+step = 5.000000e-01
+sigma2_prev_int = 538.019897  sigma2_prev_ext = 1564.535522
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   7 : fx = 5.531779E-01, gnorm = 1.511423E-05, step = 5.000000E-01
+
+********************* Iteration 008, f = 5.531779e-01
+step = 5.000000e-01
+sigma2_prev_int = 435.436096  sigma2_prev_ext = 1585.347656
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   8 : fx = 5.002088E-01, gnorm = 2.026443E-06, step = 5.000000E-01
+
+********************* Iteration 009, f = 5.002088e-01
+step = 5.000000e-01
+sigma2_prev_int = 431.427063  sigma2_prev_ext = 1593.621460
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]   9 : fx = 5.011396E-01, gnorm = 1.379617E-06, step = 5.000000E-01
+
+********************* Iteration 010, f = 5.011396e-01
+step = 5.000000e-01
+sigma2_prev_int = 528.857056  sigma2_prev_ext = 1603.729370
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  10 : fx = 5.617904E-01, gnorm = 2.030343E-05, step = 5.000000E-01
+
+********************* Iteration 011, f = 5.617904e-01
+step = 5.000000e-01
+sigma2_prev_int = 429.198914  sigma2_prev_ext = 1596.865723
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  11 : fx = 5.028760E-01, gnorm = 1.236828E-06, step = 5.000000E-01
+
+********************* Iteration 012, f = 5.028760e-01
+step = 5.000000e-01
+sigma2_prev_int = 545.250549  sigma2_prev_ext = 1605.505493
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  12 : fx = 5.693380E-01, gnorm = 1.634771E-05, step = 5.000000E-01
+
+********************* Iteration 013, f = 5.693380e-01
+step = 5.000000e-01
+sigma2_prev_int = 432.918640  sigma2_prev_ext = 1612.808838
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  13 : fx = 5.073625E-01, gnorm = 1.864802E-06, step = 5.000000E-01
+
+********************* Iteration 014, f = 5.073625e-01
+step = 5.000000e-01
+sigma2_prev_int = 570.329834  sigma2_prev_ext = 1613.569458
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  14 : fx = 5.799812E-01, gnorm = 1.890966E-05, step = 5.000000E-01
+
+********************* Iteration 015, f = 5.799812e-01
+step = 5.000000e-01
+sigma2_prev_int = 432.701233  sigma2_prev_ext = 1620.605347
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  15 : fx = 5.092084E-01, gnorm = 1.210070E-06, step = 5.000000E-01
+
+********************* Iteration 016, f = 5.092084e-01
+step = 5.000000e-01
+sigma2_prev_int = 430.307037  sigma2_prev_ext = 1627.530762
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  16 : fx = 5.112505E-01, gnorm = 1.048655E-06, step = 5.000000E-01
+
+********************* Iteration 017, f = 5.112505e-01
+step = 5.000000e-01
+sigma2_prev_int = 575.111450  sigma2_prev_ext = 1637.195923
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  17 : fx = 5.896300E-01, gnorm = 2.677616E-05, step = 5.000000E-01
+
+********************* Iteration 018, f = 5.896300e-01
+step = 5.000000e-01
+sigma2_prev_int = 428.333893  sigma2_prev_ext = 1630.683838
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  18 : fx = 5.125347E-01, gnorm = 9.198362E-07, step = 5.000000E-01
+
+********************* Iteration 019, f = 5.125347e-01
+step = 5.000000e-01
+sigma2_prev_int = 589.196655  sigma2_prev_ext = 1641.674805
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  19 : fx = 5.970119E-01, gnorm = 2.572173E-05, step = 5.000000E-01
+
+********************* Iteration 020, f = 5.970119e-01
+step = 5.000000e-01
+sigma2_prev_int = 425.498383  sigma2_prev_ext = 1634.687988
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  20 : fx = 5.138105E-01, gnorm = 9.212605E-07, step = 5.000000E-01
+
+********************* Iteration 021, f = 5.138105e-01
+step = 5.000000e-01
+sigma2_prev_int = 548.707336  sigma2_prev_ext = 1649.042114
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+[cac_hist_evaluate1 progress]  21 : fx = 5.881455E-01, gnorm = 3.476597E-05, step = 5.000000E-01
+
+********************* Iteration 022, f = 5.881455e-01
+step = 5.000000e-01
+sigma2_prev_int = 425.086914  sigma2_prev_ext = 1644.109009
+sigma2_int = 100.000000  sigma2_ext = 100.000000
+weight_int[0] is not finite!
