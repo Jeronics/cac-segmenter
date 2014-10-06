@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     # Read inputs, return numpy arrays for cage/s and mask.
     mask_file, init_cage_file, curr_cage_file=get_inputs(sys.argv)
-
+ 
     # THE END
 
     # Time elapsed

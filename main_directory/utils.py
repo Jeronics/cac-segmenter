@@ -5,7 +5,6 @@ import numpy as np
 from matplotlib import pyplot
 
 
-
 def read_pgm(filename, byteorder='>'):
     """Return image data from a raw PGM file as numpy array.
 
