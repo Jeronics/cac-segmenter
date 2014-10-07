@@ -28,7 +28,7 @@ def read_pgm(filename, byteorder='>'):
                             ).reshape((int(height), int(width)))
 
 def get_inputs(arguments):
-    """Return cages and images from input as numpy array.
+    """Return imagage, cage/s and mask from input as numpy array.
         Specification:  ./cac model imatge mascara caixa_init [caixa_curr]
     """
 
@@ -53,16 +53,18 @@ def get_inputs(arguments):
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
+    image_name = test_path + 'image'+'.pgm'
     mask_name = test_path + 'mask_'+mask_num+'.pgm'
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
 
     # LOAD Cage/s and Mask
+    image = read_pgm(image_name,byteorder='>')
     mask_file = read_pgm(mask_name,byteorder='>')
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
 
-    return mask_file, init_cage_file, curr_cage_file
+    return image, mask_file, init_cage_file, curr_cage_file
 
 
 
