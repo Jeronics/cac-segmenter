@@ -8,18 +8,36 @@ if __name__ == "__main__":
 
     # Read inputs, return numpy arrays for image, cage/s and mask.
     image, mask_file, init_cage_file, curr_cage_file=get_inputs(sys.argv)
-    # WHILE
 
-        # Define inner and outer points Omega1 and Omega2
-            #   Omega1: From Mask ---> calculate contour
-            #   Omega2: - Whole\Omega1 --- (subcase of the next:)
-            #           - Dilation(Omega1)\Omega1 ---> Distance
+    # Calculate Mean Value Coordinates
+        # IN C PROGRAMMING
+        # Get initial Contour From Initial Mask.
+            # Add more points, smooth contour.
+            # Calculate Angle of each point in the contour with the control points.
+            # Calculate Distance to each control point
+        # Calculate Coordinates(Formula)
 
-        # Define Energy function
+    # WHILE    Vertex_previous-Vertex_new > tol     &&      iterations<MaxNumIterations
+
+        # IN C PROGRAMMING
+        # Re-Define inner and outer points Omega1 and Omega2
+            #   Recalculate Contour:
+            #   Omega1: Distance function from the contour
+            #   Omega2: Dilation(Omega1)\Omega1 ---> Distance
+
+        # Re-define Energy function
             #   Create Gradient Of energy function
             #       Mean Model
             #       Gaussian Model
             #       Histogram Model
+
+        # Minimize Energy function:
+            #   Gradient decent on the gradient of the energy function
+                #   Restriction: Vertex V_i runs along (P_m-V_i) line. (P_m is the mass point)
+                #   IF the minimization step gets stuck (sign alternates):
+                    #   Change Method --> Minimize Step
+                #   ELSE
+                    #   Keep a constant step in the minimization algorithm
 
     # THE END
     # Time elapsed
