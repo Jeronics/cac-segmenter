@@ -1,22 +1,12 @@
-import scipy
+
 
 __author__ = 'jeronicarandellsaladich'
 import sys
 import time
 from utils import *
-from scipy import ndimage
-from scipy import misc
-import matplotlib.pyplot as pl
+
 if __name__ == "__main__":
     start = time.time()
-
-    #l = misc.lena()
-    #misc.imsave('lena.png', l)
-    lena = scipy.misc.imread('Android_robot.png')
-
-    print lena
-    pl.imshow(lena)
-    pl.show()
 
     # Read inputs, return numpy arrays for image, cage/s and mask.
     image, mask_file, init_cage_file, curr_cage_file=get_inputs(sys.argv)

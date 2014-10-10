@@ -4,7 +4,22 @@ import re
 import numpy as np
 from scipy import *
 from matplotlib import pyplot
+from scipy import ndimage
+import scipy
+from scipy import misc
+import matplotlib.pyplot as plt
 
+def read_png(name):
+    """Return image data from a raw PNG file as numpy array.
+    """
+    im = scipy.misc.imread(name)
+    return im
+
+
+def printNpArray(im):
+    plt.imshow(im)
+    plt.axis('off')
+    plt.show()
 
 def read_pgm(filename, byteorder='>'):
     """Return image data from a raw PGM file as numpy array.
@@ -54,19 +69,20 @@ def get_inputs(arguments):
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
-    image_name = test_path + 'image'+'.pgm'
+    image_name = test_path + 'image'+'.png'
     mask_name = test_path + 'mask_'+mask_num+'.pgm'
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
+    image_name = 'frog.png'
 
     # LOAD Cage/s and Mask
-    image = read_pgm(image_name,byteorder='>')
+    image= read_png(image_name)
+    #image = read_pgm(image_name,byteorder='>')
     mask_file = read_pgm(mask_name,byteorder='>')
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
-
+    printNpArray(image)
     return image, mask_file, init_cage_file, curr_cage_file
-
 
 
 #TODO
