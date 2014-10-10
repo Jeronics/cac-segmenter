@@ -2,6 +2,7 @@ __author__ = 'jeronicarandellsaladich'
 
 import re
 import numpy as np
+from scipy import *
 from matplotlib import pyplot
 
 
@@ -69,6 +70,7 @@ def get_inputs(arguments):
 
 
 #TODO
-    #Printing pgm files
+    # To PNG
+    # Printing pgm files
         #pyplot.imshow(mask_file, pyplot.cm.gray)
         #pyplot.show()

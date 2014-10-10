@@ -1,25 +1,46 @@
+import scipy
+
 __author__ = 'jeronicarandellsaladich'
 import sys
 import time
 from utils import *
-
+from scipy import ndimage
+from scipy import misc
+import matplotlib.pyplot as pl
 if __name__ == "__main__":
     start = time.time()
 
+    #l = misc.lena()
+    #misc.imsave('lena.png', l)
+    lena = scipy.misc.imread('Android_robot.png')
+
+    print lena
+    pl.imshow(lena)
+    pl.show()
+
     # Read inputs, return numpy arrays for image, cage/s and mask.
     image, mask_file, init_cage_file, curr_cage_file=get_inputs(sys.argv)
+
+    # If Image is an angle image, normalize..
 
     # Calculate Mean Value Coordinates
         # IN C PROGRAMMING
         # Get initial Contour From Initial Mask.
             # Add more points, smooth contour.
             # Calculate Angle of each point in the contour with the control points.
+
             # Calculate Distance to each control point
         # Calculate Coordinates(Formula)
 
     # WHILE    Vertex_previous-Vertex_new > tol     &&      iterations<MaxNumIterations
 
         # IN C PROGRAMMING
+        # ENTRADA: Contorn en python
+        # SORTIDA:
+            # - Llista pixels interns
+            # - Llista pixels externs
+            # - Coordenades afins pixels Interns
+            # - Coordenades afins pixels Externs
         # Re-Define inner and outer points Omega1 and Omega2
             #   Recalculate Contour:
             #   Omega1: Distance function from the contour
@@ -27,7 +48,8 @@ if __name__ == "__main__":
 
         # Re-define Energy function
             #   Create Gradient Of energy function
-            #       Mean Model
+
+            #       Mean Model <----------------- IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
             #       Gaussian Model
             #       Histogram Model
 
@@ -43,3 +65,7 @@ if __name__ == "__main__":
     # Time elapsed
     end = time.time()
     print end-start
+
+#TODO
+# IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
+# C-TYPES Dynamic matrix
