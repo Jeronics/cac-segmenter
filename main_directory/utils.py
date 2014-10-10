@@ -62,9 +62,9 @@ def get_inputs(arguments):
     else:
         curr_cage = None
 
-
+    folder_name='my_folder'
     # PATHS
-    test_path = r'../test/elefant/'
+    test_path = r'../test/'+folder_name+'/'
     mask_num = '%(number)02d' % {"number": mask}
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
@@ -73,11 +73,9 @@ def get_inputs(arguments):
     mask_name = test_path + 'mask_'+mask_num+'.pgm'
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
-    image_name = 'frog.png'
 
     # LOAD Cage/s and Mask
-    image= read_png(image_name)
-    #image = read_pgm(image_name,byteorder='>')
+    image = read_png(image_name)
     mask_file = read_pgm(mask_name,byteorder='>')
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
