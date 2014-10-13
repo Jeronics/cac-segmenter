@@ -1,15 +1,17 @@
 
 
 __author__ = 'jeronicarandellsaladich'
-import sys
+
 import time
 from utils import *
-
+from ctypes import *
+import numpy as np
+from numpy.ctypeslib import ndpointer
 if __name__ == "__main__":
     start = time.time()
 
     # Read inputs, return numpy arrays for image, cage/s and mask.
-    image, mask_file, init_cage_file, curr_cage_file=get_inputs(sys.argv)
+    image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
     # If Image is an angle image, normalize..
 
@@ -21,6 +23,33 @@ if __name__ == "__main__":
 
             # Calculate Distance to each control point
         # Calculate Coordinates(Formula)
+    '''
+        void cac_contour_get_interior_contour(
+            int *contour_size,      /* output */
+            float **contour_coord,  /* output */
+            float **img,             /* input */
+            int ncol,               /* input */
+            int nrow,               /* input */
+            int conn)               /* input */
+    '''
+    testlibrary = CDLL("testlibrary.so")
+    cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
+
+    c_float_p = POINTER(c_float)
+    c_float_p_p = POINTER(c_float_p)
+    img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ]], dtype=np.float, ndmin=2)
+    contour_coord=np.empty([1,1],dtype=float)
+    contour_size=c_int(0)
+    nrow, ncol = img.shape
+    c_float_p=POINTER(c_float)
+    c_float_p_p=POINTER(c_float_p)
+    nrow,ncol=img.shape
+    conn=c_int(3)
+
+    cac_contour_get_interior_contour.argtypes=[POINTER(c_int), POINTER(c_float_p_p), POINTER(c_float_p_p),c_int, c_int, c_int]
+    cac_contour_get_interior_contour(contour_size, contour_coord.ctypes.data_as(c_float_p_p),img.ctypes.data_as(c_float_p_p), ncol,nrow, conn)
+    print 'Hi'
+    print img;
 
     # WHILE    Vertex_previous-Vertex_new > tol     &&      iterations<MaxNumIterations
 

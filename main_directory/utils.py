@@ -1,6 +1,7 @@
 __author__ = 'jeronicarandellsaladich'
 
 import re
+import sys
 import numpy as np
 from scipy import *
 from matplotlib import pyplot
