@@ -1,5 +1,3 @@
-
-
 __author__ = 'jeronicarandellsaladich'
 
 import time
@@ -13,76 +11,38 @@ if __name__ == "__main__":
     # Read inputs, return numpy arrays for image, cage/s and mask.
     image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
-    # If Image is an angle image, normalize..
-
-    # Calculate Mean Value Coordinates
-        # IN C PROGRAMMING
-        # Get initial Contour From Initial Mask.
-            # Add more points, smooth contour.
-            # Calculate Angle of each point in the contour with the control points.
-
-            # Calculate Distance to each control point
-        # Calculate Coordinates(Formula)
-    '''
-        void cac_contour_get_interior_contour(
-            int *contour_size,      /* output */
-            float **contour_coord,  /* output */
-            float **img,             /* input */
-            int ncol,               /* input */
-            int nrow,               /* input */
-            int conn)               /* input */
-    '''
     testlibrary = CDLL("testlibrary.so")
     cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
+    LP_c_int = POINTER(c_int) # mateixa notacio que python
+    LP_c_double = POINTER(c_double) # mateixa notacio que python
+    LP_LP_c_double = POINTER(LP_c_double) #  mateixa notacio que python
 
-    c_double_p = POINTER(c_double)
-    c_double_p_p = POINTER(c_double_p)
+    # millor no posar-ho per "saltar-nos" un error que indica el python. No se com arreglar-lo
+    # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
+
     img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ],[ 0.5, 0.6 ]], dtype=np.float64, ndmin=2)
-    contour_coord=np.empty([1,1],dtype=np.float64)
-    contour_size=c_int(0)
     nrow, ncol = img.shape
 
-    conn=c_int(3)
+    contour_size=c_int()  # un sencer
+    mat = LP_c_double()   # un punter a double
 
-    cac_contour_get_interior_contour.argtypes=[POINTER(c_int), POINTER(c_double_p_p), POINTER(c_double_p_p),c_int, c_int, c_int]
+    print 'Calling function'
+    # Amb 'byref' passem la referencia a la variable
+    # Amb as_types transformem de tipus numpy a tipus ctypes, cosa que va millor
+    cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(img), c_int(ncol), c_int(nrow), c_int(4))
+    print 'Back to python'
 
-    cac_contour_get_interior_contour(contour_size, contour_coord.ctypes.data_as(c_double_p_p),img.ctypes.data_as(c_double_p_p), c_int(ncol), c_int(nrow), conn)
-    print 'Hi'
-    print img;
-
-    # WHILE    Vertex_previous-Vertex_new > tol     &&      iterations<MaxNumIterations
-
-        # IN C PROGRAMMING
-        # ENTRADA: Contorn en python
-        # SORTIDA:
-            # - Llista pixels interns
-            # - Llista pixels externs
-            # - Coordenades afins pixels Interns
-            # - Coordenades afins pixels Externs
-        # Re-Define inner and outer points Omega1 and Omega2
-            #   Recalculate Contour:
-            #   Omega1: Distance function from the contour
-            #   Omega2: Dilation(Omega1)\Omega1 ---> Distance
-
-        # Re-define Energy function
-            #   Create Gradient Of energy function
-
-            #       Mean Model <----------------- IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
-            #       Gaussian Model
-            #       Histogram Model
-
-        # Minimize Energy function:
-            #   Gradient decent on the gradient of the energy function
-                #   Restriction: Vertex V_i runs along (P_m-V_i) line. (P_m is the mass point)
-                #   IF the minimization step gets stuck (sign alternates):
-                    #   Change Method --> Minimize Step
-                #   ELSE
-                    #   Keep a constant step in the minimization algorithm
+    print 'Valor de contour_size es '
+    print contour_size.value
+    # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
+    matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
+    print matriu
 
     # THE END
     # Time elapsed
     end = time.time()
     print end-start
+
 
 #TODO
 # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
