@@ -80,7 +80,7 @@ def get_inputs(arguments):
     mask_file = read_pgm(mask_name,byteorder='>')
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
-    printNpArray(image)
+    #printNpArray(image)
     return image, mask_file, init_cage_file, curr_cage_file
 
 

@@ -13,17 +13,18 @@ gcc c_code_tests.c -shared -o testlibrary.so -fPIC
         int conn)               // input
 
 */
-void cac_contour_get_interior_contour(  int* pSize, float ** ppMem, float **image, int ncol, int nrow, int conn)
+void cac_contour_get_interior_contour(  int* pSize, double ** ppMem, double **image, int ncol, int nrow, int conn)
 {
   int i, j;
 
   * pSize = 4;
   * ppMem = malloc( * pSize );
   for( i = 0; i < * pSize; i ++ ) (* ppMem)[ i ] = 0.5;
-  for ( i=0; i< nrow; i++ )
+  for ( i=0; i< nrow-1; i++ )
   {
-    for ( j=0;j< ncol; j++ )
+    for ( j=0;j<= ncol; j++ )
     {
+        printf("%d\t Image: %f\n",i*nrow + j, image[0][i*nrow + j]);
         image[0][i*nrow + j]=1.5;
     }
   }

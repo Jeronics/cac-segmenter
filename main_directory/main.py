@@ -35,19 +35,18 @@ if __name__ == "__main__":
     testlibrary = CDLL("testlibrary.so")
     cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
 
-    c_float_p = POINTER(c_float)
-    c_float_p_p = POINTER(c_float_p)
-    img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ]], dtype=np.float, ndmin=2)
-    contour_coord=np.empty([1,1],dtype=float)
+    c_double_p = POINTER(c_double)
+    c_double_p_p = POINTER(c_double_p)
+    img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ],[ 0.5, 0.6 ]], dtype=np.float64, ndmin=2)
+    contour_coord=np.empty([1,1],dtype=np.float64)
     contour_size=c_int(0)
     nrow, ncol = img.shape
-    c_float_p=POINTER(c_float)
-    c_float_p_p=POINTER(c_float_p)
-    nrow,ncol=img.shape
+
     conn=c_int(3)
 
-    cac_contour_get_interior_contour.argtypes=[POINTER(c_int), POINTER(c_float_p_p), POINTER(c_float_p_p),c_int, c_int, c_int]
-    cac_contour_get_interior_contour(contour_size, contour_coord.ctypes.data_as(c_float_p_p),img.ctypes.data_as(c_float_p_p), ncol,nrow, conn)
+    cac_contour_get_interior_contour.argtypes=[POINTER(c_int), POINTER(c_double_p_p), POINTER(c_double_p_p),c_int, c_int, c_int]
+
+    cac_contour_get_interior_contour(contour_size, contour_coord.ctypes.data_as(c_double_p_p),img.ctypes.data_as(c_double_p_p), c_int(ncol), c_int(nrow), conn)
     print 'Hi'
     print img;
 
