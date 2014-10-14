@@ -21,27 +21,26 @@ if __name__ == "__main__":
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
 
     img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ],[ 0.5, 0.6 ]], dtype=np.float64, ndmin=2)
+    print image.shape
+    print image[:,:,0].dtype
+
+
     nrow, ncol = img.shape
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
 
-    print 'Calling function'
     # Amb 'byref' passem la referencia a la variable
     # Amb as_types transformem de tipus numpy a tipus ctypes, cosa que va millor
     cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(img), c_int(ncol), c_int(nrow), c_int(4))
-    print 'Back to python'
 
-    print 'Valor de contour_size es '
-    print contour_size.value
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
-    print matriu
 
     # THE END
     # Time elapsed
     end = time.time()
-    print end-start
+    #print end-start
 
 
 #TODO

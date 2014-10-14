@@ -14,10 +14,12 @@ def read_png(name):
     """Return image data from a raw PNG file as numpy array.
     """
     im = scipy.misc.imread(name)
+    im=im.astype(np.float64)
     return im
 
 
 def printNpArray(im):
+    im=im.astype('uint8')
     plt.imshow(im)
     plt.axis('off')
     plt.show()
@@ -80,12 +82,8 @@ def get_inputs(arguments):
     mask_file = read_pgm(mask_name,byteorder='>')
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
-    #printNpArray(image)
+    printNpArray(image)
     return image, mask_file, init_cage_file, curr_cage_file
 
 
 #TODO
-    # To PNG
-    # Printing pgm files
-        #pyplot.imshow(mask_file, pyplot.cm.gray)
-        #pyplot.show()
