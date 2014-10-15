@@ -12,6 +12,8 @@ if __name__ == "__main__":
     image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
     testlibrary = CDLL("testlibrary.so")
+    libcac=CDLL("apicac/libcac.so")
+
     cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
     LP_c_int = POINTER(c_int) # mateixa notacio que python
     LP_c_double = POINTER(c_double) # mateixa notacio que python
@@ -20,12 +22,17 @@ if __name__ == "__main__":
     # millor no posar-ho per "saltar-nos" un error que indica el python. No se com arreglar-lo
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
 
-    img = np.array([[ 0.1, 0.2 ],[ 0.3, 0.4 ],[ 0.5, 0.6 ]], dtype=np.float64, ndmin=2)
-    print image.shape
-    print image[:,:,0].dtype
+    img = np.array([[ 0.1, 0.2, 0.2 ],[ 0.3, 0.4,9.3 ],[ 0.5, 0.6, 5.2 ]], dtype=np.float64, ndmin=2)
+
+    print img.flags
+    img.setflags(write=1,align=1)
+    print img.flags
+    #nrow, ncol = img.shape
+    nrow, ncol = image[:,:,1].shape
+    img=image[:,:,1]
+    #printNpArray(img)
 
 
-    nrow, ncol = img.shape
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
@@ -37,6 +44,7 @@ if __name__ == "__main__":
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
+    printNpArray(matriu)
     # THE END
     # Time elapsed
     end = time.time()

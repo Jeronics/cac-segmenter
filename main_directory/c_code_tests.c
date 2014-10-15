@@ -33,7 +33,7 @@ void cac_contour_get_interior_contour(  int* pSize, double **ppMem, double *imag
   //printf("Reservant matriu...\n");
   matriu = malloc(sizeof(double) * size * 2);
 
-  for( i = 0; i < (size * 2); i++) matriu[i] = (double) i;
+  for( i = 0; i < (size * 2); i++) matriu[i] = (double) 0;
   for ( i=0; i < 4; i++ )
   {
     for ( j=0; j< 2; j++ )
