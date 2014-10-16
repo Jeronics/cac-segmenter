@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print mask_file
     nrow, ncol = mask_file.shape
     img=np.copy(mask_file)
-    printNpArray(img)
+    #printNpArray(img)
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
@@ -38,7 +38,21 @@ if __name__ == "__main__":
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
+    matriu = matriu.astype(int)
+    #image=image()
     print matriu
+
+    print image.shape
+    image_r=image[:,:,0]
+    image_g=image[:,:,1]
+    image_b=image[:,:,2]
+    image_r[matriu]= np.zeros((matriu.shape[0],1))
+    image_g[matriu]= 0.
+    image_b[matriu]= 0.
+
+    image=np.transpose(image)
+    printNpArray(image)
+
     printNpArray(matriu)
     # THE END
     # Time elapsed

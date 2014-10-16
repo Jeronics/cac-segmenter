@@ -9,7 +9,7 @@
 
 void cac_get_affine_coordinates(
     double *affcoord,            // output, assumed to be allocated at input
-    int set_size,                // input inicialment punts de corntorn
+    int set_size,                // input
     double *set_coord,           // input
     int ctrlpoints_size,         // input
     double *ctrlpoints_coord)    // input
