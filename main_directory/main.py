@@ -11,10 +11,10 @@ if __name__ == "__main__":
     # Read inputs, return numpy arrays for image, cage/s and mask.
     image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
-    testlibrary = CDLL("testlibrary.so")
-    # libcac=CDLL("apicac/libcac.so")
+    #testlibrary = CDLL("testlibrary.so")
+    libcac=CDLL("apicac/libcac.so")
 
-    cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
+    cac_contour_get_interior_contour=libcac.cac_contour_get_interior_contour
     LP_c_int = POINTER(c_int) # mateixa notacio que python
     LP_c_double = POINTER(c_double) # mateixa notacio que python
     LP_LP_c_double = POINTER(LP_c_double) #  mateixa notacio que python
