@@ -1,4 +1,24 @@
 #
+#   1. image-> Get Contour-> punts sencers
+#   2. enters->Get affine coordinates contorn->doubles
+    Alocate:
+        M=([fila = n punts contorn, col = n punts control])
+
+#   3. Recalcula coordenades doubles del contorn(Python)
+#   4. doubles->Get omega1 i omega2-> enters
+#   5. enters->Get affine coordinates Omega1->doubles
+#   6. enters->Get affine coordinates Omega2->doubles
+#   7. Calcular energia i gradient, actualitzar punts de control
+#   8. retornar a punt 3
+
+
+
+
+
+
+
+
+
     # # If Image is an angle image, normalize..
     #
     # # Calculate Mean Value Coordinates

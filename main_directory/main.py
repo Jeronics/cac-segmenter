@@ -12,7 +12,7 @@ if __name__ == "__main__":
     image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
     testlibrary = CDLL("testlibrary.so")
-    libcac=CDLL("apicac/libcac.so")
+    # libcac=CDLL("apicac/libcac.so")
 
     cac_contour_get_interior_contour=testlibrary.cac_contour_get_interior_contour
     LP_c_int = POINTER(c_int) # mateixa notacio que python
@@ -24,26 +24,27 @@ if __name__ == "__main__":
 
     img = np.array([[ 0.1, 0.2, 0.2 ],[ 0.3, 0.4,9.3 ],[ 0.5, 0.6, 5.2 ]], dtype=np.float64, ndmin=2)
 
-    print img.flags
-    img.setflags(write=1,align=1)
-    print img.flags
-    #nrow, ncol = img.shape
-    nrow, ncol = image[:,:,1].shape
-    img=image[:,:,1]
-    #printNpArray(img)
+
+
+
+    nrow, ncol = mask_file.shape
+    img=np.copy(mask_file)
+
 
 
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
 
+
     # Amb 'byref' passem la referencia a la variable
     # Amb as_types transformem de tipus numpy a tipus ctypes, cosa que va millor
-    cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(img), c_int(ncol), c_int(nrow), c_int(4))
+    cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(mask_file), c_int(ncol), c_int(nrow), c_int(4))
 
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
+    print matriu
     printNpArray(matriu)
     # THE END
     # Time elapsed

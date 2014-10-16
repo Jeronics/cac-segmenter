@@ -28,12 +28,12 @@ void cac_contour_get_interior_contour(  int* pSize, double **ppMem, double *imag
     for(j = 0; j < ncol; j++)
        //printf("Valor de la imatge a [%d][%d]: %f\n", i, j, image[i * ncol + j]);
 
-  size = 2;  // matriu de 4 x 2 (files x columnes, cada fila emmagatzema coordenada x, y del pixel)
+  size = 4;  // matriu de 4 x 2 (files x columnes, cada fila emmagatzema coordenada x, y del pixel)
 
   //printf("Reservant matriu...\n");
   matriu = malloc(sizeof(double) * size * 2);
 
-  for( i = 0; i < (size * 2); i++) matriu[i] = (double) 0;
+  for( i = 0; i < (size * 2); i++) matriu[i] = (double) i;
   for ( i=0; i < 4; i++ )
   {
     for ( j=0; j< 2; j++ )
