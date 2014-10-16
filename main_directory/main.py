@@ -24,14 +24,11 @@ if __name__ == "__main__":
 
     img = np.array([[ 0.1, 0.2, 0.2 ],[ 0.3, 0.4,9.3 ],[ 0.5, 0.6, 5.2 ]], dtype=np.float64, ndmin=2)
 
-
-
-
+    mask_file=mask_file[:,:,0]
+    print mask_file[:,140]
     nrow, ncol = mask_file.shape
     img=np.copy(mask_file)
-
-
-
+    printNpArray(img)
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
