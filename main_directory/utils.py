@@ -16,7 +16,7 @@ from PIL import Image
 def read_png(name):
     """Return image data from a raw PNG file as numpy array.
     """
-    im = Image.open(name)
+    im = scipy.misc.imread(name)
     im = im.astype(np.float64)
     return im
 
