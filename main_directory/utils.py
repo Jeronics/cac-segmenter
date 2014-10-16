@@ -30,6 +30,16 @@ def printNpArray(im):
     plt.axis('off')
     plt.show()
 
+def binarizePgmImage(im):
+    for i in xrange(0,im.shape[0]):
+        for j in xrange(0,im.shape[1]):
+            if im[i,j]>=125.:
+                im[i,j]=155.
+            else:
+                im[i,j]=0.
+    return im
+
+
 
 
 def get_inputs(arguments):
@@ -60,13 +70,14 @@ def get_inputs(arguments):
 
 
     image_name= test_path + 'image' + '.png'
-    mask_name = test_path + 'mask_' + mask_num + '.png'
+    mask_name = test_path + 'mask_' + mask_num + '.pgm' # Both .pgm as well as png work. HOWEVER, png gives you a rbg image!
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
 
     # LOAD Cage/s and Mask
     image = read_png(image_name)
     mask_file = read_png(mask_name)
+    mask_file=binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
     #printNpArray(image)

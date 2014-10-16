@@ -21,11 +21,8 @@ if __name__ == "__main__":
 
     # millor no posar-ho per "saltar-nos" un error que indica el python. No se com arreglar-lo
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
-
-    img = np.array([[ 0.1, 0.2, 0.2 ],[ 0.3, 0.4,9.3 ],[ 0.5, 0.6, 5.2 ]], dtype=np.float64, ndmin=2)
-
-    mask_file=mask_file[:,:,0]
-    print mask_file[:,140]
+    mask_file=mask_file
+    print mask_file
     nrow, ncol = mask_file.shape
     img=np.copy(mask_file)
     printNpArray(img)
