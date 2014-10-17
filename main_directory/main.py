@@ -36,15 +36,14 @@ if __name__ == "__main__":
     cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(mask_file), c_int(ncol), c_int(nrow), c_int(4))
 
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
-    matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
+    contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
-    matriu = matriu.astype(int)#.tolist()
+    matriu = contour_coordinates.astype(int)#.tolist()
+
 
     matriu = np.fliplr(matriu)
-    #image=image()
 
 
-    #print image.shape
     image_r=image[:,:,0]
     image_g=image[:,:,1]
     image_b=image[:,:,2]
@@ -63,6 +62,7 @@ if __name__ == "__main__":
     # Time elapsed
     end = time.time()
     #print end-start
+
 
 #TODO
 # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
