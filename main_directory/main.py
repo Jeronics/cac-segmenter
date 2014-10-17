@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
 
     nrow, ncol = mask_file.shape
-    img=np.copy(mask_file)
+    img = np.copy(mask_file)
     #printNpArray(img)
 
     contour_size=c_int()  # un sencer
@@ -40,8 +40,8 @@ if __name__ == "__main__":
     #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
     # plotContourOnImage(contour_coordinates,image)
 
-    control_points=1
-    affine_coordinates_of_contour = np.zeros([contour_coordinates.shape[0],control_points])
+    control_points = 1
+    affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], control_points])
 
     # THE END
     # Time elapsed
