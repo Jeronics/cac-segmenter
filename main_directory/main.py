@@ -15,6 +15,7 @@ if __name__ == "__main__":
     libcac=CDLL("apicac/libcac.so")
 
     cac_contour_get_interior_contour=libcac.cac_contour_get_interior_contour
+    cac_get_affine_coordinates=libcac.cac_get_affine_coordinates
     LP_c_int = POINTER(c_int) # mateixa notacio que python
     LP_c_double = POINTER(c_double) # mateixa notacio que python
     LP_LP_c_double = POINTER(LP_c_double) #  mateixa notacio que python
@@ -39,15 +40,17 @@ if __name__ == "__main__":
 
     #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
     # plotContourOnImage(contour_coordinates,image)
+    num_control_point = init_cage_file.shape[0]
+    affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
-    control_points = 1
-    affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], control_points])
+    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), contour_coordinates.shape[0], ctypeslib.as_ctypes(contour_coordinates), num_control_point, ctypeslib.as_ctypes(init_cage_file))
+
+    print affine_contour_coordinates
 
     # THE END
     # Time elapsed
     end = time.time()
     #print end-start
-
 
 #TODO
 # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
