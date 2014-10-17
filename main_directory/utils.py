@@ -39,6 +39,23 @@ def binarizePgmImage(im):
                 im[i,j]=0.
     return im
 
+def plotContourOnImage(contour_coordinates,image):
+    matriu = contour_coordinates.astype(int)
+    matriu = np.fliplr(matriu)
+    image_copy=np.copy(image)
+    image_r=image_copy[:,:,0]
+    image_g=image_copy[:,:,1]
+    image_b=image_copy[:,:,2]
+    for a in matriu:
+        image_r[a[0]][a[1]]= 255.
+        image_g[a[0]][a[1]]= 255.
+        image_b[a[0]][a[1]]= 255.
+
+    image_copy[:,:,0]=image_r
+    image_copy[:,:,1]=image_g
+    image_copy[:,:,2]=image_b
+
+    printNpArray(image_copy)
 
 
 

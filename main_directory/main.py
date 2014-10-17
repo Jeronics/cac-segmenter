@@ -38,26 +38,8 @@ if __name__ == "__main__":
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
-    matriu = contour_coordinates.astype(int)#.tolist()
+    plotContourOnImage(contour_coordinates,image)
 
-
-    matriu = np.fliplr(matriu)
-
-
-    image_r=image[:,:,0]
-    image_g=image[:,:,1]
-    image_b=image[:,:,2]
-
-    for a in matriu:
-        image_r[a[0]][a[1]]= 255.
-        image_g[a[0]][a[1]]= 255.
-        image_b[a[0]][a[1]]= 255.
-
-    image[:,:,0]=image_r
-    image[:,:,1]=image_g
-    image[:,:,2]=image_b
-
-    printNpArray(image)
     # THE END
     # Time elapsed
     end = time.time()
