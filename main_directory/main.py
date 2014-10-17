@@ -21,7 +21,6 @@ if __name__ == "__main__":
 
     # millor no posar-ho per "saltar-nos" un error que indica el python. No se com arreglar-lo
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
-    mask_file=mask_file
 
     nrow, ncol = mask_file.shape
     img=np.copy(mask_file)
@@ -39,9 +38,10 @@ if __name__ == "__main__":
     contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
     #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
-    #plotContourOnImage(contour_coordinates,image)
+    # plotContourOnImage(contour_coordinates,image)
 
-
+    control_points=1
+    affine_coordinates_of_contour = np.zeros([contour_coordinates.shape[0],control_points])
 
     # THE END
     # Time elapsed
