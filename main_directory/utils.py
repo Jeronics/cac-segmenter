@@ -19,7 +19,7 @@ def read_png(name):
     """
     im = scipy.misc.imread(name)
     im = im.astype(np.float64)
-    print im.shape
+
     return im
 
 
@@ -50,9 +50,9 @@ def get_inputs(arguments):
     if (len(arguments) != 6 and len(arguments) != 5 ):
         print 'Wrong Use!!!! Expected Input ' +sys.argv[0] + ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
-
-    for arg in arguments:
-        print arg
+    #
+    # for arg in arguments:
+    #     print arg
     model = arguments[0]
     mask = int(arguments[1])
     init_cage= int(arguments[2])

@@ -22,7 +22,7 @@ if __name__ == "__main__":
     # millor no posar-ho per "saltar-nos" un error que indica el python. No se com arreglar-lo
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
     mask_file=mask_file
-    print mask_file
+
     nrow, ncol = mask_file.shape
     img=np.copy(mask_file)
     #printNpArray(img)
@@ -38,27 +38,31 @@ if __name__ == "__main__":
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     matriu = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
-    matriu = matriu.astype(int)
-    #image=image()
-    print matriu
+    matriu = matriu.astype(int)#.tolist()
 
-    print image.shape
+    matriu = np.fliplr(matriu)
+    #image=image()
+
+
+    #print image.shape
     image_r=image[:,:,0]
     image_g=image[:,:,1]
     image_b=image[:,:,2]
-    image_r[matriu]= np.zeros((matriu.shape[0],1))
-    image_g[matriu]= 0.
-    image_b[matriu]= 0.
 
-    image=np.transpose(image)
+    for a in matriu:
+        image_r[a[0]][a[1]]= 255.
+        image_g[a[0]][a[1]]= 255.
+        image_b[a[0]][a[1]]= 255.
+
+    image[:,:,0]=image_r
+    image[:,:,1]=image_g
+    image[:,:,2]=image_b
+
     printNpArray(image)
-
-    printNpArray(matriu)
     # THE END
     # Time elapsed
     end = time.time()
     #print end-start
-
 
 #TODO
 # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
