@@ -38,7 +38,10 @@ if __name__ == "__main__":
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
     contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
-    plotContourOnImage(contour_coordinates,image)
+    #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
+    #plotContourOnImage(contour_coordinates,image)
+
+
 
     # THE END
     # Time elapsed

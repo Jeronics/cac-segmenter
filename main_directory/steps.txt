@@ -1,6 +1,6 @@
 #
-#   1. image-> Get Contour-> punts sencers
-#   2. enters->Get affine coordinates contorn->doubles
+#   1. image-> Get Contour-> punts doubles
+#   2. double->Get affine coordinates contorn->doubles
     Alocate:
         M=([fila = n punts contorn, col = n punts control])
 
