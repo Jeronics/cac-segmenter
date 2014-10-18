@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     cac_contour_get_interior_contour=libcac.cac_contour_get_interior_contour
     cac_get_affine_coordinates=libcac.cac_get_affine_coordinates
+    cac_get_omega1_omega2=libcac.cac_get_omega1_omega2
+
     LP_c_int = POINTER(c_int) # mateixa notacio que python
     LP_c_double = POINTER(c_double) # mateixa notacio que python
     LP_LP_c_double = POINTER(LP_c_double) #  mateixa notacio que python
@@ -24,12 +26,12 @@ if __name__ == "__main__":
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
 
     nrow, ncol = mask_file.shape
-    img = np.copy(mask_file)
+    # img = np.copy(mask_file)
+
     #printNpArray(img)
 
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
-
 
     # Amb 'byref' passem la referencia a la variable
     # Amb as_types transformem de tipus numpy a tipus ctypes, cosa que va millor
@@ -45,14 +47,20 @@ if __name__ == "__main__":
 
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), contour_coordinates.shape[0], ctypeslib.as_ctypes(contour_coordinates), num_control_point, ctypeslib.as_ctypes(init_cage_file))
 
-    print affine_contour_coordinates
+    #Update Step of contour coordinates
+    contour_coordinates = np.dot(affine_contour_coordinates, init_cage_file)
 
-    #Update Step
-    contour_coordinates = np.dot(affine_contour_coordinates,init_cage_file)
-    
+    omega1_size=c_int()
+    omega1_coord = LP_c_double()
+    omega2_size=c_int()
+    omega2_coord = LP_c_double()
+    band_size = 4
+    #Get contour OMEGA 1
+    cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), ncol, nrow, band_size)
+
     # THE END
     # Time elapsed
-    end = time.time()
+    # end = time.time()
     #print end-start
 
 #TODO

@@ -11,14 +11,6 @@
 #   7. Calcular energia i gradient, actualitzar punts de control
 #   8. retornar a punt 3
 
-
-
-
-
-
-
-
-
     # # If Image is an angle image, normalize..
     #
     # # Calculate Mean Value Coordinates
