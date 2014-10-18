@@ -45,7 +45,7 @@ if __name__ == "__main__":
     num_control_point = init_cage_file.shape[0]
     affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
-    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), contour_coordinates.shape[0], ctypeslib.as_ctypes(contour_coordinates), num_control_point, ctypeslib.as_ctypes(init_cage_file))
+    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), c_int(contour_coordinates.shape[0]), ctypeslib.as_ctypes(contour_coordinates), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
     #Update Step of contour coordinates
     contour_coordinates = np.dot(affine_contour_coordinates, init_cage_file)
@@ -55,8 +55,9 @@ if __name__ == "__main__":
     omega2_size=c_int()
     omega2_coord = LP_c_double()
     band_size = 4
+
     #Get contour OMEGA 1
-    cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), ncol, nrow, band_size)
+    cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
 
     # THE END
     # Time elapsed
