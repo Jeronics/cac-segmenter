@@ -47,6 +47,9 @@ if __name__ == "__main__":
 
     print affine_contour_coordinates
 
+    #Update Step
+    contour_coordinates = np.dot(affine_contour_coordinates,init_cage_file)
+    
     # THE END
     # Time elapsed
     end = time.time()
