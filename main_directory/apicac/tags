@@ -1,0 +1,84 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CAC_H	api_cac.h	2;"	d
+D_FIRST	api_cac.h	44;"	d
+D_NONE	api_cac.h	43;"	d
+D_SECOND	api_cac.h	45;"	d
+D_SECOND_MIXED	api_cac.h	46;"	d
+EXPAND_SEQUENCE_CONTOUR	api_get_contour.c	9;"	d	file:
+FALSE	image_io.c	13;"	d	file:
+FILTER_GAUSS	api_cac.h	50;"	d
+FILTER_SIMONCELLI	api_cac.h	49;"	d
+FILTER_SIZE	api_cac.h	53;"	d
+FILTER_TYPE	api_cac.h	54;"	d
+MAX	api_cac.h	39;"	d
+MIN	api_cac.h	40;"	d
+SQR	api_cac.h	38;"	d
+TMP	api_get_omega1_omega2.c	132;"	d	file:
+TMP	api_get_omega1_omega2.c	296;"	d	file:
+TRUE	image_io.c	14;"	d	file:
+b	api_cac.h	/^  char *b,*e; \/* Begin and end of the queue *\/$/;"	m	struct:queue	access:public
+cac_circular_convolution	api_get_contour.c	/^void cac_circular_convolution($/;"	f	signature:( double *output, double *input, int npoints, double *filter_coefs, int filter_length)
+cac_contour_blur	api_get_contour.c	/^void cac_contour_blur($/;"	f	signature:( double *contour_coord, int contour_size)
+cac_contour_get_interior_contour	api_get_contour.c	/^void cac_contour_get_interior_contour($/;"	f	signature:( int *contour_size, double **contour_coord, double *img, int ncol, int nrow, int conn)
+cac_delete_queue	api_get_omega1_omega2.c	/^void cac_delete_queue(q)$/;"	f
+cac_error	api_utils.c	/^void cac_error(char *str)$/;"	f	signature:(char *str)
+cac_expand_queue	api_get_omega1_omega2.c	/^void cac_expand_queue(q)$/;"	f
+cac_fdistance	api_get_omega1_omega2.c	/^void cac_fdistance($/;"	f	signature:( struct image *out, struct image *in, int N)
+cac_gaussian_filter	api_get_contour.c	/^void cac_gaussian_filter(double sigma, double ratio,$/;"	f	signature:(double sigma, double ratio, int max_samples, double **filter, int *nsamples)
+cac_get_affine_coordinates	api_get_affcoord.c	/^void cac_get_affine_coordinates($/;"	f	signature:( double *affcoord, int set_size, double *set_coord, int ctrlpoints_size, double *ctrlpoints_coord)
+cac_get_affine_coordinates_pixel	api_get_affcoord.c	/^void cac_get_affine_coordinates_pixel(double *affcoord, double coord_x, double coord_y, int ctrlpoints_size, double *ctrlpoints_coord)$/;"	f	signature:(double *affcoord, double coord_x, double coord_y, int ctrlpoints_size, double *ctrlpoints_coord)
+cac_get_elem_queue	api_get_omega1_omega2.c	/^void cac_get_elem_queue(elem, q)$/;"	f
+cac_get_number_pixels_omega	api_get_omega1_omega2.c	/^int cac_get_number_pixels_omega(struct image *mask, struct image *dist)$/;"	f	signature:(struct image *mask, struct image *dist)
+cac_get_omega1_omega2	api_get_omega1_omega2.c	/^void cac_get_omega1_omega2($/;"	f	signature:( int *omega1_size, double **omega1_coord, int *omega2_size, double **omega2_coord, int contour_size, double *contour_coord, int ncol, int nrow, int band_size)
+cac_get_pixels_omega	api_get_omega1_omega2.c	/^void cac_get_pixels_omega(int *omega_size, double **omega_coord, struct image *mask, struct image *dist)$/;"	f	signature:(int *omega_size, double **omega_coord, struct image *mask, struct image *dist)
+cac_get_queue_nb_elements	api_get_omega1_omega2.c	/^int cac_get_queue_nb_elements(q)$/;"	f
+cac_holefilling	api_get_omega1_omega2.c	/^void cac_holefilling(struct image *mask)$/;"	f	signature:(struct image *mask)
+cac_holefilling_child	api_get_omega1_omega2.c	/^void cac_holefilling_child(struct image *mask, int x, int y)$/;"	f	signature:(struct image *mask, int x, int y)
+cac_image_alloc	api_image.c	/^struct image *cac_image_alloc($/;"	f	signature:( int ncol, int nrow)
+cac_image_clear	api_image.c	/^void cac_image_clear($/;"	f	signature:( struct image *im, double value)
+cac_image_copy	api_image.c	/^void cac_image_copy($/;"	f	signature:( struct image *out, struct image *in)
+cac_image_delete	api_image.c	/^void cac_image_delete($/;"	f	signature:( struct image *image)
+cac_image_line_draw	api_get_omega1_omega2.c	/^void cac_image_line_draw(struct image *image, int a0, int b0, int a1, int b1, float c)$/;"	f	signature:(struct image *image, int a0, int b0, int a1, int b1, float c)
+cac_image_new	api_image.c	/^struct image *cac_image_new()$/;"	f
+cac_is_queue_empty	api_get_omega1_omega2.c	/^int cac_is_queue_empty(q)$/;"	f
+cac_is_queue_full	api_get_omega1_omega2.c	/^int cac_is_queue_full(q)$/;"	f
+cac_mask_invert	api_get_omega1_omega2.c	/^void cac_mask_invert(struct image *inout)$/;"	f	signature:(struct image *inout)
+cac_new_queue	api_get_omega1_omega2.c	/^struct queue *cac_new_queue(int size_elem, int expand_size)$/;"	f	signature:(int size_elem, int expand_size)
+cac_pgm_read_image	image_io.c	/^struct image *cac_pgm_read_image(char * name)$/;"	f	signature:(char * name)
+cac_pgm_write_image	image_io.c	/^void cac_pgm_write_image(struct image *image, char * name)$/;"	f	signature:(struct image *image, char * name)
+cac_put_elem_queue	api_get_omega1_omega2.c	/^void cac_put_elem_queue(elem, q)$/;"	f
+cac_write_raw_image	image_io.c	/^void cac_write_raw_image(struct image *image, char * name)$/;"	f	signature:(struct image *image, char * name)
+cac_xmalloc	api_utils.c	/^void *cac_xmalloc(size_t size)$/;"	f	signature:(size_t size)
+e	api_cac.h	/^  char *b,*e; \/* Begin and end of the queue *\/$/;"	m	struct:queue	access:public
+expand_size	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+gray	api_cac.h	/^  float *gray;    \/* The Gray level plane (may be NULL) *\/$/;"	m	struct:image	access:public
+image	api_cac.h	/^struct image {$/;"	s
+image::gray	api_cac.h	/^  float *gray;    \/* The Gray level plane (may be NULL) *\/$/;"	m	struct:image	access:public
+image::ncol	api_cac.h	/^  int ncol;       \/* Number of columns (dx) *\/$/;"	m	struct:image	access:public
+image::nrow	api_cac.h	/^  int nrow;       \/* Number of rows (dy) *\/$/;"	m	struct:image	access:public
+max_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+nb_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+ncol	api_cac.h	/^  int ncol;       \/* Number of columns (dx) *\/$/;"	m	struct:image	access:public
+nrow	api_cac.h	/^  int nrow;       \/* Number of rows (dy) *\/$/;"	m	struct:image	access:public
+point	api_cac.h	/^struct point {$/;"	s
+point::x	api_cac.h	/^  int x;$/;"	m	struct:point	access:public
+point::y	api_cac.h	/^  int y;$/;"	m	struct:point	access:public
+queue	api_cac.h	/^struct queue {  \/* Structure for fifo queue *\/$/;"	s
+queue::b	api_cac.h	/^  char *b,*e; \/* Begin and end of the queue *\/$/;"	m	struct:queue	access:public
+queue::e	api_cac.h	/^  char *b,*e; \/* Begin and end of the queue *\/$/;"	m	struct:queue	access:public
+queue::expand_size	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+queue::max_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+queue::nb_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+queue::r	api_cac.h	/^  char *r, *w; \/* Read and write pointers of the queue *\/$/;"	m	struct:queue	access:public
+queue::size_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+queue::w	api_cac.h	/^  char *r, *w; \/* Read and write pointers of the queue *\/$/;"	m	struct:queue	access:public
+r	api_cac.h	/^  char *r, *w; \/* Read and write pointers of the queue *\/$/;"	m	struct:queue	access:public
+size_elem	api_cac.h	/^  int size_elem, nb_elem, expand_size, max_elem;$/;"	m	struct:queue	access:public
+w	api_cac.h	/^  char *r, *w; \/* Read and write pointers of the queue *\/$/;"	m	struct:queue	access:public
+x	api_cac.h	/^  int x;$/;"	m	struct:point	access:public
+y	api_cac.h	/^  int y;$/;"	m	struct:point	access:public

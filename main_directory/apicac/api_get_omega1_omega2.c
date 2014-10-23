@@ -143,14 +143,14 @@ void cac_fdistance(
 
   tmp = cac_image_alloc(in->ncol, in->nrow);
 
-  cac_image_copy(in, tmp);
-  cac_image_copy(in, out);
+  cac_image_copy(tmp, in);
+  cac_image_copy(out, in);
 
   ncIN = in->ncol;
 
   for (n = 1; n <= N; n++)
   {
-    if (n > 1) cac_image_copy(out,tmp);
+    if (n > 1) cac_image_copy(tmp,out);
 
     ptrTMP = tmp->gray;  
     ptrOUT = out->gray;
