@@ -45,6 +45,8 @@ if __name__ == "__main__":
     num_control_point = init_cage_file.shape[0]
     affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
+    plotContourOnImage(contour_coordinates,image)
+    # Calculate the affine contour coordinates
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), c_int(contour_coordinates.shape[0]), ctypeslib.as_ctypes(contour_coordinates), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
     #Update Step of contour coordinates
@@ -54,10 +56,35 @@ if __name__ == "__main__":
     omega1_coord = LP_c_double()
     omega2_size=c_int()
     omega2_coord = LP_c_double()
-    band_size = 4
+    band_size = 10
 
-    #Get contour OMEGA 1
+    #Get contour OMEGA 1 and OMEGA 2
     cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
+
+    omega1_size= ctypeslib.as_array(omega1_size);
+    omega2_size= ctypeslib.as_array(omega2_size);
+
+    omega1_coord = ctypeslib.as_array(omega1_coord,shape=(omega1_size,2));
+    omega2_coord = ctypeslib.as_array(omega2_coord,shape=(omega2_size,2));
+
+
+
+    #Get affine coordinates OMEGA 1 and OMEGA 2. First Allocate affine_omegai_coordinates:
+    affine_omega1_coordinates = np.zeros([omega1_size, num_control_point])
+    affine_omega2_coordinates = np.zeros([omega2_size, num_control_point])
+
+    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega1_coordinates), c_int(omega1_size), ctypeslib.as_ctypes(omega1_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
+    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
+
+    # Calculate Image gradient
+    image_r=image[:,:,0]
+    imageGradient = np.array(np.gradient(image_r))
+
+    ## SECOND ITERATION
+    #RE-Update Step of contour coordinates
+    contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
+
+    plotContourOnImage(contour_coordinates,image)
 
     # THE END
     # Time elapsed
