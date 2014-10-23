@@ -77,14 +77,18 @@ if __name__ == "__main__":
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
     # Calculate Image gradient
-    image_r=image[:,:,0]
+    image_r = image[:,:,0]
     imageGradient = np.array(np.gradient(image_r))
+
+    # Generate random movements
+    vertex_variations=np.random.random_integers(0.0,10.0,curr_cage_file.shape)
+    curr_cage_file=curr_cage_file+vertex_variations
 
     ## SECOND ITERATION
     #RE-Update Step of contour coordinates
     contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
 
-    plotContourOnImage(contour_coordinates,image)
+    plotContourOnImage(contour_coordinates, image)
 
     # THE END
     # Time elapsed
