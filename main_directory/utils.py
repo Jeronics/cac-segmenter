@@ -39,21 +39,33 @@ def binarizePgmImage(im):
                 im[i,j]=0.
     return im
 
+#Checks if point is inside an image given only the shape of the image.
+def is_inside_image(a,size):
+    print a,size
+    if( a[0] > 0 and a[0] < size[0]-1 and a[1] > 0 and a[1] < size[1]-1 ):
+        return True
+    else:
+        return False
+
+
 def plotContourOnImage(contour_coordinates,image):
     matriu = contour_coordinates.astype(int)
     matriu = np.fliplr(matriu)
     image_copy=np.copy(image)
+
     image_r=image_copy[:,:,0]
     image_g=image_copy[:,:,1]
     image_b=image_copy[:,:,2]
+    size=image_r.shape
     for a in matriu:
-        image_r[a[0]][a[1]]= 255.
-        image_g[a[0]][a[1]]= 255.
-        image_b[a[0]][a[1]]= 255.
+        if (is_inside_image(a,size)):
+            image_r[a[0]][a[1]] = 255.
+            image_g[a[0]][a[1]] = 255.
+            image_b[a[0]][a[1]] = 255.
 
-    image_copy[:,:,0]=image_r
-    image_copy[:,:,1]=image_g
-    image_copy[:,:,2]=image_b
+    image_copy[:,:,0] = image_r
+    image_copy[:,:,1] = image_g
+    image_copy[:,:,2] = image_b
 
     printNpArray(image_copy)
 

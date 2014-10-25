@@ -52,43 +52,49 @@ if __name__ == "__main__":
     #Update Step of contour coordinates
     contour_coordinates = np.dot(affine_contour_coordinates, init_cage_file)
 
-    omega1_size=c_int()
-    omega1_coord = LP_c_double()
-    omega2_size=c_int()
-    omega2_coord = LP_c_double()
-    band_size = 10
 
-    #Get contour OMEGA 1 and OMEGA 2
-    cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
+    iter=0
+    max_iter=10
+    while(iter<max_iter):
 
-    omega1_size= ctypeslib.as_array(omega1_size);
-    omega2_size= ctypeslib.as_array(omega2_size);
+        omega1_size=c_int()
+        omega1_coord = LP_c_double()
+        omega2_size=c_int()
+        omega2_coord = LP_c_double()
+        band_size = 10
 
-    omega1_coord = ctypeslib.as_array(omega1_coord,shape=(omega1_size,2));
-    omega2_coord = ctypeslib.as_array(omega2_coord,shape=(omega2_size,2));
+        #Get contour OMEGA 1 and OMEGA 2
+        cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
+
+        omega1_size= ctypeslib.as_array(omega1_size);
+        omega2_size= ctypeslib.as_array(omega2_size);
+
+        omega1_coord = ctypeslib.as_array(omega1_coord,shape=(omega1_size,2));
+        omega2_coord = ctypeslib.as_array(omega2_coord,shape=(omega2_size,2));
 
 
 
-    #Get affine coordinates OMEGA 1 and OMEGA 2. First Allocate affine_omegai_coordinates:
-    affine_omega1_coordinates = np.zeros([omega1_size, num_control_point])
-    affine_omega2_coordinates = np.zeros([omega2_size, num_control_point])
+        #Get Affine coordinates OMEGA 1 and OMEGA 2. First Allocate affine_omegai_coordinates:
+        affine_omega1_coordinates = np.zeros([omega1_size, num_control_point])
+        affine_omega2_coordinates = np.zeros([omega2_size, num_control_point])
 
-    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega1_coordinates), c_int(omega1_size), ctypeslib.as_ctypes(omega1_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
-    cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
+        cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega1_coordinates), c_int(omega1_size), ctypeslib.as_ctypes(omega1_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
+        cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
-    # Calculate Image gradient
-    image_r = image[:,:,0]
-    imageGradient = np.array(np.gradient(image_r))
+        # Calculate Image gradient
+        image_r = image[:,:,0]
+        imageGradient = np.array(np.gradient(image_r))
 
-    # Generate random movements
-    vertex_variations=np.random.random_integers(0.0,10.0,curr_cage_file.shape)
-    curr_cage_file=curr_cage_file+vertex_variations
+        # Generate random movements
+        vertex_variations = np.random.random(curr_cage_file.shape)*2-1.
+        curr_cage_file = curr_cage_file+vertex_variations
 
-    ## SECOND ITERATION
-    #RE-Update Step of contour coordinates
-    contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
+        ## SECOND ITERATION
+        #RE-Update Step of contour coordinates
+        contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
 
-    plotContourOnImage(contour_coordinates, image)
+        plotContourOnImage(contour_coordinates, image)
+        iter+=1;
 
     # THE END
     # Time elapsed
