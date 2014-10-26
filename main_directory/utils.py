@@ -45,7 +45,6 @@ def binarizePgmImage(im):
 
 #Checks if point is inside an image given only the shape of the image.
 def is_inside_image(a,size):
-    print a,size
     if( a[0] > 0 and a[0] < size[0]-1 and a[1] > 0 and a[1] < size[1]-1 ):
         return True
     else:
@@ -83,9 +82,7 @@ def get_inputs(arguments):
     if (len(arguments) != 6 and len(arguments) != 5 ):
         print 'Wrong Use!!!! Expected Input ' +sys.argv[0] + ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
-    #
-    # for arg in arguments:
-    #     print arg
+
     model = arguments[0]
     mask = int(arguments[1])
     init_cage= int(arguments[2])
@@ -113,8 +110,19 @@ def get_inputs(arguments):
     mask_file=binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
-    #printNpArray(image)
+
     return image, mask_file, init_cage_file, curr_cage_file
+
+def calculateMeanOfOmega(omega_coord, omega_size, image):
+    omega_intensity = 0.
+    for a in omega_coord:
+        if( is_inside_image( a, image.shape ) ):
+            omega_intensity += image[a[0]][a[1]]
+        else:
+            omega_size -= 1
+    omega_mean = omega_intensity / omega_size
+
+    return omega_mean
 
 
 #TODO

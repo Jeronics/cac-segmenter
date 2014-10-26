@@ -1,12 +1,9 @@
 __author__ = 'jeronicarandellsaladich'
-import matplotlib
-matplotlib.use('TKAgg')
 import time
 from utils import *
 from ctypes import *
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+
 
 if __name__ == "__main__":
     start = time.time()
@@ -99,16 +96,9 @@ if __name__ == "__main__":
 
         # Calculate Energy
         # E_mean
-        omega1_size_in_image = omega1_size
-        print omega1_size_in_image
-        omega1_intensity = 0.
-        for a in omega1_coord:
-            if(is_inside_image(a, size_image)):
-                omega1_intensity += image[a[0]][a[1]]
-            else:
-                omega1_size_in_image
-        omega1_mean = omega1_intensity / omega1_size_in_image
-        print omega1_mean
+        print calculateMeanOfOmega(omega1_coord, omega1_size, image)
+        print calculateMeanOfOmega(omega2_coord, omega2_size, image)
+
 
 
         # Update contour coordinates
