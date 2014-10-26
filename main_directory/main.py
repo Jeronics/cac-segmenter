@@ -98,7 +98,7 @@ if __name__ == "__main__":
         # E_mean
         meanEnergy = calculateMeanEnergy( omega1_coord, omega2_coord, omega1_size, omega2_size, image )
         print meanEnergy
-        
+
         # Update contour coordinates
         contour_coordinates = np.dot( affine_contour_coordinates, curr_cage_file )
 
