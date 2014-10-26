@@ -1,15 +1,23 @@
 __author__ = 'jeronicarandellsaladich'
-
+import matplotlib
+matplotlib.use('TKAgg')
 import time
 from utils import *
 from ctypes import *
 import numpy as np
-from numpy.ctypeslib import ndpointer
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
 if __name__ == "__main__":
     start = time.time()
 
     # Read inputs, return numpy arrays for image, cage/s and mask.
-    image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
+    rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
+    printNpArray(rgb_image)
+
+    # TURN IMAGE TO GRAYSCALE!
+    image=rgb2gray(rgb_image)
+    printNpArray(image)
 
     #testlibrary = CDLL("testlibrary.so")
     libcac=CDLL("apicac/libcac.so")
@@ -41,11 +49,10 @@ if __name__ == "__main__":
     contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
 
     #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
-    # plotContourOnImage(contour_coordinates,image)
     num_control_point = init_cage_file.shape[0]
     affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
-    plotContourOnImage(contour_coordinates,image)
+    plotContourOnImage(contour_coordinates,rgb_image)
     # Calculate the affine contour coordinates
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), c_int(contour_coordinates.shape[0]), ctypeslib.as_ctypes(contour_coordinates), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
@@ -82,19 +89,29 @@ if __name__ == "__main__":
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
         # Calculate Image gradient
-        image_r = image[:,:,0]
-        imageGradient = np.array(np.gradient(image_r))
+
+        imageGradient = np.array(np.gradient(image))
 
         # Generate random movements
-        vertex_variations = np.random.random(curr_cage_file.shape)*2-1.
-        curr_cage_file = curr_cage_file+vertex_variations
+        vertex_variations = np.random.random( curr_cage_file.shape ) * 2 - 1.
+        curr_cage_file = curr_cage_file + vertex_variations
 
-        ## SECOND ITERATION
-        #RE-Update Step of contour coordinates
-        contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
+        # Calculate Energy
+        # E_mean
+        print omega1_size
+        omega1_intensity=0.
+        for a in omega1_coord:
+            omega1_intensity += omega1_coord[a[0]][a[1]]
+        omega1_mean = omega1_intensity / omega1_size
+        print omega1_mean
 
-        plotContourOnImage(contour_coordinates, image)
-        iter+=1;
+
+        # Update contour coordinates
+        contour_coordinates = np.dot( affine_contour_coordinates, curr_cage_file )
+        plotContourOnImage( contour_coordinates, image )
+        iter += 1
+
+
 
     # THE END
     # Time elapsed

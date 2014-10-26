@@ -14,6 +14,11 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 
+def rgb2gray(rgb):
+    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    return gray
+
 def read_png(name):
     """Return image data from a raw PNG file as numpy array.
     """
@@ -21,7 +26,6 @@ def read_png(name):
     im = im.astype(np.float64)
 
     return im
-
 
 def printNpArray(im):
     im = im.astype('uint8')
