@@ -9,11 +9,12 @@ from scipy import ndimage
 import scipy
 from scipy import misc
 import PIL
+import math
 
 import matplotlib.pyplot as plt
 from PIL import Image
 
-
+########### VISUALITON
 def rgb2gray(rgb):
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
@@ -42,14 +43,6 @@ def binarizePgmImage(im):
             else:
                 im[i,j]=0.
     return im
-
-#Checks if point is inside an image given only the shape of the image.
-def is_inside_image(a,size):
-    if( a[0] > 0 and a[0] < size[0]-1 and a[1] > 0 and a[1] < size[1]-1 ):
-        return True
-    else:
-        return False
-
 
 def plotContourOnImage(contour_coordinates,image):
     matriu = contour_coordinates.astype(int)
@@ -98,7 +91,6 @@ def get_inputs(arguments):
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
-
     image_name= test_path + 'image' + '.png'
     mask_name = test_path + 'mask_' + mask_num + '.pgm' # Both .pgm as well as png work. HOWEVER, png gives you a rbg image!
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
@@ -113,7 +105,14 @@ def get_inputs(arguments):
 
     return image, mask_file, init_cage_file, curr_cage_file
 
-def calculateMeanOfOmega(omega_coord, omega_size, image):
+#Checks if point is inside an image given only the shape of the image.
+def is_inside_image(a,size):
+    if( a[0] > 0 and a[0] < size[0]-1 and a[1] > 0 and a[1] < size[1]-1 ):
+        return True
+    else:
+        return False
+
+def calculateOmegaMean(omega_coord, omega_size, image):
     omega_intensity = 0.
     for a in omega_coord:
         if( is_inside_image( a, image.shape ) ):
@@ -124,5 +123,18 @@ def calculateMeanOfOmega(omega_coord, omega_size, image):
 
     return omega_mean
 
+def calculateMeanEnergy( omega1_coord, omega2_coord, omega1_size, omega2_size,  image ):
+    omega1Mean = calcuateOmegaMeanVariance( omega1_coord, omega1_size, image )
+    omega2Mean = calcuateOmegaMeanVariance( omega2_coord, omega2_size, image )
+    Energy1 = calcuateOmegaMeanVariance( image, omega1Mean, omega1_coord )
+    Energy2 = calcuateOmegaMeanVariance( image, omega2Mean, omega2_coord )
+    return ( Energy1 + Energy2 ) / 2
 
-#TODO
+
+def calcuateOmegaMeanVariance( image, omegaMean, omega_coord ):
+    val = 0.
+    for a in omega_coord:
+        if ( is_inside_image(a, image.shape ) ):
+            val += pow( ( image[a[0]][a[1]] - omegaMean ), 2 )
+        # ELSE: DE MOMENT NO FER RES.
+    return val

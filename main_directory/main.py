@@ -1,9 +1,9 @@
 __author__ = 'jeronicarandellsaladich'
-import time
+
 from utils import *
 from ctypes import *
 import numpy as np
-
+import time
 
 if __name__ == "__main__":
     start = time.time()
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     num_control_point = init_cage_file.shape[0]
     affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
-    plotContourOnImage(contour_coordinates,rgb_image)
+    plotContourOnImage(contour_coordinates, rgb_image)
     # Calculate the affine contour coordinates
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), c_int(contour_coordinates.shape[0]), ctypeslib.as_ctypes(contour_coordinates), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
@@ -88,25 +88,22 @@ if __name__ == "__main__":
 
         # Calculate Image gradient
 
-        imageGradient = np.array(np.gradient(image))
+        imageGradient = np.array( np.gradient( image ) )
 
         # Generate random movements
         vertex_variations = np.random.random( curr_cage_file.shape ) * 2 - 1.
         curr_cage_file = curr_cage_file + vertex_variations
 
-        # Calculate Energy
+        # Calculate Energy:
         # E_mean
-        print calculateMeanOfOmega(omega1_coord, omega1_size, image)
-        print calculateMeanOfOmega(omega2_coord, omega2_size, image)
-
-
-
+        meanEnergy = calculateMeanEnergy( omega1_coord, omega2_coord, omega1_size, omega2_size, image )
+        print meanEnergy
+        
         # Update contour coordinates
         contour_coordinates = np.dot( affine_contour_coordinates, curr_cage_file )
+
         plotContourOnImage( contour_coordinates, rgb_image )
         iter += 1
-
-
 
     # THE END
     # Time elapsed
