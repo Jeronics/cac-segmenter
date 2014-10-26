@@ -34,6 +34,7 @@ if __name__ == "__main__":
     # cac_contour_get_interior_contour.argtypes=[LP_c_int, LP_LP_c_double, LP_c_double, c_int, c_int, c_int]
 
     nrow, ncol = mask_file.shape
+    size_image = image.shape
     # img = np.copy(mask_file)
 
     #printNpArray(img)
@@ -98,17 +99,21 @@ if __name__ == "__main__":
 
         # Calculate Energy
         # E_mean
-        print omega1_size
-        omega1_intensity=0.
+        omega1_size_in_image = omega1_size
+        print omega1_size_in_image
+        omega1_intensity = 0.
         for a in omega1_coord:
-            omega1_intensity += omega1_coord[a[0]][a[1]]
-        omega1_mean = omega1_intensity / omega1_size
+            if(is_inside_image(a, size_image)):
+                omega1_intensity += image[a[0]][a[1]]
+            else:
+                omega1_size_in_image
+        omega1_mean = omega1_intensity / omega1_size_in_image
         print omega1_mean
 
 
         # Update contour coordinates
         contour_coordinates = np.dot( affine_contour_coordinates, curr_cage_file )
-        plotContourOnImage( contour_coordinates, image )
+        plotContourOnImage( contour_coordinates, rgb_image )
         iter += 1
 
 
