@@ -78,28 +78,28 @@ def get_inputs(arguments):
 
     model = arguments[0]
     mask = int(arguments[1])
-    init_cage= int(arguments[2])
+    init_cage = int(arguments[2])
     if len(arguments) == 6:
-        curr_cage = int(arguments[5]);
+        curr_cage = int(arguments[5])
     else:
         curr_cage = None
 
-    folder_name='my_folder'
+    folder_name = 'my_folder'
     # PATHS
     test_path = r'../test/'+folder_name+'/'
     mask_num = '%(number)02d' % {"number": mask}
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
-    image_name= test_path + 'image' + '.png'
-    mask_name = test_path + 'mask_' + mask_num + '.pgm' # Both .pgm as well as png work. HOWEVER, png gives you a rbg image!
+    image_name = test_path + 'image' + '.png'
+    mask_name = test_path + 'mask_' + mask_num + '.pgm'  # Both .pgm as well as png work. png gives you a rbg image!
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
 
     # LOAD Cage/s and Mask
     image = read_png(image_name)
     mask_file = read_png(mask_name)
-    mask_file=binarizePgmImage(mask_file)
+    mask_file = binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)
     curr_cage_file = np.loadtxt(curr_cage_name, float)
 
@@ -107,44 +107,8 @@ def get_inputs(arguments):
 
 #Checks if point is inside an image given only the shape of the image.
 def is_inside_image(a,size):
-    if( a[0] > 0 and a[0] < size[0]-1 and a[1] > 0 and a[1] < size[1]-1 ):
+    if  a[0] >= 0 and a[0] < size[0] and a[1] >= 0 and a[1] < size[1]:
         return True
     else:
         return False
 
-def calculateOmegaMean(omega_coord, omega_size, image):
-    omega_intensity = 0.
-    for a in omega_coord:
-        if( is_inside_image( a, image.shape ) ):
-            omega_intensity += image[a[0]][a[1]]
-        else:
-            omega_size -= 1
-    omega_mean = omega_intensity / omega_size
-
-    return omega_mean
-
-def calculateMeanEnergy( omega1_coord, omega2_coord, omega1_size, omega2_size,  image ):
-    omega1Mean = calculateOmegaMean( omega1_coord, omega1_size, image )
-    omega2Mean = calculateOmegaMean( omega2_coord, omega2_size, image )
-    Energy1 = calcuateOmegaMeanEnergy( image, omega1Mean, omega1_coord )
-    Energy2 = calcuateOmegaMeanEnergy( image, omega2Mean, omega2_coord )
-    return ( Energy1 + Energy2 ) / 2
-
-
-def calcuateOmegaMeanEnergy( image, omegaMean, omega_coord ):
-    val = 0.
-    for a in omega_coord:
-        if ( is_inside_image(a, image.shape ) ):
-            val += pow( ( image[a[0]][a[1]] - omegaMean ), 2 )
-        # ELSE: DE MOMENT NO FER RES.
-    return val
-
-def calcuateOmegaMeanEnergyGradient( image_gradient, omegaMean, omega_coord ):
-    val = 0.
-    cardinal=omega_coord
-    for a in omega_coord:
-        if ( is_inside_image( a, image_gradient.shape ) ):
-            val += pow( ( image_gradient[a[0]][a[1]] - omegaMean ), 2 )
-        else:
-            cardinal-=1
-    return val/cardinal

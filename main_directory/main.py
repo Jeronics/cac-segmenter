@@ -1,6 +1,7 @@
 __author__ = 'jeronicarandellsaladich'
 
 from utils import *
+from energyutils import *
 from ctypes import *
 import numpy as np
 import time
@@ -10,11 +11,9 @@ if __name__ == "__main__":
 
     # Read inputs, return numpy arrays for image, cage/s and mask.
     rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
-    printNpArray(rgb_image)
 
     # TURN IMAGE TO GRAYSCALE!
-    image=rgb2gray(rgb_image)
-    printNpArray(image)
+    image = rgb2gray(rgb_image)
 
     #testlibrary = CDLL("testlibrary.so")
     libcac=CDLL("apicac/libcac.so")
@@ -50,7 +49,6 @@ if __name__ == "__main__":
     num_control_point = init_cage_file.shape[0]
     affine_contour_coordinates = np.zeros([contour_coordinates.shape[0], num_control_point])
 
-    plotContourOnImage(contour_coordinates, rgb_image)
     # Calculate the affine contour coordinates
     cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_contour_coordinates), c_int(contour_coordinates.shape[0]), ctypeslib.as_ctypes(contour_coordinates), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
@@ -71,8 +69,8 @@ if __name__ == "__main__":
         #Get contour OMEGA 1 and OMEGA 2
         cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
 
-        omega1_size= ctypeslib.as_array(omega1_size);
-        omega2_size= ctypeslib.as_array(omega2_size);
+        omega1_size = ctypeslib.as_array(omega1_size);
+        omega2_size = ctypeslib.as_array(omega2_size);
 
         omega1_coord = ctypeslib.as_array(omega1_coord,shape=(omega1_size,2));
         omega2_coord = ctypeslib.as_array(omega2_coord,shape=(omega2_size,2));
@@ -87,22 +85,27 @@ if __name__ == "__main__":
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
         # Calculate Image gradient
-
-        imageGradient = np.array( np.gradient( image ) )
-
-        # Generate random movements
-        vertex_variations = np.random.random( curr_cage_file.shape ) * 2 - 1.
-        curr_cage_file = curr_cage_file + vertex_variations
+        imageGradient = np.array(np.gradient(image))
 
         # Calculate Energy:
         # E_mean
-        meanEnergy = calculateMeanEnergy( omega1_coord, omega2_coord, omega1_size, omega2_size, image )
-        print meanEnergy
+        meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, omega1_size, omega2_size, image)
+
+
+        omega = np.concatenate((omega1_coord.astype(int), omega2_coord.astype(int)),axis=0)
+
+        # TODO: remove from omega indexes not in the image
+        if is_inside_image(omega, image.shape):
+            gradEnergy = (image[omega[:, 0], omega[:, 1]] - 1, 1)
+
+        # Generate random movements
+        vertex_variations = np.random.random(curr_cage_file.shape) * 3 - 1.
+        curr_cage_file = curr_cage_file + vertex_variations
 
         # Update contour coordinates
-        contour_coordinates = np.dot( affine_contour_coordinates, curr_cage_file )
+        contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
 
-        plotContourOnImage( contour_coordinates, rgb_image )
+        # plotContourOnImage(contour_coordinates, rgb_image)
         iter += 1
 
     # THE END
