@@ -92,7 +92,7 @@ if __name__ == "__main__":
         meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, omega1_size, omega2_size, image)
 
 
-        omega = np.concatenate((omega1_coord.astype(int), omega2_coord.astype(int)),axis=0)
+        omega = np.concatenate((omega1_coord.astype(int), omega2_coord.astype(int)), axis=0)
 
         # TODO: remove from omega indexes not in the image
         if is_inside_image(omega, image.shape):
