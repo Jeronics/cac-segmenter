@@ -16,7 +16,7 @@ from PIL import Image
 
 ########### VISUALITON
 def rgb2gray(rgb):
-    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
     return gray
 
@@ -36,35 +36,34 @@ def printNpArray(im):
     plt.show()
 
 def binarizePgmImage(im):
-    for i in xrange(0,im.shape[0]):
-        for j in xrange(0,im.shape[1]):
-            if im[i,j]>=125.:
-                im[i,j]=155.
+    for i in xrange(0, im.shape[0]):
+        for j in xrange(0, im.shape[1]):
+            if im[i, j] >= 125.:
+                im[i, j] = 155.
             else:
-                im[i,j]=0.
+                im[i, j] = 0.
     return im
 
 def plotContourOnImage(contour_coordinates,image):
     matriu = contour_coordinates.astype(int)
     matriu = np.fliplr(matriu)
-    image_copy=np.copy(image)
+    image_copy = np.copy(image)
 
-    image_r=image_copy[:,:,0]
-    image_g=image_copy[:,:,1]
-    image_b=image_copy[:,:,2]
-    size=image_r.shape
+    image_r = image_copy[:, :, 0]
+    image_g = image_copy[:, :, 1]
+    image_b = image_copy[:, :, 2]
+    size = image_r.shape
     for a in matriu:
-        if (is_inside_image(a,size)):
+        if (is_inside_image(a, size)):
             image_r[a[0]][a[1]] = 255.
             image_g[a[0]][a[1]] = 255.
             image_b[a[0]][a[1]] = 255.
 
-    image_copy[:,:,0] = image_r
-    image_copy[:,:,1] = image_g
-    image_copy[:,:,2] = image_b
+    image_copy[:, :, 0] = image_r
+    image_copy[:, :, 1] = image_g
+    image_copy[:, :, 2] = image_b
 
     printNpArray(image_copy)
-
 
 
 def get_inputs(arguments):
@@ -105,10 +104,26 @@ def get_inputs(arguments):
 
     return image, mask_file, init_cage_file, curr_cage_file
 
+
+# Check if list of points are inside an image given only the shape.
+def are_inside_image(coordinates, size):
+    initial_length = len(coordinates)
+    coordinates = coordinates[coordinates[:, 0] > -1]
+    print len(coordinates)
+    coordinates = coordinates[coordinates[:, 0] < size[0]]
+    print len(coordinates)
+    coordinates = coordinates[coordinates[:, 1] > -1]
+    print len(coordinates)
+    coordinates = coordinates[coordinates[:, 1] < size[1]]
+    print len(coordinates)
+    print max(coordinates[0]), max(coordinates[1])
+    final_length = len(coordinates)
+    return coordinates, initial_length - final_length
+# TODO: coordinates[coordinates[:,0]>1] does not work
+
 #Checks if point is inside an image given only the shape of the image.
-def is_inside_image(a,size):
-    if  a[0] >= 0 and a[0] < size[0] and a[1] >= 0 and a[1] < size[1]:
+def is_inside_image(a, size):
+    if a[0] >= 0 and a[0] < size[0] and a[1] >= 0 and a[1] < size[1]:
         return True
     else:
         return False
-

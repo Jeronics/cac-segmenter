@@ -69,11 +69,11 @@ if __name__ == "__main__":
         #Get contour OMEGA 1 and OMEGA 2
         cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
 
-        omega1_size = ctypeslib.as_array(omega1_size);
-        omega2_size = ctypeslib.as_array(omega2_size);
+        omega1_size = ctypeslib.as_array(omega1_size)
+        omega2_size = ctypeslib.as_array(omega2_size)
 
-        omega1_coord = ctypeslib.as_array(omega1_coord,shape=(omega1_size,2));
-        omega2_coord = ctypeslib.as_array(omega2_coord,shape=(omega2_size,2));
+        omega1_coord = ctypeslib.as_array(omega1_coord, shape=(omega1_size, 2))
+        omega2_coord = ctypeslib.as_array(omega2_coord, shape=(omega2_size, 2))
 
 
 
@@ -89,15 +89,26 @@ if __name__ == "__main__":
 
         # Calculate Energy:
         # E_mean
-        meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, omega1_size, omega2_size, image)
+        omega1_coord = omega1_coord.astype(int)
+        omega2_coord = omega2_coord.astype(int)
 
+        # meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, image)
+        meanOmega1 = calculateOmegaMean(omega1_coord, image)
+        meanOmega2 = calculateOmegaMean(omega2_coord, image)
 
-        omega = np.concatenate((omega1_coord.astype(int), omega2_coord.astype(int)), axis=0)
+        omega1, lost_instances1 = are_inside_image(omega1_coord, image.shape)
+        omega2, lost_instances1 = are_inside_image(omega2_coord, image.shape)
+        print omega1
 
-        # TODO: remove from omega indexes not in the image
-        if is_inside_image(omega, image.shape):
-            gradEnergy = (image[omega[:, 0], omega[:, 1]] - 1, 1)
+        omega1x = omega1[:, 0].tolist()
+        omega1y = omega1[:, 1].tolist()
+        omega2x = omega2[:, 0].tolist()
+        omega2y = omega2[:, 1].tolist()
 
+        gradEnergy1 = image[[omega1x, omega1y]] - meanOmega1
+        gradEnergy2 = image[[omega2x, omega2y]] - meanOmega2
+
+        print gradEnergy1
         # Generate random movements
         vertex_variations = np.random.random(curr_cage_file.shape) * 3 - 1.
         curr_cage_file = curr_cage_file + vertex_variations
@@ -115,4 +126,3 @@ if __name__ == "__main__":
 
 #TODO
 # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
-# C-TYPES Dynamic matrix
