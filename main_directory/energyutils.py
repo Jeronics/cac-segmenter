@@ -14,10 +14,10 @@ import math
 
 
 def calculateOmegaMean(omega_coord, image):
-    omega_size = len(omega_coord)
-    omega_coord, numIndexesNotInside = utils.are_inside_image(omega_coord, image.shape)
+    omega_boolean = utils.are_inside_image(omega_coord, image.shape)
+    omega_coord = omega_coord[omega_boolean]
     omega_intensity = sum(image[[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]])
-    omega_mean = omega_intensity / (omega_size-numIndexesNotInside)
+    omega_mean = omega_intensity / (len(omega_boolean[omega_boolean == True]))
     return omega_mean
 
 
@@ -47,3 +47,26 @@ def calcuateOmegaMeanEnergyGradient(image_gradient, omegaMean, omega_coord):
         else:
             cardinal -= 1
     return val/cardinal
+
+
+
+
+def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image):
+
+    # Calculate Image gradient
+    imageGradient = np.array(np.gradient(image))
+
+    # Calculate Energy:
+    # E_mean
+    omega1_coord = omega1_coord.astype(int)
+    omega2_coord = omega2_coord.astype(int)
+
+    # meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, image)
+    meanOmega1 = calculateOmegaMean(omega1_coord, image)
+    meanOmega2 = calculateOmegaMean(omega2_coord, image)
+
+    gradEnergy1_b = evaluate_image(omega1_coord, image) - meanOmega1
+    gradEnergy2_b = evaluate_image(omega2_coord, image) - meanOmega2
+
+    gradient_energy_for_each_vertex()
+    return

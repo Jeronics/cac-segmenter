@@ -1,10 +1,13 @@
 __author__ = 'jeronicarandellsaladich'
 
-from utils import *
-from energyutils import *
 from ctypes import *
-import numpy as np
 import time
+
+import numpy as np
+
+from utils import *
+from main_directory.energyutils import *
+
 
 if __name__ == "__main__":
     start = time.time()
@@ -16,11 +19,11 @@ if __name__ == "__main__":
     image = rgb2gray(rgb_image)
 
     #testlibrary = CDLL("testlibrary.so")
-    libcac=CDLL("apicac/libcac.so")
+    libcac = CDLL("apicac/libcac.so")
 
-    cac_contour_get_interior_contour=libcac.cac_contour_get_interior_contour
-    cac_get_affine_coordinates=libcac.cac_get_affine_coordinates
-    cac_get_omega1_omega2=libcac.cac_get_omega1_omega2
+    cac_contour_get_interior_contour = libcac.cac_contour_get_interior_contour
+    cac_get_affine_coordinates = libcac.cac_get_affine_coordinates
+    cac_get_omega1_omega2 = libcac.cac_get_omega1_omega2
 
     LP_c_int = POINTER(c_int) # mateixa notacio que python
     LP_c_double = POINTER(c_double) # mateixa notacio que python
@@ -56,13 +59,13 @@ if __name__ == "__main__":
     contour_coordinates = np.dot(affine_contour_coordinates, init_cage_file)
 
 
-    iter=0
-    max_iter=10
-    while(iter<max_iter):
+    iter = 0
+    max_iter = 1
+    while(iter < max_iter):
 
-        omega1_size=c_int()
+        omega1_size = c_int()
         omega1_coord = LP_c_double()
-        omega2_size=c_int()
+        omega2_size = c_int()
         omega2_coord = LP_c_double()
         band_size = 10
 
@@ -75,8 +78,6 @@ if __name__ == "__main__":
         omega1_coord = ctypeslib.as_array(omega1_coord, shape=(omega1_size, 2))
         omega2_coord = ctypeslib.as_array(omega2_coord, shape=(omega2_size, 2))
 
-
-
         #Get Affine coordinates OMEGA 1 and OMEGA 2. First Allocate affine_omegai_coordinates:
         affine_omega1_coordinates = np.zeros([omega1_size, num_control_point])
         affine_omega2_coordinates = np.zeros([omega2_size, num_control_point])
@@ -84,31 +85,13 @@ if __name__ == "__main__":
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega1_coordinates), c_int(omega1_size), ctypeslib.as_ctypes(omega1_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
-        # Calculate Image gradient
-        imageGradient = np.array(np.gradient(image))
 
-        # Calculate Energy:
-        # E_mean
-        omega1_coord = omega1_coord.astype(int)
-        omega2_coord = omega2_coord.astype(int)
+        energyGradient = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
 
-        # meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, image)
-        meanOmega1 = calculateOmegaMean(omega1_coord, image)
-        meanOmega2 = calculateOmegaMean(omega2_coord, image)
 
-        omega1, lost_instances1 = are_inside_image(omega1_coord, image.shape)
-        omega2, lost_instances1 = are_inside_image(omega2_coord, image.shape)
-        print omega1
+        print affine_omega1_coordinates[0]
 
-        omega1x = omega1[:, 0].tolist()
-        omega1y = omega1[:, 1].tolist()
-        omega2x = omega2[:, 0].tolist()
-        omega2y = omega2[:, 1].tolist()
 
-        gradEnergy1 = image[[omega1x, omega1y]] - meanOmega1
-        gradEnergy2 = image[[omega2x, omega2y]] - meanOmega2
-
-        print gradEnergy1
         # Generate random movements
         vertex_variations = np.random.random(curr_cage_file.shape) * 3 - 1.
         curr_cage_file = curr_cage_file + vertex_variations

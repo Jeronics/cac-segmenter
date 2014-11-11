@@ -105,20 +105,26 @@ def get_inputs(arguments):
     return image, mask_file, init_cage_file, curr_cage_file
 
 
+def evaluate_image(coordinates, image):
+    '''
+    Evaluates image
+    :param coordinates: index numpy array
+    :param image: numpy array image
+    :return:
+        Result of image, when indexes are not inside the image return maximum 255
+    '''
+    image_evaluations = np.ones([1,len(coordinates)])*255
+    image_evaluations=image_evaluations[0]
+    coordinates_booleans = are_inside_image(coordinates, image.shape)
+    coordinates = coordinates[coordinates_booleans]
+    coordinates = np.transpose(coordinates).tolist()
+    image_evaluations[coordinates_booleans] = image[coordinates]
+    return image_evaluations
+
 # Check if list of points are inside an image given only the shape.
 def are_inside_image(coordinates, size):
-    initial_length = len(coordinates)
-    coordinates = coordinates[coordinates[:, 0] > -1]
-    print len(coordinates)
-    coordinates = coordinates[coordinates[:, 0] < size[0]]
-    print len(coordinates)
-    coordinates = coordinates[coordinates[:, 1] > -1]
-    print len(coordinates)
-    coordinates = coordinates[coordinates[:, 1] < size[1]]
-    print len(coordinates)
-    print max(coordinates[0]), max(coordinates[1])
-    final_length = len(coordinates)
-    return coordinates, initial_length - final_length
+    boolean = (coordinates[:, 0] > -1) & (coordinates[:, 0] < size[0]) & (coordinates[:, 1] > -1) & (coordinates[:, 1] < size[1])
+    return boolean
 # TODO: coordinates[coordinates[:,0]>1] does not work
 
 #Checks if point is inside an image given only the shape of the image.
