@@ -86,7 +86,6 @@ if __name__ == "__main__":
 
         energyGradient = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
 
-
         # Generate random movements
         vertex_variations = np.random.random(curr_cage_file.shape) * 3 - 1.
         curr_cage_file = curr_cage_file + vertex_variations

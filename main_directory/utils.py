@@ -1,3 +1,4 @@
+
 import re
 import sys
 import numpy as np
@@ -42,7 +43,7 @@ def binarizePgmImage(im):
                 im[i, j] = 0.
     return im
 
-def plotContourOnImage(contour_coordinates,image):
+def plotContourOnImage(contour_coordinates, image):
     matriu = contour_coordinates.astype(int)
     matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
