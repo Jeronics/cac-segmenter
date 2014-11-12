@@ -1,5 +1,3 @@
-__author__ = 'jeronicarandellsaladich'
-
 import re
 import sys
 import numpy as np
@@ -105,7 +103,7 @@ def get_inputs(arguments):
     return image, mask_file, init_cage_file, curr_cage_file
 
 
-def evaluate_image(coordinates, image):
+def evaluate_image(coordinates, image, outside_value=255.):
     '''
     Evaluates image
     :param coordinates: index numpy array
@@ -113,7 +111,7 @@ def evaluate_image(coordinates, image):
     :return:
         Result of image, when indexes are not inside the image return maximum 255
     '''
-    image_evaluations = np.ones([1,len(coordinates)])*255
+    image_evaluations = np.ones([1,len(coordinates)])*outside_value
     image_evaluations=image_evaluations[0]
     coordinates_booleans = are_inside_image(coordinates, image.shape)
     coordinates = coordinates[coordinates_booleans]

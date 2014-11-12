@@ -1,4 +1,3 @@
-__author__ = 'jeronicarandellsaladich'
 import sys
 sys.path.append('/cac-segmenter')
 import utils
@@ -49,24 +48,27 @@ def calcuateOmegaMeanEnergyGradient(image_gradient, omegaMean, omega_coord):
     return val/cardinal
 
 
+def gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point):
 
+    image_gradient_by_point = np.transpose(image_gradient_by_point)
+    aux_1 = np.multiply(aux, np.transpose(affine_omega_coordinates))
+    aux_2 = np.dot(aux_1, image_gradient_by_point)
+    return aux_2
 
 def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image):
-
     # Calculate Image gradient
-    imageGradient = np.array(np.gradient(image))
-
+    image_gradient = np.array(np.gradient(image))
     # Calculate Energy:
+
+    Omega1 = gradient_Energy_per_region(omega1_coord, affine_omega1_coordinates, image, image_gradient)
+    Omega2 = gradient_Energy_per_region(omega2_coord, affine_omega2_coordinates, image, image_gradient)
+    Energy = Omega1+ Omega2
+    print Energy
+
+def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, image_gradient):
+    omega_coord = omega_coord.astype(int)
     # E_mean
-    omega1_coord = omega1_coord.astype(int)
-    omega2_coord = omega2_coord.astype(int)
-
-    # meanEnergy = calculateMeanEnergy(omega1_coord, omega2_coord, image)
-    meanOmega1 = calculateOmegaMean(omega1_coord, image)
-    meanOmega2 = calculateOmegaMean(omega2_coord, image)
-
-    gradEnergy1_b = evaluate_image(omega1_coord, image) - meanOmega1
-    gradEnergy2_b = evaluate_image(omega2_coord, image) - meanOmega2
-
-    gradient_energy_for_each_vertex()
-    return
+    meanOmega1 = calculateOmegaMean(omega_coord, image)
+    aux = utils.evaluate_image(omega_coord, image) - meanOmega1
+    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0],0), utils.evaluate_image(omega_coord, image_gradient[1], 0)]
+    return gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
