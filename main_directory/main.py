@@ -56,9 +56,9 @@ if __name__ == "__main__":
     #Update Step of contour coordinates
     contour_coordinates = np.dot(affine_contour_coordinates, init_cage_file)
 
-
+    curr_cage_file = init_cage_file
     iter = 0
-    max_iter = 1
+    max_iter = 100
     while(iter < max_iter):
 
         omega1_size = c_int()
@@ -84,16 +84,22 @@ if __name__ == "__main__":
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
 
-        energyGradient = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
-
+        w = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
+        print w
+        w = w/np.linalg.norm(w)
+        print w
         # Generate random movements
-        vertex_variations = np.random.random(curr_cage_file.shape) * 3 - 1.
-        curr_cage_file = curr_cage_file + vertex_variations
+        # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
+        alpha = 2
+        curr_cage_file = curr_cage_file - alpha*w
+
 
         # Update contour coordinates
         contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
 
         # plotContourOnImage(contour_coordinates, rgb_image)
+        plotContourOnImage(contour_coordinates, rgb_image)
+
         iter += 1
 
     # THE END

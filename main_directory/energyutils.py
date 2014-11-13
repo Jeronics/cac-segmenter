@@ -61,8 +61,8 @@ def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine
     # Calculate Energy:
     Omega1 = gradient_Energy_per_region(omega1_coord, affine_omega1_coordinates, image, image_gradient)
     Omega2 = gradient_Energy_per_region(omega2_coord, affine_omega2_coordinates, image, image_gradient)
-    Energy = Omega1+ Omega2
-    print Energy
+    Energy = Omega1 + Omega2
+    return Energy
 
 def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, image_gradient):
     omega_coord = omega_coord.astype(int)
@@ -71,4 +71,5 @@ def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, ima
     print mean_omega, omega_std
     aux = utils.evaluate_image(omega_coord, image) - mean_omega
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0],0), utils.evaluate_image(omega_coord, image_gradient[1], 0)]
-    return gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
+    grad =  gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
+    return grad*(1/pow(omega_std,2))
