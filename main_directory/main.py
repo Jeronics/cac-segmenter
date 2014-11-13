@@ -65,7 +65,7 @@ if __name__ == "__main__":
         omega1_coord = LP_c_double()
         omega2_size = c_int()
         omega2_coord = LP_c_double()
-        band_size = 10
+        band_size = 30
 
         #Get contour OMEGA 1 and OMEGA 2
         cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
