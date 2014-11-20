@@ -15,8 +15,11 @@ from PIL import Image
 
 ########### VISUALITON
 def rgb2gray(rgb):
-    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    if (len(rgb.shape) ==3):
+        r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+        gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    else:
+        gray = rgb
     return gray
 
 def read_png(name):
@@ -48,19 +51,30 @@ def plotContourOnImage(contour_coordinates, image):
     matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
 
-    image_r = image_copy[:, :, 0]
-    image_g = image_copy[:, :, 1]
-    image_b = image_copy[:, :, 2]
-    size = image_r.shape
+    if len(image.shape)==3:
+        image_r = image_copy[:, :, 0]
+        image_g = image_copy[:, :, 1]
+        image_b = image_copy[:, :, 2]
+        size = image_r.shape
+    else:
+        image_gray = image_copy
+        size = image_gray.shape
+
     for a in matriu:
         if (is_inside_image(a, size)):
-            image_r[a[0]][a[1]] = 255.
-            image_g[a[0]][a[1]] = 255.
-            image_b[a[0]][a[1]] = 255.
+            if len(size)==3:
+                image_r[a[0]][a[1]] = 255.
+                image_g[a[0]][a[1]] = 255.
+                image_b[a[0]][a[1]] = 255.
+            else:
+                image_gray[a[0]][a[1]] = 255.
 
-    image_copy[:, :, 0] = image_r
-    image_copy[:, :, 1] = image_g
-    image_copy[:, :, 2] = image_b
+    if len(size)==3:
+        image_copy[:, :, 0] = image_r
+        image_copy[:, :, 1] = image_g
+        image_copy[:, :, 2] = image_b
+    else:
+        image_copy = image_gray
 
     printNpArray(image_copy)
 
@@ -82,7 +96,7 @@ def get_inputs(arguments):
     else:
         curr_cage = None
 
-    folder_name = 'my_folder'
+    folder_name = 'ovella'
     # PATHS
     test_path = r'../test/'+folder_name+'/'
     mask_num = '%(number)02d' % {"number": mask}
@@ -90,7 +104,7 @@ def get_inputs(arguments):
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
     image_name = test_path + 'image' + '.png'
-    mask_name = test_path + 'mask_' + mask_num + '.pgm'  # Both .pgm as well as png work. png gives you a rbg image!
+    mask_name = test_path + 'mask_' + mask_num + '.png'  # Both .pgm as well as png work. png gives you a rbg image!
     init_cage_name = test_path + 'cage_'+init_cage_name+'.txt'
     curr_cage_name = test_path + 'cage_'+curr_cage_name+'.txt'
 

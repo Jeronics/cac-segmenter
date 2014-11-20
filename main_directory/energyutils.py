@@ -68,8 +68,7 @@ def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, ima
     omega_coord = omega_coord.astype(int)
     # E_mean
     mean_omega, omega_std = calculateOmegaMean(omega_coord, image)
-    print mean_omega, omega_std
     aux = utils.evaluate_image(omega_coord, image) - mean_omega
-    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0],0), utils.evaluate_image(omega_coord, image_gradient[1], 0)]
-    grad =  gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
-    return grad*(1/pow(omega_std,2))
+    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0), utils.evaluate_image(omega_coord, image_gradient[1], 0)]
+    grad = gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
+    return grad*(1/pow(omega_std, 2))

@@ -34,8 +34,6 @@ if __name__ == "__main__":
     size_image = image.shape
     # img = np.copy(mask_file)
 
-    #printNpArray(img)
-
     contour_size=c_int()  # un sencer
     mat = LP_c_double()   # un punter a double
 
@@ -44,7 +42,7 @@ if __name__ == "__main__":
     cac_contour_get_interior_contour(byref(contour_size), byref(mat), ctypeslib.as_ctypes(mask_file), c_int(ncol), c_int(nrow), c_int(4))
 
     # passem la matriu retornada a tipus numpy. Observa com defineixo la mida de la matriu
-    contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value,2));
+    contour_coordinates = ctypeslib.as_array(mat,shape=(contour_size.value, 2))
 
     #OPTIONAL: PRINT THE CONTOUR ON THE IMAGE
     num_control_point = init_cage_file.shape[0]
@@ -58,14 +56,14 @@ if __name__ == "__main__":
 
     curr_cage_file = init_cage_file
     iter = 0
-    max_iter = 100
-    while(iter < max_iter):
+    max_iter = 300
+    while (iter < max_iter):
 
         omega1_size = c_int()
         omega1_coord = LP_c_double()
         omega2_size = c_int()
         omega2_coord = LP_c_double()
-        band_size = 30
+        band_size = 20
 
         #Get contour OMEGA 1 and OMEGA 2
         cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord), contour_size, ctypeslib.as_ctypes(contour_coordinates), c_int(ncol), c_int(nrow), c_int(band_size))
@@ -85,22 +83,20 @@ if __name__ == "__main__":
 
 
         w = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
-        print w
         w = w/np.linalg.norm(w)
-        print w
         # Generate random movements
         # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
-        alpha = 2
+        alpha = 5
         curr_cage_file = curr_cage_file - alpha*w
-
 
         # Update contour coordinates
         contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
-
         # plotContourOnImage(contour_coordinates, rgb_image)
         plotContourOnImage(contour_coordinates, rgb_image)
 
         iter += 1
+
+
 
     # THE END
     # Time elapsed
