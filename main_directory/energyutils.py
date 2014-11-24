@@ -48,12 +48,16 @@ def calcuateOmegaMeanEnergyGradient(image_gradient, omegaMean, omega_coord):
             cardinal -= 1
     return val/cardinal
 
+def energy_for_each_vertex():
+    return 0
+
 
 def gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point):
     image_gradient_by_point = np.transpose(image_gradient_by_point)
     aux_1 = np.multiply(aux, np.transpose(affine_omega_coordinates))
     aux_2 = np.dot(aux_1, image_gradient_by_point)
     return aux_2
+
 
 def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image):
     # Calculate Image gradient
@@ -64,6 +68,7 @@ def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine
     Energy = Omega1 + Omega2
     return Energy
 
+
 def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, image_gradient):
     omega_coord = omega_coord.astype(int)
     # E_mean
@@ -72,3 +77,74 @@ def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, ima
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0), utils.evaluate_image(omega_coord, image_gradient[1], 0)]
     grad = gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point)
     return grad*(1/pow(omega_std, 2))
+
+def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
+    '''
+    Checks if vertices cannot evolve anymore
+    :param grad_k_3:
+    :param grad_k_2:
+    :param grad_k_1:
+    :param grad_k:
+    :return:
+    '''
+    product_1 = sum(np.transpose(grad_k*grad_k_2), 0)
+    product_2 = sum(np.transpose(grad_k_1*grad_k_3), 0)
+    product_3 = sum(np.transpose(grad_k*grad_k_1), 0)
+    if any(x <= 0 for x in product_1):
+        return False
+    if any(x <= 0 for x in product_2):
+        return False
+    if any(x >= 0 for x in product_3):
+        return False
+    return True
+
+def multiple_project_gradient_on_axis(a, b):
+    '''
+    Finds a's projection on b
+    :param a:
+    :param b:
+    :return:
+    '''
+    return np.transpose((multiple_dot_products(a, b)/np.power(multiple_norm(b),2)) * np.transpose(b))
+
+
+def normalize_vectors(vectors):
+    '''
+    Normalizes vectors
+    :param vect:
+    :return:
+    '''
+    vectors = np.array([x/np.linalg.norm(x) for x in vectors])
+    return vectors
+
+'''
+    THE FOLLOWING FUNCTIONS ARE MADE TO ACCEPT MULTIPLE VECTORS IN THE FOLLOWING FORMAT:
+
+    v1
+    v2
+    .
+    .
+    .
+    vN
+'''
+
+
+def multiple_norm(a):
+    '''
+
+    :param a:
+    :return:
+    '''
+    return np.array([np.linalg.norm(x) for x in a])
+
+def multiple_normalize(a):
+    '''
+
+    :param a:
+    :return:
+    '''
+    return np.array([x/np.linalg.norm(x) for x in a])
+
+def multiple_dot_products(a, b):
+    c = a*b
+    return np.array([sum(x) for x in c])

@@ -27,15 +27,15 @@ def read_png(name):
     """
     im = scipy.misc.imread(name)
     im = im.astype(np.float64)
-
     return im
 
-def printNpArray(im):
+def printNpArray(im, show_plot=True):
     im = im.astype('uint8')
     plt.gray()
     plt.imshow(im, interpolation='nearest')
     plt.axis('off')
-    plt.show()
+    if show_plot:
+        plt.show()
 
 def binarizePgmImage(im):
     for i in xrange(0, im.shape[0]):
@@ -46,12 +46,12 @@ def binarizePgmImage(im):
                 im[i, j] = 0.
     return im
 
-def plotContourOnImage(contour_coordinates, image):
+def plotContourOnImage(contour_coordinates, image, points=[]):
     matriu = contour_coordinates.astype(int)
     matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
 
-    if len(image.shape)==3:
+    if len(image.shape) == 3:
         image_r = image_copy[:, :, 0]
         image_g = image_copy[:, :, 1]
         image_b = image_copy[:, :, 2]
@@ -61,22 +61,28 @@ def plotContourOnImage(contour_coordinates, image):
         size = image_gray.shape
 
     for a in matriu:
-        if (is_inside_image(a, size)):
-            if len(size)==3:
+        if is_inside_image(a, size):
+            if len(size) == 3:
                 image_r[a[0]][a[1]] = 255.
                 image_g[a[0]][a[1]] = 255.
                 image_b[a[0]][a[1]] = 255.
             else:
                 image_gray[a[0]][a[1]] = 255.
 
-    if len(size)==3:
+    if len(size) == 3:
         image_copy[:, :, 0] = image_r
         image_copy[:, :, 1] = image_g
         image_copy[:, :, 2] = image_b
     else:
         image_copy = image_gray
+    printNpArray(image_copy, False)
+    if points != []:
+        points = np.concatenate((points, [points[0]]))
+        points = np.transpose(points)
+        plt.scatter(points[0], points[1],marker='o', c='b',)
+        plt.plot(points[0], points[1])
+    plt.show()
 
-    printNpArray(image_copy)
 
 
 def get_inputs(arguments):
@@ -126,8 +132,8 @@ def evaluate_image(coordinates, image, outside_value=255.):
     :return:
         Result of image, when indexes are not inside the image return maximum 255
     '''
-    image_evaluations = np.ones([1,len(coordinates)])*outside_value
-    image_evaluations=image_evaluations[0]
+    image_evaluations = np.ones([1, len(coordinates)])*outside_value
+    image_evaluations = image_evaluations[0]
     coordinates_booleans = are_inside_image(coordinates, image.shape)
     coordinates = coordinates[coordinates_booleans]
     coordinates = np.transpose(coordinates).tolist()
@@ -146,3 +152,4 @@ def is_inside_image(a, size):
         return True
     else:
         return False
+

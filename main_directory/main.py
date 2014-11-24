@@ -57,8 +57,12 @@ if __name__ == "__main__":
     curr_cage_file = init_cage_file
     iter = 0
     max_iter = 300
+    first_stage = True
+    grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point,2]),  np.zeros([num_control_point,2]),  np.zeros([num_control_point,2]),  np.zeros([num_control_point,2])
+
     while (iter < max_iter):
 
+        # Allocate memory
         omega1_size = c_int()
         omega1_coord = LP_c_double()
         omega2_size = c_int()
@@ -82,22 +86,43 @@ if __name__ == "__main__":
         cac_get_affine_coordinates(ctypeslib.as_ctypes(affine_omega2_coordinates), c_int(omega2_size), ctypeslib.as_ctypes(omega2_coord), c_int(num_control_point), ctypeslib.as_ctypes(init_cage_file))
 
 
-        w = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
-        w = w/np.linalg.norm(w)
+
+        if first_stage:
+            # Update gradients
+            grad_k_3 = grad_k_2
+            grad_k_2 = grad_k_1
+            grad_k_1 = grad_k
+            grad_k = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates, image)
+            mid_point = sum(curr_cage_file, 0)/curr_cage_file.shape[0]
+            axis = mid_point - curr_cage_file
+            axis = normalize_vectors(axis)
+            print axis
+            grad_k = multiple_normalize(grad_k)
+            print grad_k
+            grad_k = multiple_project_gradient_on_axis(grad_k, axis)
+            print grad_k
+        else:
+            print 'First Stage Complete'
+            break
+
+        # print grad_k
         # Generate random movements
         # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
-        alpha = 5
-        curr_cage_file = curr_cage_file - alpha*w
+
+        # Calculate alpha
+        grad_k = normalize_vectors(grad_k)
+        beta = 5
+        alpha = 5 #multiple_norm()
+        curr_cage_file += - alpha*grad_k
+        if first_stage and cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
+            first_stage = False
 
         # Update contour coordinates
         contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
-        # plotContourOnImage(contour_coordinates, rgb_image)
-        plotContourOnImage(contour_coordinates, rgb_image)
-
+        plotContourOnImage(contour_coordinates, rgb_image, curr_cage_file)
         iter += 1
 
-
-
+    plotContourOnImage(contour_coordinates, rgb_image)
     # THE END
     # Time elapsed
     # end = time.time()
