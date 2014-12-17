@@ -16,10 +16,10 @@ from scipy import interpolate
 
 def calculateOmegaMean(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
-    omega_coord = omega_coord[omega_boolean]
-    omega_intensity = sum(image[[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]])
+    omega_coord_aux = omega_coord[omega_boolean]
+    omega_intensity = sum(image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]])
     omega_mean = omega_intensity / (len(omega_boolean[omega_boolean == True]))
-    omega_std = np.std(image[[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]])
+    omega_std = np.std(image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]])
     return omega_mean, omega_std
 
 
@@ -67,9 +67,9 @@ def gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradien
 
 
 def GAUSS_gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point):
-    image_gradient_by_point = np.transpose(image_gradient_by_point)
+    image_gradient_by_point_aux = np.transpose(image_gradient_by_point)
     aux_1 = np.multiply(aux, np.transpose(affine_omega_coordinates))
-    aux_2 = np.dot(aux_1, image_gradient_by_point)
+    aux_2 = np.dot(aux_1, image_gradient_by_point_aux)
     return aux_2
 
 
@@ -86,9 +86,10 @@ def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine
 def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, image_gradient):
     # E_mean
     mean_omega, omega_std = calculateOmegaMean(omega_coord, image)
-    aux = utils.evaluate_bilinear_interpolation(omega_coord, image, mean_omega) - mean_omega
-    image_gradient_by_point = [utils.evaluate_bilinear_interpolation(omega_coord, image_gradient[0], 0),
-                               utils.evaluate_bilinear_interpolation(omega_coord, image_gradient[1], 0)]
+    print mean_omega
+    aux = utils.evaluate_image(omega_coord, image, mean_omega) - mean_omega
+    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
+                               utils.evaluate_image(omega_coord, image_gradient[1], 0)]
     mean_derivative = np.dot(image_gradient_by_point, affine_omega_coordinates) / float(len(omega_coord))
     grad = gradient_energy_for_each_vertex(aux, affine_omega_coordinates, image_gradient_by_point, mean_derivative)
     return grad  # *(1/pow(omega_std, 2)) for GAUSS
@@ -131,8 +132,8 @@ def normalize_vectors(vectors):
     :param vect:
     :return:
     '''
-    vectors = np.array([x / np.linalg.norm(x) for x in vectors])
-    return vectors
+    vectors_aux = np.array([x / np.linalg.norm(x) for x in vectors])
+    return vectors_aux
 
 
 '''

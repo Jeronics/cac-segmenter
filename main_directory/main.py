@@ -75,7 +75,7 @@ if __name__ == "__main__":
         omega1_coord = LP_c_double()
         omega2_size = c_int()
         omega2_coord = LP_c_double()
-        band_size = 25
+        band_size = 100
 
         #Get contour OMEGA 1 and OMEGA 2
         cac_get_omega1_omega2(byref(omega1_size), byref(omega1_coord), byref(omega2_size), byref(omega2_coord),
@@ -84,7 +84,6 @@ if __name__ == "__main__":
 
         omega1_size = ctypeslib.as_array(omega1_size)
         omega2_size = ctypeslib.as_array(omega2_size)
-
 
         omega1_coord = ctypeslib.as_array(omega1_coord, shape=(omega1_size, 2))
         omega2_coord = ctypeslib.as_array(omega2_coord, shape=(omega2_size, 2))
@@ -112,7 +111,7 @@ if __name__ == "__main__":
             mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
             axis = mid_point - curr_cage_file
             # axis = normalize_vectors(axis)
-            # grad_k = multiple_normalize(grad_k)
+            grad_k = multiple_normalize(grad_k)
             grad_k = multiple_project_gradient_on_axis(grad_k, axis)
         else:
             print 'First Stage Complete'
@@ -123,8 +122,9 @@ if __name__ == "__main__":
         # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
 
         # Calculate alpha
-        grad_k = normalize_vectors(grad_k)
+        # grad_k = normalize_vectors(grad_k)
         # print grad_k[2], curr_cage_file[2]
+        print curr_cage_file[-2], grad_k[-2]
         beta = 5
         alpha = 5  #multiple_norm()
         curr_cage_file += - alpha * grad_k

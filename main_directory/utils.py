@@ -31,15 +31,16 @@ def read_png(name):
 
 
 def printNpArray(im, show_plot=True):
-    im = im.astype('uint8')
+    im_aux = im.astype('uint8')
     plt.gray()
-    plt.imshow(im, interpolation='nearest')
+    plt.imshow(im_aux, interpolation='nearest')
     plt.axis('off')
     if show_plot:
         plt.show()
 
 
-def binarizePgmImage(im):
+def binarizePgmImage(image):
+    im = image
     for i in xrange(0, im.shape[0]):
         for j in xrange(0, im.shape[1]):
             if im[i, j] >= 125.:
@@ -49,7 +50,7 @@ def binarizePgmImage(im):
     return im
 
 
-def plotContourOnImage(contour_coordinates, image, points=[], color = [255., 255., 255.]):
+def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.]):
     matriu = contour_coordinates.astype(int)
     matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
@@ -126,7 +127,7 @@ def get_inputs(arguments):
 
     # FROM RGBA to RGB if necessary
     if image.shape[2] == 4:
-        image =image[:, :, 0:3]
+        image = image[:, :, 0:3]
     return image, mask_file, init_cage_file, curr_cage_file
 
 
@@ -141,9 +142,9 @@ def evaluate_image(coordinates, image, outside_value=255.):
     image_evaluations = np.ones([1, len(coordinates)]) * outside_value
     image_evaluations = image_evaluations[0]
     coordinates_booleans = are_inside_image(coordinates, image.shape)
-    coordinates = coordinates[coordinates_booleans]
-    coordinates = np.transpose(coordinates).tolist()
-    image_evaluations[coordinates_booleans] = image[coordinates]
+    coordinates_aux = coordinates[coordinates_booleans]
+    coordinates_aux = np.transpose(coordinates_aux).tolist()
+    image_evaluations[coordinates_booleans] = image[coordinates_aux]
     return image_evaluations
 
 
@@ -170,7 +171,7 @@ def are_inside_image(coordinates, size):
 
 # TODO: coordinates[coordinates[:,0]>1] does not work
 
-#Checks if point is inside an image given only the shape of the image.
+# Checks if point is inside an image given only the shape of the image.
 def is_inside_image(a, size):
     if a[0] >= 0 and a[0] < size[0] and a[1] >= 0 and a[1] < size[1]:
         return True
@@ -179,13 +180,13 @@ def is_inside_image(a, size):
 
 
 def bilinear_interpolate(im, y, x):
-    #TODO:PROPERLY CHANGE COLUMN AND ROWS TO ROW;COL FORMAT INSTEAD OF COL;ROW
-    x = np.asarray(x)
-    y = np.asarray(y)
+    # TODO:PROPERLY CHANGE COLUMN AND ROWS TO ROW;COL FORMAT INSTEAD OF COL;ROW
+    x_aux = np.asarray(x)
+    y_aux = np.asarray(y)
 
-    x0 = np.floor(x).astype(int)
+    x0 = np.floor(x_aux).astype(int)
     x1 = x0 + 1
-    y0 = np.floor(y).astype(int)
+    y0 = np.floor(y_aux).astype(int)
     y1 = y0 + 1
 
     x0 = np.clip(x0, 0, im.shape[1] - 1)
@@ -198,9 +199,9 @@ def bilinear_interpolate(im, y, x):
     Ic = im[y0, x1]
     Id = im[y1, x1]
 
-    wa = (x1 - x) * (y1 - y)
-    wb = (x1 - x) * (y - y0)
-    wc = (x - x0) * (y1 - y)
-    wd = (x - x0) * (y - y0)
+    wa = (x1 - x) * (y1 - y_aux)
+    wb = (x1 - x) * (y_aux - y0)
+    wc = (x - x0) * (y1 - y_aux)
+    wd = (x - x0) * (y_aux - y0)
 
     return wa * Ia + wb * Ib + wc * Ic + wd * Id
