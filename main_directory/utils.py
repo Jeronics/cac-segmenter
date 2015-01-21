@@ -50,9 +50,10 @@ def binarizePgmImage(image):
     return im
 
 
-def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.]):
+def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.], points2=[]):
+    f = plt.figure()
     matriu = contour_coordinates.astype(int)
-    matriu = np.fliplr(matriu)
+    # matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
 
     if len(image.shape) == 3:
@@ -80,11 +81,20 @@ def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255.,
     else:
         image_copy = image_gray
     printNpArray(image_copy, False)
+
     if points != []:
+        points=np.fliplr(points)
         points = np.concatenate((points, [points[0]]))
         points = np.transpose(points)
         plt.scatter(points[0], points[1], marker='o', c='b', )
         plt.plot(points[0], points[1])
+
+    if points2 != []:
+        points2=np.fliplr(points2)
+        points2 = np.concatenate((points2, [points2[0]]))
+        points2 = np.transpose(points2)
+        plt.scatter(points2[0], points2[1], marker='o', c='g', )
+        plt.plot(points2[0], points2[1])
     plt.show()
 
 
@@ -165,7 +175,7 @@ def evaluate_bilinear_interpolation(coordinates, image, outside_value=255.):
 # Check if list of points are inside an image given only the shape.
 def are_inside_image(coordinates, size):
     boolean = (coordinates[:, 0] > -1) & (coordinates[:, 0] < size[0]) & (coordinates[:, 1] > -1) & (
-    coordinates[:, 1] < size[1])
+        coordinates[:, 1] < size[1])
     return boolean
 
 

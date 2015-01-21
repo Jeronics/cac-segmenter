@@ -86,7 +86,6 @@ def gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine
 def gradient_Energy_per_region(omega_coord, affine_omega_coordinates, image, image_gradient):
     # E_mean
     mean_omega, omega_std = calculateOmegaMean(omega_coord, image)
-    print mean_omega
     aux = utils.evaluate_image(omega_coord, image, mean_omega) - mean_omega
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
                                utils.evaluate_image(omega_coord, image_gradient[1], 0)]

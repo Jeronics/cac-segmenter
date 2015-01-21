@@ -4,6 +4,7 @@ from Tkinter import *
 from tkFileDialog import askopenfilename
 import Image, ImageTk
 
+
 if __name__ == "__main__":
     root = Tk()
 
