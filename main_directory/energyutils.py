@@ -103,14 +103,11 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     :param grad_k:
     :return:
     '''
-    product_1 = sum(np.transpose(grad_k * grad_k_2), 0)
-    product_2 = sum(np.transpose(grad_k_1 * grad_k_3), 0)
-    product_3 = sum(np.transpose(grad_k * grad_k_1), 0)
-    if any(x <= 0 for x in product_1):
+    if not all(np.diagonal(np.dot(grad_k,np.transpose(grad_k_2)))>0):
         return False
-    if any(x <= 0 for x in product_2):
+    if not all(np.diagonal(np.dot(grad_k_1,np.transpose(grad_k_3)))>0):
         return False
-    if any(x >= 0 for x in product_3):
+    if not all(np.diagonal(np.dot(grad_k,np.transpose(grad_k_1)))>0):
         return False
     return True
 

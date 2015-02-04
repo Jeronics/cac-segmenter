@@ -67,6 +67,8 @@ if __name__ == "__main__":
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
         [num_control_point, 2]), np.zeros([num_control_point, 2])
     mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
+    beta = 5
+    alpha = 5
     while (iter < max_iter):
 
         # Allocate memory
@@ -109,24 +111,26 @@ if __name__ == "__main__":
 
         f_interior.close()
         f_exterior.close()
-
+        if not first_stage:
+            print 'First Stage Complete'
+            alpha = 1 * alpha
+            first_stage = True
         if first_stage:
+            # multiple_norm()
             # Update gradients
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
             grad_k = gradientEnergy(omega1_coord, omega2_coord, affine_omega1_coordinates, affine_omega2_coordinates,
                                     image)
-
+            # mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
             # axis = mid_point - curr_cage_file
-            # # axis = normalize_vectors(axis)
-            grad_k = multiple_normalize(grad_k)
+            # axis = normalize_vectors(axis)
             # grad_k = multiple_project_gradient_on_axis(grad_k, axis)
-        else:
-            print 'First Stage Complete'
-            break
-        print grad_k
-        # print grad_k
+            grad_k = multiple_normalize(grad_k)
+
+        print 'Omega1: ', calculateOmegaMean(omega1_coord, image)
+        print 'Omega2: ', calculateOmegaMean(omega2_coord, image), '\n'
         # Generate random movements
         # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
 
@@ -135,9 +139,8 @@ if __name__ == "__main__":
         # print grad_k[2], curr_cage_file[2]
         # print curr_cage_file[-2], grad_k[-2]
 
-        beta = 5
-        alpha = 5  # multiple_norm()
-        if iter % 5 == 0:
+
+        if iter % 20 == 0:
             plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
                                points2=curr_cage_file - alpha * 10 * grad_k)
 
