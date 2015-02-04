@@ -42,7 +42,7 @@ def create_mask_and_cage_points(c, p, im_shape, num_cage_points):
             print n
             cage = []
             for i in xrange(0, n):
-                angle = i * 2 * PI / n
+                angle = 2 * i * PI / n
                 y, x = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
                 cage.append([y + c[0], x + c[1]])
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
