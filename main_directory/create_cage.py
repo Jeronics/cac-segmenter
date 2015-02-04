@@ -1,7 +1,7 @@
 __author__ = 'jeronicarandellsaladich'
 
 from Tkinter import *
-import Image, ImageTk
+import Image,ImageTk
 import numpy as np
 import png
 import utils
