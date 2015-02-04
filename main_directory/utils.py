@@ -8,6 +8,8 @@ import scipy
 from scipy import misc
 import PIL
 import math
+import os
+
 
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -23,8 +25,11 @@ def rgb2gray(rgb):
 
 
 def read_png(name):
-    """Return image data from a raw PNG file as numpy array.
-    """
+    '''
+    Return image data from a raw PNG file as numpy array.
+    :param name: a directory path to the png image.
+    :return: An image matrix in the type (y,x)
+    '''
     im = scipy.misc.imread(name)
     im = im.astype(np.float64)
     return im
@@ -53,7 +58,6 @@ def binarizePgmImage(image):
 def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.], points2=[]):
     f = plt.figure()
     matriu = contour_coordinates.astype(int)
-    # matriu = np.fliplr(matriu)
     image_copy = np.copy(image)
 
     if len(image.shape) == 3:
@@ -83,14 +87,14 @@ def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255.,
     printNpArray(image_copy, False)
 
     if points != []:
-        points=np.fliplr(points)
+        points = np.fliplr(points)
         points = np.concatenate((points, [points[0]]))
         points = np.transpose(points)
         plt.scatter(points[0], points[1], marker='o', c='b', )
         plt.plot(points[0], points[1])
 
     if points2 != []:
-        points2=np.fliplr(points2)
+        points2 = np.fliplr(points2)
         points2 = np.concatenate((points2, [points2[0]]))
         points2 = np.transpose(points2)
         plt.scatter(points2[0], points2[1], marker='o', c='g', )
@@ -108,9 +112,9 @@ def get_inputs(arguments):
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
 
-    model = arguments[0]
-    mask = int(arguments[1])
-    init_cage = int(arguments[2])
+    model = arguments[1]
+    mask = int(arguments[2])
+    init_cage = int(arguments[4])
     if len(arguments) == 6:
         curr_cage = int(arguments[5])
     else:
@@ -123,10 +127,12 @@ def get_inputs(arguments):
     init_cage_name = '%(number)02d' % {"number": init_cage}
     curr_cage_name = '%(number)02d' % {"number": curr_cage}
 
-    image_name = test_path + 'image' + '.png'
+    image_name = test_path + 'image_ovella' + '.png'
     mask_name = test_path + 'mask_' + mask_num + '.png'  # Both .pgm as well as png work. png gives you a rbg image!
     init_cage_name = test_path + 'cage_' + init_cage_name + '.txt'
     curr_cage_name = test_path + 'cage_' + curr_cage_name + '.txt'
+
+    print init_cage_name, init_cage, arguments
 
     # LOAD Cage/s and Mask
     image = read_png(image_name)
@@ -136,7 +142,7 @@ def get_inputs(arguments):
     curr_cage_file = np.loadtxt(curr_cage_name, float)
 
     # FROM RGBA to RGB if necessary
-    if image.shape[2] == 4:
+    if image.shape == 2 and image.shape[2] == 4:
         image = image[:, :, 0:3]
     return image, mask_file, init_cage_file, curr_cage_file
 
@@ -215,3 +221,45 @@ def bilinear_interpolate(im, y, x):
     wd = (x - x0) * (y_aux - y0)
 
     return wa * Ia + wb * Ib + wc * Ic + wd * Id
+
+
+def walk_level(some_dir, level=1):
+    '''
+    Walks through directories with a depth of level which is one by default.
+    :param some_dir:
+    :param level:
+    :return root, dirs, files:
+        root: filename of a directory
+        dirs: list of directories inside the root directory
+        files: list of files inside the root directory
+    '''
+    some_dir = some_dir.rstrip(os.path.sep)
+    assert os.path.isdir(some_dir)
+    num_sep = some_dir.count(os.path.sep)
+    for root, dirs, files in os.walk(some_dir):
+        yield root, dirs, files
+        num_sep_this = root.count(os.path.sep)
+        if num_sep + level <= num_sep_this:
+            del dirs[:]
+
+
+def mkdir(str_path):
+    """
+    Creates the given path if it does not exist.
+    If it exits, returns silently.
+    If the directory could not be created raises
+    an exception.
+
+    :param str_path:
+    :return: True if the path was created, false
+    if already existed.
+    """
+    if os.path.exists(str_path) and os.path.isdir(str_path):
+        return False
+
+    os.system("mkdir -p " + str_path)
+    if not os.path.exists(str_path) or not os.path.isdir(str_path):
+        raise IOError("Could not create path '%s'" % str_path)
+
+    return True
+
