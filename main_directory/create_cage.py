@@ -6,7 +6,6 @@ import numpy as np
 import png
 import utils
 
-
 PI = 3.14159265358979323846264338327950288419716939937510
 
 def create_mask_and_cage_points(c, p, im_shape, num_cage_points):
