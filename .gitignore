@@ -1,1 +1,19 @@
-.idea/*
+#      Ignore     #
+###################
+*.DS_Store
+*.pyc
+*.png
+*.pdf
+*~
+*.db
+*.log
+*.png
+logs/
+var/
+tmp/
+.idea/
+.project
+.vagrant
+.ipynb_checkpoints/
+data_api/
+databases/
