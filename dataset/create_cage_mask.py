@@ -8,7 +8,7 @@ import utils
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
-def create_mask_and_cage_points(c, p, im_shape, num_cage_points):
+def create_mask_and_cage_points(c, p, im_shape, num_cage_points, filename='output'):
     '''
     This function creates a mask and a sequence of cages.
     :param c:
@@ -55,6 +55,8 @@ def create_mask_and_cage_points(c, p, im_shape, num_cage_points):
 if __name__ == "__main__":
     root = Tk()
     File = '../test/ovella/image_ovella.png'
+    out_filename = '/'.join(File.split('/')[:-1])
+    print out_filename
 
     # File = '../dataset'
     # for root, dirs, files in utils.walk_level(File, 1):
@@ -104,7 +106,7 @@ if __name__ == "__main__":
             # The second point is a point in the radius
             RADIUS_POINT = [event.y, event.x]
             print 'RADIUS_POINT', RADIUS_POINT
-            create_mask_and_cage_points(CENTER, RADIUS_POINT, image.shape, num_cage_points)
+            create_mask_and_cage_points(CENTER, RADIUS_POINT, image.shape, num_cage_points, filename=out_filename)
 
     # mouseclick event
     canvas.bind("<Button 1>", printcoords)
