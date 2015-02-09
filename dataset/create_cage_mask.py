@@ -9,7 +9,7 @@ from main_directory import utils
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
-def create_mask_and_cage_points(c, p, image, num_cage_points, filename='output'):
+def create_mask_and_cage_points(c, p, image, num_cage_points):
     '''
     This function creates a mask and a sequence of cages.
     :param c:
@@ -33,7 +33,9 @@ def create_mask_and_cage_points(c, p, image, num_cage_points, filename='output')
                 im[y, x] = 255
                 mask_points.append([y, x])
 
-    png.from_array(im, 'L').save("circle_image.png")
+    ima = Image.fromarray(im)
+    folder = '/'.join(IN_FILENAME.split("/")[:-1])
+    ima.save(folder+"/mask_00.png")
     print type(num_cage_points) is list
     if type(num_cage_points) is not list:
         num_cage_points = [num_cage_points]
@@ -51,7 +53,7 @@ def create_mask_and_cage_points(c, p, image, num_cage_points, filename='output')
     utils.plotContourOnImage(np.array(mask_points), image,
                              points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])],
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
-    exit()
+
 
 
 def open_canvas(File):
@@ -82,7 +84,6 @@ def open_canvas(File):
     yscroll.config(command=canvas.yview)
     frame.pack(fill=BOTH, expand=1)
 
-    print File
     canvas.create_image(0, 0, image=img, anchor="nw")
     canvas.config(scrollregion=canvas.bbox(ALL))
 
@@ -96,6 +97,7 @@ def open_canvas(File):
         global COUNTER
         global CENTER
         global RADIUS_POINT
+        global IN_FILENAME
         if COUNTER == 0:
             # The first point is the center
             CENTER = [event.y, event.x]
@@ -105,7 +107,7 @@ def open_canvas(File):
             # The second point is a point in the radius
             RADIUS_POINT = [event.y, event.x]
             print 'RADIUS_POINT', RADIUS_POINT
-            create_mask_and_cage_points(CENTER, RADIUS_POINT, image, num_cage_points, filename=out_filename)
+            create_mask_and_cage_points(CENTER, RADIUS_POINT, image, num_cage_points)
 
     # mouseclick event
     canvas.bind("<Button 1>", printcoords)
@@ -114,9 +116,16 @@ def open_canvas(File):
     text_file.close()
 
 if __name__ == '__main__':
-    File = '../test/ovella/image_ovella.png'
-    COUNTER = 0
-    # function to be called when mouse is clicked
-    CENTER = []
-    RADIUS_POINT = []
-    open_canvas(File)
+    RootFolder='../dataset'
+    depth = 2
+    generator = utils.walk_level(RootFolder,depth)
+
+    gens = [[r, f] for r,d,f in generator if len(r.split("/"))==len(RootFolder.split("/"))+depth][1:]
+    print gens
+    for r, f in gens:
+        COUNTER = 0
+        # function to be called when mouse is clicked
+        CENTER = []
+        RADIUS_POINT = []
+        IN_FILENAME = r+"/"+f[0]
+        open_canvas(IN_FILENAME)
