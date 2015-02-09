@@ -2,15 +2,18 @@ __author__ = 'jeronicarandellsaladich'
 
 
 from Tkinter import *
-import Image,ImageTk
+from PIL import Image,ImageTk
 import numpy as np
 import png
 from main_directory import utils
+<<<<<<< HEAD
 
+=======
+>>>>>>> a280c69c03f3d2f2733b5aad844249c3abe16d7f
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
-def create_mask_and_cage_points(c, p, im_shape, num_cage_points, filename='output'):
+def create_mask_and_cage_points(c, p, image, num_cage_points, filename='output'):
     '''
     This function creates a mask and a sequence of cages.
     :param c:
@@ -19,6 +22,7 @@ def create_mask_and_cage_points(c, p, im_shape, num_cage_points, filename='outpu
     :param num_cage_points:
     :return:
     '''
+    im_shape = image.shape
     radius = np.linalg.norm(np.array(c) - np.array(p))
     radius_cage_ratio = [1.3, 1.5, 1.7]
     im = np.zeros(im_shape, dtype='uint8')
@@ -53,9 +57,10 @@ def create_mask_and_cage_points(c, p, im_shape, num_cage_points, filename='outpu
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
     exit()
 
-def open_canvas(filename='../test/ovella/image_ovella.png'):
+
+def open_canvas(File):
+
     root = Tk()
-    File = '../test/ovella/image_ovella.png'
     out_filename = '/'.join(File.split('/')[:-1])
     print out_filename
 
@@ -86,10 +91,7 @@ def open_canvas(filename='../test/ovella/image_ovella.png'):
     canvas.config(scrollregion=canvas.bbox(ALL))
 
     text_file = open("Mask_output.txt", "w")
-    COUNTER = 0
-    # function to be called when mouse is clicked
-    CENTER = []
-    RADIUS_POINT = []
+
     num_cage_points = [8, 9, 10]
 
     def printcoords(event):
@@ -107,7 +109,7 @@ def open_canvas(filename='../test/ovella/image_ovella.png'):
             # The second point is a point in the radius
             RADIUS_POINT = [event.y, event.x]
             print 'RADIUS_POINT', RADIUS_POINT
-            create_mask_and_cage_points(CENTER, RADIUS_POINT, image.shape, num_cage_points, filename=out_filename)
+            create_mask_and_cage_points(CENTER, RADIUS_POINT, image, num_cage_points, filename=out_filename)
 
     # mouseclick event
     canvas.bind("<Button 1>", printcoords)
@@ -115,6 +117,10 @@ def open_canvas(filename='../test/ovella/image_ovella.png'):
     root.mainloop()
     text_file.close()
 
-
-
-open_canvas('../test/ovella/image_ovella.png')
+if __name__ == '__main__':
+    File = '../test/ovella/image_ovella.png'
+    COUNTER = 0
+    # function to be called when mouse is clicked
+    CENTER = []
+    RADIUS_POINT = []
+    open_canvas(File)
