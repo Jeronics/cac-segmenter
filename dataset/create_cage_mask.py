@@ -6,10 +6,6 @@ from PIL import Image,ImageTk
 import numpy as np
 import png
 from main_directory import utils
-<<<<<<< HEAD
-
-=======
->>>>>>> a280c69c03f3d2f2733b5aad844249c3abe16d7f
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
