@@ -242,7 +242,6 @@ def walk_level(some_dir, level=1):
         if num_sep + level <= num_sep_this:
             del dirs[:]
 
-
 def mkdir(str_path):
     """
     Creates the given path if it does not exist.
