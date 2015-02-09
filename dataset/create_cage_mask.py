@@ -1,10 +1,12 @@
 __author__ = 'jeronicarandellsaladich'
 
+
 from Tkinter import *
 import Image,ImageTk
 import numpy as np
 import png
-import utils
+from main_directory import utils
+
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
@@ -51,8 +53,7 @@ def create_mask_and_cage_points(c, p, im_shape, num_cage_points, filename='outpu
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
     exit()
 
-
-if __name__ == "__main__":
+def open_canvas(filename='../test/ovella/image_ovella.png'):
     root = Tk()
     File = '../test/ovella/image_ovella.png'
     out_filename = '/'.join(File.split('/')[:-1])
@@ -113,3 +114,7 @@ if __name__ == "__main__":
 
     root.mainloop()
     text_file.close()
+
+
+
+open_canvas('../test/ovella/image_ovella.png')
