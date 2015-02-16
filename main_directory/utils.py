@@ -2,7 +2,8 @@ import re
 import sys
 import numpy as np
 from scipy import *
-from matplotlib import pyplot
+import matplotlib
+matplotlib.use("Qt5Agg")
 from scipy import ndimage
 import scipy
 from scipy import misc
@@ -10,7 +11,7 @@ import PIL
 import math
 import os
 
-
+matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 

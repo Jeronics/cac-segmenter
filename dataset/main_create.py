@@ -1,12 +1,15 @@
-__author__ = 'jeronicarandellsaladich'
+__author__ = 'jeroni'
+import sys
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
-from Tkinter import *
-from PIL import Image, ImageTk
 import numpy as np
-import png
 from main_directory import utils
 
 PI = 3.14159265358979323846264338327950288419716939937510
+
 
 def create_mask_and_cage_points(c, p, image, num_cage_points):
     '''
@@ -57,44 +60,32 @@ def create_mask_and_cage_points(c, p, image, num_cage_points):
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
 
 
-def open_canvas(File):
-    root = Tk()
-    out_filename = '/'.join(File.split('/')[:-1])
-    print out_filename
+class DrawImage(QMainWindow):
+    def __init__(self, parent=None):
+        super(QMainWindow, self).__init__(parent)
 
-    # File = '../dataset'
-    # for root, dirs, files in utils.walk_level(File, 1):
-    # print root
+        self.setWindowTitle('Select Window')
+        self.local_image = QImage(IN_FILENAME)
 
-    img = ImageTk.PhotoImage(Image.open(File))
-    image = utils.read_png(File)
+        self.local_grview = QGraphicsView()
+        self.setCentralWidget(self.local_grview)
 
-    # setting up a tkinter canvas with scrollbars
-    frame = Frame(root, bd=0, relief=SUNKEN)
-    frame.grid_rowconfigure(0, weight=1)
-    frame.grid_columnconfigure(0, weight=1)
-    xscroll = Scrollbar(frame, orient=HORIZONTAL)
-    xscroll.grid(row=1, column=0, sticky=E + W)
-    yscroll = Scrollbar(frame)
-    yscroll.grid(row=0, column=1, sticky=N + S)
-    canvas = Canvas(frame, bd=0, xscrollcommand=xscroll.set, yscrollcommand=yscroll.set, width=300,
-                    height=300)
-    canvas.grid(row=0, column=0, sticky=N + S + E + W)
-    xscroll.config(command=canvas.xview)
-    yscroll.config(command=canvas.yview)
-    frame.pack(fill=BOTH, expand=1)
+        self.local_scene = QGraphicsScene()
 
-    canvas.create_image(0, 0, image=img, anchor="nw")
-    canvas.config(scrollregion=canvas.bbox(ALL))
+        self.image_format = self.local_image.format()
+        self.pixMapItem = self.local_scene.addPixmap( QPixmap(self.local_image) )
+        # self.pixMapItem = QGraphicsPixmapItem(QPixmap(self.local_image), None, self.local_scene)
 
+        self.local_grview.setScene(self.local_scene)
 
-    # text_file -= open("Center_radius.txt", "w")
+        self.pixMapItem.mousePressEvent = self.pixelSelect
 
-    num_cage_points = [8, 9, 10]
+    def pixelSelect(self, event):
+        print 'hello'
+        position = QPoint(event.pos().x(), event.pos().y())
+        print(str(event.pos().x()))
+        print( str(event.pos().y()) )
 
-    def printcoords(event):
-        # reading the center and a point on the radius in order to create a mask.
-        # text_file.write("%.8e\t%.8e\n" % (event.y, event.x))
         global COUNTER
         global CENTER
         global RADIUS_POINT
@@ -110,14 +101,16 @@ def open_canvas(File):
             print 'RADIUS_POINT', RADIUS_POINT
             create_mask_and_cage_points(CENTER, RADIUS_POINT, image, num_cage_points)
 
-    # mouseclick event
-    canvas.bind("<Button 1>", printcoords)
 
-    root.mainloop()
-    text_file.close()
+def open_canvas():
+    app = QtWidgets.QApplication(sys.argv)
+    form = DrawImage()
+    form.show()
+    app.exec_()
 
 
 if __name__ == '__main__':
+
     RootFolder = '../dataset'
     depth = 2
     generator = utils.walk_level(RootFolder, depth)
@@ -134,6 +127,5 @@ if __name__ == '__main__':
                 print files
                 IN_FILENAME = r + "/" + files
                 print IN_FILENAME
-                open_canvas(IN_FILENAME)
-
+                open_canvas()
 
