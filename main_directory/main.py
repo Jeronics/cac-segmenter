@@ -29,10 +29,10 @@ if __name__ == '__main__':
                 if f.split('.')[-1] == 'txt' and f.split("/")[-1].split("_")[0] == 'cage':
                     cage = root + "/" + f
                     result = root + "/results/" + f.split('.txt')[0]
-                    print 'Here', result
                     rgb_image, mask_file, init_cage_file, curr_cage_file = utils.get_inputs(
                         [None, model, image, mask, cage])
                     resulting_cage = cac_segmenter.cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file)
-                    np.array(resulting_cage).savetxt(result)
-
-
+                    if resulting_cage == None:
+                        print 'No convergence reached for the cac-segmenter'
+                    else:
+                        utils.save_cage(resulting_cage, result)

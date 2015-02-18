@@ -7,26 +7,30 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+from main_directory import utils
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Click on the center and radius")
-        Form.resize(600, 60)
+
+class UiForm(object):
+    def setupUi(self, formObject):
+        formObject.setObjectName(formObject.path+"Click on the center and radius")
+        image = utils.read_png(formObject.path)
+        formObject.resize(image.shape[0], image.shape[1])
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
-        Form.setSizePolicy(sizePolicy)
-        self.gridLayout = QtWidgets.QGridLayout(Form)
+        sizePolicy.setHeightForWidth(formObject.sizePolicy().hasHeightForWidth())
+        formObject.setSizePolicy(sizePolicy)
+        self.gridLayout = QtWidgets.QGridLayout(formObject)
         self.gridLayout.setObjectName("gridLayout")
-        self.graphicsView = QtWidgets.QGraphicsView(Form)
+        self.graphicsView = QtWidgets.QGraphicsView(formObject)
         self.graphicsView.setObjectName("graphicsView")
         self.gridLayout.addWidget(self.graphicsView, 0, 0, 1, 1)
 
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        self.retranslateUi(formObject)
+        QtCore.QMetaObject.connectSlotsByName(formObject)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Click on the center and radius", "Click on the center and radius"))
+

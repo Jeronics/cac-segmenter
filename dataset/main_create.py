@@ -6,40 +6,13 @@ from PyQt5.QtGui import *
 
 a = Qt.QApplication(sys.argv)
 
-# from untitled import Ui_Form
+from untitled import UiForm
 
 import numpy as np
 from main_directory import utils
 from PIL import Image
 
 PI = 3.14159265358979323846264338327950288419716939937510
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
-
-class UiForm(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Click on the center and radius")
-        image = utils.read_png(in_filename)
-        print image.shape[0], image.shape[1]
-        Form.resize(image.shape[0], image.shape[1])
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Form.sizePolicy().hasHeightForWidth())
-        Form.setSizePolicy(sizePolicy)
-        self.gridLayout = QtWidgets.QGridLayout(Form)
-        self.gridLayout.setObjectName("gridLayout")
-        self.graphicsView = QtWidgets.QGraphicsView(Form)
-        self.graphicsView.setObjectName("graphicsView")
-        self.gridLayout.addWidget(self.graphicsView, 0, 0, 1, 1)
-
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
-
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Click on the center and radius", "Click on the center and radius"))
 
 
 def create_mask_and_cage_points(c, p, in_filename):
@@ -51,15 +24,12 @@ def create_mask_and_cage_points(c, p, in_filename):
     :param num_cage_points:
     :return:
     '''
-    num_cage_points = [8, 9, 10]
     image = utils.read_png(in_filename)
     im_shape = image.shape
+    num_cage_points = [8, 9]
     radius = np.linalg.norm(np.array(c) - np.array(p))
-    radius_cage_ratio = [1.3, 1.5, 1.7]
-    print 'HERE IS THE SHAPE', im_shape
+    radius_cage_ratio = [1.5, 1.7]
     im = np.zeros(im_shape, dtype='uint8')
-    print 'Shape', im_shape
-    print c
     mask_points = []
 
     # careful im_shape is (max(y), max(x))
@@ -69,11 +39,9 @@ def create_mask_and_cage_points(c, p, in_filename):
                 im[y, x] = 255
                 mask_points.append([y, x])
 
-    print im.shape
     ima = Image.fromarray(im[:, :, 0], mode='L')
     folder = '/'.join(in_filename.split("/")[:-1])
     ima.save(folder + "/mask_00.png")
-    print type(num_cage_points) is list
     if type(num_cage_points) is not list:
         num_cage_points = [num_cage_points]
     cages = {}
@@ -81,16 +49,14 @@ def create_mask_and_cage_points(c, p, in_filename):
         for n in num_cage_points:
             name_output = folder + '/cage_' + str(n) + '_' + str(ratio) + '.txt'
             text_file = open(name_output, "w")
-            print n
             cage = []
             for i in xrange(0, n):
                 angle = 2 * i * PI / n
                 y, x = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
-                cage.append([ y + c[0], x + c[1]])
-                text_file.write("%.8e\t%.8e\n" % ( x + c[1], y + c[0])) # OTHER
+                cage.append([y + c[0], x + c[1]])
+                text_file.write("%.8e\t%.8e\n" % ( x + c[1], y + c[0]))  # OTHER
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
-    print cages.keys()
-    utils.plotContourOnImage(np.array(mask_points), im[:,:,0],
+    utils.plotContourOnImage(np.array(mask_points), im[:, :, 0],
                              points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])],
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
 
@@ -106,17 +72,14 @@ class OverrideGraphicsScene(Qt.QGraphicsScene):
     def mousePressEvent(self, event):
         super(OverrideGraphicsScene, self).mousePressEvent(event)
         position = (event.pos().y(), event.pos().x())
-        print position
 
         if self.COUNTER == 0:
             # The first point is the center
             self.CENTER = [event.pos().y(), event.pos().x()]
-            print 'Center', self.CENTER
             self.COUNTER += 1
         else:
             # The second point is a point in the radius
             self.RADIUS_POINT = [event.pos().y(), event.pos().x()]
-            print 'RADIUS_POINT', self.RADIUS_POINT
             create_mask_and_cage_points(self.CENTER, self.RADIUS_POINT, self.in_filename)
 
 
@@ -124,8 +87,6 @@ class ImageProcess(Qt.QWidget):
     def __init__(self, in_filename):
         super(ImageProcess, self).__init__()
         self.path = in_filename  # image path
-        print QImage(self.path).size()
-        print QImage(self.path).width(), QImage(self.path).height()
         self.new = UiForm()
         self.new.setupUi(self)
 
@@ -154,11 +115,9 @@ if __name__ == '__main__':
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth][1:]
-    print gens
     for r, f in gens:
         # function to be called when mouse is clicked
         for files in f:
             if files.split('.')[-1] == 'png' and files.split("/")[-1].split("_")[0] != 'mask':
-                print files
                 in_filename = r + "/" + files
                 open_canvas(in_filename)

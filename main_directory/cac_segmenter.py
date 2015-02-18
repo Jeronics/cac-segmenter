@@ -154,14 +154,14 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
         contour_coordinates = np.dot(affine_contour_coordinates, curr_cage_file)
         iter += 1
 
+    return None
+    # THE END
+    # Time elapsed
+    # end = time.time()
+    # print end-start
 
-        # THE END
-        # Time elapsed
-        # end = time.time()
-        # print end-start
-
-        # TODO
-        # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
+    # TODO
+    # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional
 if __name__ == '__main__':
     rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
     cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file)

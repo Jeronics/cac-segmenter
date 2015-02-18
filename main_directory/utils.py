@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from scipy import *
 import matplotlib
+
 matplotlib.use("Qt5Agg")
 from scipy import ndimage
 import scipy
@@ -14,6 +15,25 @@ import os
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
+
+class ImageClass:
+    def __init__(self, im=np.array([]), filename=''):
+        # Assume fd is a file-like object.
+        self.name = None
+        self.image = im
+        self.shape = im.shape[:2]
+        self.path = filename
+
+    def read_png(self, filename):
+        '''
+        Return image data from a raw PNG file as numpy array.
+        :param name: a directory path to the png image.
+        :return: An image matrix in the type (y,x)
+        '''
+        self.path = filename
+        im = scipy.misc.imread(filename)
+        self.image = im.astype(np.float64)
+        self.shape = im.shape[:2]
 
 # ########## VISUALITON
 def rgb2gray(rgb):
@@ -47,8 +67,8 @@ def printNpArray(im, show_plot=True):
 
 def binarizePgmImage(image):
     im = image.copy()
-    if len(im.shape)==3:
-        im=im[:,:,0]
+    if len(im.shape) == 3:
+        im = im[:, :, 0]
     for i in xrange(0, im.shape[0]):
         for j in xrange(0, im.shape[1]):
             if im[i, j] >= 125.:
@@ -115,9 +135,9 @@ def get_inputs(arguments):
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
 
-    model = arguments[1] # Model
-    image = arguments[2] # Image
-    mask =arguments[3]
+    model = arguments[1]  # Model
+    image = arguments[2]  # Image
+    mask = arguments[3]
     init_cage_name = arguments[4]
 
     if len(arguments) == 6:
@@ -239,6 +259,13 @@ def walk_level(some_dir, level=1):
         num_sep_this = root.count(os.path.sep)
         if num_sep + level <= num_sep_this:
             del dirs[:]
+
+
+def save_cage(cage, filename):
+    text_file = open(filename, "w")
+    for x, y in cage:
+        text_file.write("%.8e\t%.8e\n" % (x, y))
+
 
 def mkdir(str_path):
     """
