@@ -46,7 +46,9 @@ def printNpArray(im, show_plot=True):
 
 
 def binarizePgmImage(image):
-    im = image
+    im = image.copy()
+    if len(im.shape)==3:
+        im=im[:,:,0]
     for i in xrange(0, im.shape[0]):
         for j in xrange(0, im.shape[1]):
             if im[i, j] >= 125.:
@@ -113,34 +115,29 @@ def get_inputs(arguments):
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
 
-    model = arguments[1]
-    mask = int(arguments[2])
-    init_cage = int(arguments[4])
+    model = arguments[1] # Model
+    image = arguments[2] # Image
+    mask =arguments[3]
+    init_cage_name = arguments[4]
+
     if len(arguments) == 6:
-        curr_cage = int(arguments[5])
+        curr_cage_name = int(arguments[5])
     else:
-        curr_cage = None
+        curr_cage_name = None
 
-    folder_name = 'ovella'
-    # PATHS
-    test_path = r'../test/' + folder_name + '/'
-    mask_num = '%(number)02d' % {"number": mask}
-    init_cage_name = '%(number)02d' % {"number": init_cage}
-    curr_cage_name = '%(number)02d' % {"number": curr_cage}
+    mask_name = mask  # Both .pgm as well as png work. png gives you a rbg image!
 
-    image_name = test_path + 'image_ovella' + '.png'
-    mask_name = test_path + 'mask_' + mask_num + '.png'  # Both .pgm as well as png work. png gives you a rbg image!
-    init_cage_name = test_path + 'cage_' + init_cage_name + '.txt'
-    curr_cage_name = test_path + 'cage_' + curr_cage_name + '.txt'
-
-    print init_cage_name, init_cage, arguments
+    print init_cage_name
 
     # LOAD Cage/s and Mask
-    image = read_png(image_name)
+    image = read_png(image)
     mask_file = read_png(mask_name)
     mask_file = binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)
-    curr_cage_file = np.loadtxt(curr_cage_name, float)
+    if curr_cage_name != None:
+        curr_cage_file = np.loadtxt(curr_cage_name, float)
+    else:
+        curr_cage_file = None
 
     # FROM RGBA to RGB if necessary
     if image.shape == 2 and image.shape[2] == 4:
