@@ -18,9 +18,9 @@ from PIL import Image
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
-        # Assume fd is a file-like object.
         self.name = None
         self.image = im
+        self.gray_image=im
         self.shape = im.shape[:2]
         self.path = filename
 
@@ -34,6 +34,17 @@ class ImageClass:
         im = scipy.misc.imread(filename)
         self.image = im.astype(np.float64)
         self.shape = im.shape[:2]
+        self.gray_image = im
+
+    def plot_image(self, show_plot=True):
+        im_aux = self.image.astype('uint8')
+        plt.gray()
+        plt.imshow(im_aux, interpolation='nearest')
+        plt.axis('off')
+        if show_plot:
+            plt.show()
+
+
 
 # ########## VISUALITON
 def rgb2gray(rgb):
