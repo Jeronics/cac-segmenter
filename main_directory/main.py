@@ -14,19 +14,18 @@ if __name__ == '__main__':
         # function to be called when mouse is clicked
         model, image, mask, cage = 0, '', '', ''
         for f in files:
-            if f.split('.')[-1] == 'png' and f.split("/")[-1].split("_")[0] != 'mask':
-                print f
+            if utils.is_png(f) and f.split("/")[-1].split("_")[0] != 'mask':
                 model = 1
                 image = root + "/" + f
         for f in files:
-            if f.split('.')[-1] == 'png' and f.split("/")[-1].split("_")[0] == 'mask':
+            if utils.is_png(f) and f.split("/")[-1].split("_")[0] == 'mask':
                 mask = root + "/" + f
         if image == '' or mask == '':
             print root, 'has nothing'
         else:
             utils.mkdir(root + '/results')
             for f in files:
-                if f.split('.')[-1] == 'txt' and f.split("/")[-1].split("_")[0] == 'cage':
+                if utils.is_txt(f) and f.split("/")[-1].split("_")[0] == 'cage':
                     cage = root + "/" + f
                     result = root + "/results/" + f.split('.txt')[0]
                     rgb_image, mask_file, init_cage_file, curr_cage_file = utils.get_inputs(

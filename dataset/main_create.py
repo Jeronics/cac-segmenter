@@ -54,7 +54,7 @@ def create_mask_and_cage_points(c, p, in_filename):
                 angle = 2 * i * PI / n
                 y, x = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
                 cage.append([y + c[0], x + c[1]])
-                text_file.write("%.8e\t%.8e\n" % ( x + c[1], y + c[0]))  # OTHER
+                text_file.write("%.8e\t%.8e\n" % (x + c[1], y + c[0]))  # OTHER
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
     utils.plotContourOnImage(np.array(mask_points), im[:, :, 0],
                              points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])],

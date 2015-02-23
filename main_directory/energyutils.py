@@ -5,6 +5,7 @@ import utils
 import re
 import numpy as np
 from scipy import *
+import energyutils
 from matplotlib import pyplot
 from scipy import ndimage
 import scipy
@@ -12,6 +13,18 @@ from scipy import misc
 import PIL
 import math
 from scipy import interpolate
+
+
+def find_optimal_alpha(beta, curr_cage_file, grad_k):
+    step = 0.001
+    alpha = 0.05
+    while all(energyutils.multiple_norm(alpha * grad_k) <= beta):
+        alpha += step
+    return alpha
+
+
+def backtrack_optimal_alpha(alpha, current_cage_file, grad_k):
+    return alpha
 
 
 def calculateOmegaMean(omega_coord, image):
@@ -103,11 +116,11 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     :param grad_k:
     :return:
     '''
-    if not all(np.diagonal(np.dot(grad_k,np.transpose(grad_k_2)))>0):
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_2))) > 0):
         return False
-    if not all(np.diagonal(np.dot(grad_k_1,np.transpose(grad_k_3)))>0):
+    if not all(np.diagonal(np.dot(grad_k_1, np.transpose(grad_k_3))) > 0):
         return False
-    if not all(np.diagonal(np.dot(grad_k,np.transpose(grad_k_1)))>0):
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_1))) > 0):
         return False
     return True
 
@@ -159,6 +172,8 @@ def multiple_normalize(a):
     :param a:
     :return:
     '''
+    print np.array([x / np.linalg.norm(x) for x in a])
+
     return np.array([x / np.linalg.norm(x) for x in a])
 
 

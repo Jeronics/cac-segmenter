@@ -16,11 +16,12 @@ matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 
+
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
         self.name = None
         self.image = im
-        self.gray_image=im
+        self.gray_image = im
         self.shape = im.shape[:2]
         self.path = filename
 
@@ -45,7 +46,6 @@ class ImageClass:
             plt.show()
 
 
-
 # ########## VISUALITON
 def rgb2gray(rgb):
     if len(rgb.shape) == 3:
@@ -54,6 +54,14 @@ def rgb2gray(rgb):
     else:
         gray = rgb
     return gray
+
+
+def is_png(filename):
+    return filename.split('.')[-1] == 'png'
+
+
+def is_txt(filename):
+    return filename.split('.')[-1] == 'txt'
 
 
 def read_png(name):
