@@ -13,16 +13,20 @@ import numpy as np
 def first_step_alpha(beta, curr_cage, grad_k):
     step = 0.001
     alpha = 0.05
-    while all(energyutils.multiple_norm(alpha * grad_k) <= beta):
+    while all(multiple_norm(alpha * grad_k) <= beta):
         alpha += step
     return alpha
 
-def second_step_alpha(alpha, curr_cage, grad_k):
+
+def second_step_alpha(alpha, curr_cage, grad_k, current_energy):
     step = 0.001
-    # while
+    next_energy = 0
+    while current_energy > next_energy:
+        # calculate new contour_coord
 
+        # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
 
-
+        next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
 
 
 '''
@@ -31,15 +35,15 @@ def second_step_alpha(alpha, curr_cage, grad_k):
 
 '''
 
+
 def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
     omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
-    energy = (omega_1 + omega_2)/float(2)
-    print energy
+    energy = (omega_1 + omega_2) / float(2)
     return energy
 
-def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
 
+def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     # Calculate Image gradient
     image_gradient = np.array(np.gradient(image))
 
@@ -54,6 +58,7 @@ def mean_energy_per_region(omega_coord, affine_omega_coord, image):
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     return np.dot(aux, np.transpose(aux))
+
 
 def mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
@@ -84,3 +89,83 @@ def get_omega_mean(omega_coord, image):
     omega_mean = omega_intensity / (len(omega_boolean[omega_boolean]))
     omega_std = np.std(image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]])
     return omega_mean, omega_std
+
+
+'''
+
+                    STOP CRITERIA
+
+'''
+
+
+def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
+    '''
+    Checks if vertices cannot evolve anymore
+    :param grad_k_3:
+    :param grad_k_2:
+    :param grad_k_1:
+    :param grad_k:
+    :return:
+    '''
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_2))) > 0):
+        return False
+    if not all(np.diagonal(np.dot(grad_k_1, np.transpose(grad_k_3))) > 0):
+        return False
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_1))) > 0):
+        return False
+    return True
+
+
+def multiple_project_gradient_on_axis(a, b):
+    '''
+    Finds a's projection on b
+    :param a:
+    :param b:
+    :return:
+    '''
+    return np.transpose((multiple_dot_products(a, b) / np.power(multiple_norm(b), 2)) * np.transpose(b))
+
+
+def normalize_vectors(vectors):
+    '''
+    Normalizes vectors
+    :param vect:
+    :return:
+    '''
+    vectors_aux = np.array([x / np.linalg.norm(x) for x in vectors])
+    return vectors_aux
+
+
+'''
+    THE FOLLOWING FUNCTIONS ARE MADE TO ACCEPT MULTIPLE VECTORS IN THE FOLLOWING FORMAT:
+
+    v1
+    v2
+    .
+    .
+    .
+    vN
+'''
+
+
+def multiple_norm(a):
+    '''
+
+    :param a:
+    :return:
+    '''
+    return np.array([np.linalg.norm(x) for x in a])
+
+
+def multiple_normalize(a):
+    '''
+
+    :param a:
+    :return:
+    '''
+    return np.array([x / np.linalg.norm(x) for x in a])
+
+
+def multiple_dot_products(a, b):
+    c = a * b
+    return np.array([sum(x) for x in c])

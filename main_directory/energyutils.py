@@ -15,18 +15,6 @@ import math
 from scipy import interpolate
 
 
-def find_optimal_alpha(beta, curr_cage_file, grad_k):
-    step = 0.001
-    alpha = 0.05
-    while all(energyutils.multiple_norm(alpha * grad_k) <= beta):
-        alpha += step
-    return alpha
-
-
-def backtrack_optimal_alpha(alpha, current_cage_file, grad_k):
-    return alpha
-
-
 def calculateOmegaMean(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
     omega_coord_aux = omega_coord[omega_boolean]
@@ -172,8 +160,6 @@ def multiple_normalize(a):
     :param a:
     :return:
     '''
-    print np.array([x / np.linalg.norm(x) for x in a])
-
     return np.array([x / np.linalg.norm(x) for x in a])
 
 
