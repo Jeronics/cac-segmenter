@@ -19,6 +19,8 @@ def first_step_alpha(beta, curr_cage, grad_k):
 
 def second_step_alpha(alpha, curr_cage, grad_k):
     step = 0.001
+    # while
+
 
 
 
@@ -29,10 +31,11 @@ def second_step_alpha(alpha, curr_cage, grad_k):
 
 '''
 
-def mean_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    omega_1 = mean_energy_per_region(omega1_coord, affine_omega_1_coord, image)
-    omega_2 = mean_energy_per_region(omega2_coord, affine_omega_2_coord, image)
-    energy = omega_1 + omega_2
+def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+    omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+    energy = (omega_1 + omega_2)/float(2)
+    print energy
     return energy
 
 def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
@@ -50,8 +53,7 @@ def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_om
 def mean_energy_per_region(omega_coord, affine_omega_coord, image):
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-    energy = aux - omega_mean
-    return energy
+    return np.dot(aux, np.transpose(aux))
 
 def mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean

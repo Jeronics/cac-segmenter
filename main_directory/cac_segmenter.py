@@ -112,7 +112,7 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
         f_exterior.close()
         if not first_stage:
             print 'First Stage Complete'
-            return curr_cage_file
+            # return curr_cage_file
 
         if first_stage:
             # multiple_norm()
@@ -131,6 +131,7 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
             grad_k = multiple_normalize(grad_k)
             print grad_k
         else:
+            energy.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,image)
             print ''
 
 
