@@ -1,5 +1,6 @@
 __author__ = 'jeroni'
 from main_directory import utils
+from ctypes_utils import *
 import numpy as np
 
 
@@ -18,15 +19,28 @@ def first_step_alpha(beta, curr_cage, grad_k):
     return alpha
 
 
-def second_step_alpha(alpha, curr_cage, grad_k, current_energy):
-    step = 0.001
-    next_energy = 0
-    while current_energy > next_energy:
+def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, image):
+    step = 0.1
+    print current_energy, type(current_energy)
+    next_energy = current_energy+1
+    alpha=alpha+step
+    nrow, ncol = image.shape
+    while current_energy < next_energy:
+        alpha-=step
+
         # calculate new contour_coord
+        contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k*alpha)
 
         # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+        omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
+                                                                                           contour_size, ncol, nrow)
+
+        affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
+                                                                                    omega_2_coord, omega_2_size,
+                                                                                    len(curr_cage), curr_cage - grad_k*alpha)
 
         next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
+        print 'A, EN: ', alpha, next_energy
 
 
 '''

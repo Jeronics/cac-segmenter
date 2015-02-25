@@ -17,6 +17,15 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 
+class CageClass:
+    def __init__(self, cage=np.array([]), filename=''):
+        self.name = None
+        self.cage = cage
+        self.shape = cage.shape
+        self.path = filename
+        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.txt'
+
+
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
         self.name = None

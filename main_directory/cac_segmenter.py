@@ -8,14 +8,12 @@ import numpy as np
 
 from utils import *
 from main_directory.energyutils import *
-from main_directory import energies as energy
+from main_directory import energies
 from scipy import interpolate
 
 
 def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
     start = time.time()
-
-    # TURN IMAGE TO GRAYSCALE!
     image = rgb2gray(rgb_image)
 
     nrow, ncol = mask_file.shape
@@ -35,29 +33,16 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
         [num_control_point, 2]), np.zeros([num_control_point, 2])
     mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
-    beta = 5
-    while (iter < max_iter):
+    beta = 20
+    while iter < max_iter:
 
-        band_size = 50
+        band_size = 200
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                            contour_size, ncol, nrow)
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
-                                                                                    num_control_point, init_cage_file)
-
-        f_interior = file('interior_points.txt', 'w')
-        f_exterior = file('exterior_points.txt', 'w')
-        for coord in omega_1_coord:
-            f_interior.write("%d %d\n" % (coord[0], coord[1]))
-        for coord in omega_2_coord:
-            f_exterior.write("%d %d\n" % (coord[0], coord[1]))
-
-        f_interior.close()
-        f_exterior.close()
-        if not first_stage:
-            print 'First Stage Complete'
-            # return curr_cage_file
+                                                                                    num_control_point, curr_cage_file)
 
         if first_stage:
             # multiple_norm()
@@ -65,8 +50,8 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
-            grad_k = energy.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                             image)
+            grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                               image)
 
             # mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
             # axis = mid_point - curr_cage_file
@@ -74,15 +59,12 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
             # grad_k = multiple_project_gradient_on_axis(grad_k, axis)
             grad_k = multiple_normalize(grad_k)
         else:
-            energy.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
-            print ''
-
-
-
-        # print 'Omega1: ', calculateOmegaMean(omega1_coord, image)
-        # print 'Omega2: ', calculateOmegaMean(omega2_coord, image), '\n'
-        # Generate random movements
-        # vertex_variations = np.random.random(init_cage_file.shape) * 3 - 1.
+            energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                          image)
+            energies.second_step_alpha(alpha, curr_cage_file, grad_k, band_size, affine_contour_coordinates,
+                                       contour_size, energy,
+                                       image)
+            # return curr_cage_file
 
         # Calculate alpha
         # grad_k = normalize_vectors(grad_k)
@@ -90,10 +72,11 @@ def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
         # print curr_cage_file[-2], grad_k[-2]
         alpha = beta  # find_optimal_alpha(beta, curr_cage_file, grad_k)
 
-
-        # if iter % 20 == 0:
+        if iter % 20 == 0:
+            plotContourOnImage(contour_coord, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
+                               points2=curr_cage_file - alpha * 10 * grad_k)
         # plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
-        #                        points2=curr_cage_file - alpha * 10 * grad_k)
+        # points2=curr_cage_file - alpha * 10 * grad_k)
 
         # Update File current cage
         curr_cage_file = curr_cage_file - alpha * grad_k

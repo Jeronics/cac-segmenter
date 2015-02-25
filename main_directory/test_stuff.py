@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 
 if __name__ == '__main__':
-
     name = 'images_tester/eagle2.png'
 
     image = utils.ImageClass()
@@ -51,10 +50,13 @@ if __name__ == '__main__':
     print image.image.shape
     image.plot_image(show_plot=False)
 
-
     contours = np.loadtxt('images_tester/contour_test.txt', float)
-    print contours.astype(int)
-    im= image.image
-    # gtk_disable_setlocale()
-    cv2.drawContours(im, [contours.astype(int)], -1, (0,0,0), 3)
-    cv2.imshow('output',im)
+    cont = [contours.astype(int)]
+    im = image.image
+
+    cnt = cont[0]
+    M = cv2.moments(cnt)
+    print M
+    # cv2.drawContours(im, [contours.astype(int)], -1, (0, 0, 0), 3)
+    # cv2.imshow('output', im)
+
