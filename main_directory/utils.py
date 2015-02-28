@@ -33,6 +33,7 @@ class ImageClass:
         self.gray_image = im
         self.shape = im.shape[:2]
         self.path = filename
+        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.png'
 
     def read_png(self, filename):
         '''
@@ -40,11 +41,8 @@ class ImageClass:
         :param name: a directory path to the png image.
         :return: An image matrix in the type (y,x)
         '''
-        self.path = filename
         im = scipy.misc.imread(filename)
-        self.image = im.astype(np.float64)
-        self.shape = im.shape[:2]
-        self.gray_image = im
+        self.__init__(im, filename)
 
     def plot_image(self, show_plot=True):
         im_aux = self.image.astype('uint8')
@@ -53,6 +51,24 @@ class ImageClass:
         plt.axis('off')
         if show_plot:
             plt.show()
+
+    def reshape(self, new_width=-1, new_height=-1):
+        height, width = self.shape
+        im = Image.open(self.path)
+
+        if not (new_width == -1 and new_height == -1):
+            if new_width == -1:
+                new_width = int(width * new_height / float(height))
+            elif new_height == -1:
+                new_height = int(height * new_width / float(width))
+
+            reshaped_image = im.resize((new_width, new_height), Image.ANTIALIAS)
+            self.__init__(np.array(reshaped_image), self.path)
+
+    def save_image(self, filename=''):
+        if filename == '':
+            filename = self.save_path
+        scipy.misc.imsave(filename, self.image)
 
 
 # ########## VISUALITON
