@@ -1,15 +1,10 @@
-import re
-import sys
 import numpy as np
 from scipy import *
 import matplotlib
 
 matplotlib.use("Qt5Agg")
-from scipy import ndimage
 import scipy
 from scipy import misc
-import PIL
-import math
 import os
 
 matplotlib.use("Qt5Agg")
@@ -19,20 +14,44 @@ from PIL import Image
 
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):
-        self.name = None
+        self.name = '_'.join(filename.split("/")[-1].split('.txt')[0].split('.'))
+        self.spec_name = ''.join(self.name.split("cage_"))
         self.cage = cage
         self.shape = cage.shape
         self.path = filename
+        self.root ="/".join(filename.split("/")[:-1])
         self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.txt'
+
+
+class MaskClass:
+    def __init__(self, mask=np.array([]), filename=''):
+        self.name = '_'.join(filename.split("/")[-1].split('.png')[0].split('.'))
+        self.spec_name = '_'.join(self.name.split("mask_"))
+        self.mask = mask
+        self.shape = mask.shape
+        self.path = filename
+        self.root ="/".join(filename.split("/")[:-1])
+        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.png'
+
+    def read_png(self, filename):
+        '''
+        Return mask data from a raw PNG file as numpy array.
+        :param name: a directory path to the png image.
+        :return: An image matrix in the type (y,x)
+        '''
+        mask = scipy.misc.imread(filename)
+        self.__init__(mask, filename)
 
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
-        self.name = None
+        self.name = '_'.join(filename.split("/")[-1].split('.png')[0].split('.'))
+        self.spec_name = '_'.join(self.name.split("image_"))
         self.image = im
         self.gray_image = im
         self.shape = im.shape[:2]
         self.path = filename
+        self.root ="/".join(filename.split("/")[:-1])
         self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.png'
 
     def read_png(self, filename):
@@ -85,8 +104,44 @@ def is_png(filename):
     return filename.split('.')[-1] == 'png'
 
 
+def is_mask(f):
+    return f.split("/")[-1].split("_")[0] == 'mask'
+
+
+def is_cage(f):
+    return f.split("/")[-1].split("_")[0] == 'cage'
+
+
 def is_txt(filename):
     return filename.split('.')[-1] == 'txt'
+
+
+def get_images(files, root):
+    images = []
+    for f in files:
+        if is_png(f) and not is_mask(f):
+            image = ImageClass()
+            image.read_png(root + "/" + f)
+            images.append(image)
+    return images
+
+
+def get_mask(files, root):
+    masks = []
+    for f in files:
+        if is_png(f) and is_mask(f):
+            mask = MaskClass()
+            mask.read_png(root + "/" + f)
+            masks.append(mask)
+    return masks
+
+
+def get_cages(files, root):
+    cages = []
+    for f in files:
+        if is_txt(f) and is_cage(f):
+            cage = root + "/" + f
+    return cages
 
 
 def read_png(name):
