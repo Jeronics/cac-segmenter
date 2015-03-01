@@ -14,24 +14,34 @@ from PIL import Image
 
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):
-        self.name = '_'.join(filename.split("/")[-1].split('.txt')[0].split('.'))
-        self.spec_name = ''.join(self.name.split("cage_"))
         self.cage = cage
         self.shape = cage.shape
+        self.num_points = len(cage)
         self.path = filename
-        self.root ="/".join(filename.split("/")[:-1])
-        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.txt'
+        self.name = filename.split("/")[-1]
+        self.spec_name = self.name.split('.txt')[0]
+        self.root = "/".join(filename.split("/")[:-1]) + "/"
+        self.save_name = self.spec_name + '_out.txt'
+
+    def read_txt(self, filename):
+        cage = np.loadtxt(filename, float)
+        self.__init__(cage, filename)
 
 
 class MaskClass:
+    '''
+    filename = root+name
+    name = spec_name.png
+    '''
+
     def __init__(self, mask=np.array([]), filename=''):
-        self.name = '_'.join(filename.split("/")[-1].split('.png')[0].split('.'))
-        self.spec_name = '_'.join(self.name.split("mask_"))
         self.mask = mask
         self.shape = mask.shape
         self.path = filename
-        self.root ="/".join(filename.split("/")[:-1])
-        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.png'
+        self.name = filename.split("/")[-1]
+        self.spec_name = self.name.split('.png')[0]
+        self.root = "/".join(filename.split("/")[:-1])
+        self.save_name = self.spec_name + '_out.png'
 
     def read_png(self, filename):
         '''
@@ -45,14 +55,14 @@ class MaskClass:
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
-        self.name = '_'.join(filename.split("/")[-1].split('.png')[0].split('.'))
-        self.spec_name = '_'.join(self.name.split("image_"))
         self.image = im
         self.gray_image = im
         self.shape = im.shape[:2]
         self.path = filename
-        self.root ="/".join(filename.split("/")[:-1])
-        self.save_path = '.'.join(filename.split('.')[:-1]) + '_out.png'
+        self.name = filename.split("/")[-1]
+        self.spec_name = self.name.split('.png')[0]
+        self.root = "/".join(filename.split("/")[:-1]) + "/"
+        self.save_name = self.spec_name + '_out.png'
 
     def read_png(self, filename):
         '''
@@ -140,7 +150,9 @@ def get_cages(files, root):
     cages = []
     for f in files:
         if is_txt(f) and is_cage(f):
-            cage = root + "/" + f
+            cage = CageClass()
+            cage.read_txt(root + "/" + f)
+            cages.append(cage)
     return cages
 
 

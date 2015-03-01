@@ -7,14 +7,14 @@ import time
 import numpy as np
 
 from utils import *
-from main_directory.energyutils import *
-from main_directory import energies
+from main_directory import energyutils
+import main_directory.energies
 from scipy import interpolate
 
 
-def cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file):
+def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
     start = time.time()
-    image = rgb2gray(rgb_image)
+    image = rgb2gray(image_obj)
 
     nrow, ncol = mask_file.shape
     num_control_point = init_cage_file.shape[0]

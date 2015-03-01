@@ -2,10 +2,11 @@ import cac_segmenter
 import numpy as np
 import utils
 
-def walk_through_dataset(RootFolder, depth):
-    generator = utils.walk_level(RootFolder, depth)
 
-    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth][1:]
+def walk_through_dataset(root_folder, depth):
+    generator = utils.walk_level(root_folder, depth)
+    model = 1
+    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(root_folder.split("/")) + depth][1:]
     print gens
     for root, files in gens:
         images = utils.get_images(files, root)
@@ -18,22 +19,29 @@ def walk_through_dataset(RootFolder, depth):
         elif not cages:
             print root, 'has no .txt cages'
         else:
-            utils.mkdir(root + '/results')
+            results_path = root + '/results'
+            utils.mkdir(results_path)
+            if len(images) > 1:
+                results_path = results_path + "/" + image.spec_name
+                utils.mkdir(results_path)
+            if len(masks) > 1:
+                results_path = results_path + "/" + mask.spec_name
             for image in images:
                 for mask in masks:
                     for cage in cages:
-                        if len(images)>1:
-                            result = root + "/results/" +image.name+"/"+mask.spec_name+'_'+cage.spec_name+'.txt'
-                        rgb_image, mask_file, init_cage_file, curr_cage_file = utils.get_inputs(
-                            [None, model, image, mask, cage])
-                        resulting_cage = cac_segmenter.cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file)
-                        if not resulting_cage:
-                            print 'No convergence reached for the cac-segmenter'
-                        else:
-                            utils.save_cage(resulting_cage, result)
+                        result_file = results_path + cage.save_name
+                        print 'HEREEEE:', result_file
+                    rgb_image, mask_file, init_cage_file, curr_cage_file = utils.get_inputs(
+                        [None, model, image, mask, cage])
+                    resulting_cage = cac_segmenter.cac_segmenter(rgb_image, mask_file, init_cage_file,
+                                                                 curr_cage_file)
+                    if not resulting_cage:
+                        print 'No convergence reached for the cac-segmenter'
+                    else:
+                        utils.save_cage(resulting_cage, result_file)
+
 
 if __name__ == '__main__':
-
     RootFolder = '../dataset'
     depth = 2
     walk_through_dataset(RootFolder, depth)

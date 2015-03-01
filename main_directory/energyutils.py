@@ -1,18 +1,8 @@
 import sys
 
 sys.path.append('/cac-segmenter')
-import utils
-import re
 import numpy as np
 from scipy import *
-import energyutils
-from matplotlib import pyplot
-from scipy import ndimage
-import scipy
-from scipy import misc
-import PIL
-import math
-from scipy import interpolate
 
 
 def calculateOmegaMean(omega_coord, image):
