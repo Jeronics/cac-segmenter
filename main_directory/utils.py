@@ -76,7 +76,6 @@ class ImageClass:
         :return: An image matrix in the type (y,x)
         '''
         im = scipy.misc.imread(filename)
-        print type(im)
         self.__init__(im, filename)
 
     def plot_image(self, show_plot=True):
@@ -260,8 +259,6 @@ def get_inputs(arguments):
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
 
-    for a in arguments:
-        print a
     model = arguments[1]  # Model
     image = arguments[2]  # Image
     mask = arguments[3]
@@ -274,11 +271,9 @@ def get_inputs(arguments):
 
     mask_name = mask  # Both .pgm as well as png work. png gives you a rbg image!
 
-    print init_cage_name
 
     # LOAD Cage/s and Mask
     image = read_png(image)
-    print mask_name
     mask_file = read_png(mask_name)
     mask_file = binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)
