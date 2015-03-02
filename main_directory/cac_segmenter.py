@@ -17,28 +17,23 @@ from scipy import interpolate
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     start = time.time()
     image = image_obj.gray_image
-    mask_file = mask_obj.mask
-    init_cage_file = cage_obj.cage
-    mask_obj.height, mask_obj.width = mask_file.shape
-    print mask_obj.height, mask_obj.width
-    print mask_obj.height, mask_obj.width
 
-    num_control_point = init_cage_file.shape[0]
+    num_control_point = cage_obj.num_points
 
     contour_coord, contour_size = get_contour(mask_obj)
 
-    affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, init_cage_file)
+    affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
     # Update Step of contour coordinates
-    contour_coord = np.dot(affine_contour_coordinates, init_cage_file)
+    contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
 
-    curr_cage_file = init_cage_file.copy()
+    # copy of cage_obj
     iter = 0
     max_iter = 100
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
         [num_control_point, 2]), np.zeros([num_control_point, 2])
-    mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
+    mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
     beta = 20
     while iter < max_iter:
 
@@ -48,7 +43,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
-                                                                                    num_control_point, curr_cage_file)
+                                                                                    num_control_point, cage_obj.cage)
 
         if first_stage:
             # multiple_norm()
@@ -67,7 +62,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image)
-            energies.second_step_alpha(alpha, curr_cage_file, grad_k, band_size, affine_contour_coordinates,
+            energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
                                        contour_size, energy,
                                        image)
             # return curr_cage_file
@@ -79,18 +74,18 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         alpha = beta  # find_optimal_alpha(beta, curr_cage_file, grad_k)
 
         if iter % 20 == 0:
-            plotContourOnImage(contour_coord, image_obj.image, points=curr_cage_file, color=[0., 0., 255.],
-                               points2=curr_cage_file - alpha * 10 * grad_k)
+            plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
+                               points2=cage_obj.cage - alpha * 10 * grad_k)
         # plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
         # points2=curr_cage_file - alpha * 10 * grad_k)
 
         # Update File current cage
-        curr_cage_file = curr_cage_file - alpha * grad_k
+        cage_obj.cage = cage_obj.cage - alpha * grad_k
         if first_stage and energies.cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
             first_stage = False
 
         # Update contour coordinates
-        contour_coord = np.dot(affine_contour_coordinates, curr_cage_file)
+        contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
         iter += 1
 
     return None
