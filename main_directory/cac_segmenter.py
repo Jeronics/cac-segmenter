@@ -14,10 +14,11 @@ import energies
 from scipy import interpolate
 
 
-def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
+def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     start = time.time()
     image = image_obj.gray_image
-
+    mask_file =mask_obj.mask
+    init_cage_file = cage_obj.cage
     nrow, ncol = mask_file.shape
     num_control_point = init_cage_file.shape[0]
 
@@ -30,7 +31,7 @@ def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
 
     curr_cage_file = init_cage_file.copy()
     iter = 0
-    max_iter = 1000
+    max_iter = 100
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
         [num_control_point, 2]), np.zeros([num_control_point, 2])
@@ -103,7 +104,11 @@ if __name__ == '__main__':
     # 1 ../test/ovella/image_ovella.png ../test/ovella/mask_01.png ../test/ovella/cage_01.txt
     # TODO: RUN 1 ../dataset/pear/pear2/pear2.png   ../dataset/pear/pear2/mask_00.png  ../dataset/pear/pear2/cage_8_1.5.txt
 
-    rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
+    # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
     image_obj = ImageClass()
     image_obj.read_png('../dataset/pear/pear2/pear2.png')
-    print cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file)
+    mask_obj = MaskClass()
+    mask_obj.read_png('../dataset/pear/pear2/mask_00.png')
+    cage_obj = CageClass()
+    cage_obj.read_txt('../dataset/pear/pear2/cage_8_1.5.txt')
+    print cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)

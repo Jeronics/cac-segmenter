@@ -31,9 +31,7 @@ def walk_through_dataset(root_folder, depth):
                 for mask in masks:
                     for cage in cages:
                         result_file = results_path + cage.save_name
-                        rgb_image, mask_file, init_cage_file, curr_cage_file = utils.get_inputs(
-                            [0,0,image.path, mask.path, cage.path])
-                        resulting_cage = cac_segmenter.cac_segmenter(image, mask_file, init_cage_file,None)
+                        resulting_cage = cac_segmenter.cac_segmenter(image, mask, cage, None)
                         if not resulting_cage:
                             print 'No convergence reached for the cac-segmenter'
                         else:

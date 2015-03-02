@@ -30,13 +30,8 @@ class CageClass:
 
 
 class MaskClass:
-    '''
-    filename = root+name
-    name = spec_name.png
-    '''
-
     def __init__(self, mask=np.array([]), filename=''):
-        self.mask = mask
+        self.mask = self.binarize_image(mask)
         self.shape = mask.shape
         self.path = filename
         self.name = filename.split("/")[-1]
@@ -51,7 +46,20 @@ class MaskClass:
         :return: An image matrix in the type (y,x)
         '''
         mask = scipy.misc.imread(filename)
+        mask = mask.astype(np.float64)
         self.__init__(mask, filename)
+
+    def binarize_image(self, image):
+        im = image.copy()
+        if len(im.shape) == 3:
+            im = im[:, :, 0]
+        for i in xrange(0, im.shape[0]):
+            for j in xrange(0, im.shape[1]):
+                if im[i, j] >= 125.:
+                    im[i, j] = 155.
+                else:
+                    im[i, j] = 0.
+        return im
 
 
 class ImageClass:
@@ -76,6 +84,7 @@ class ImageClass:
         :return: An image matrix in the type (y,x)
         '''
         im = scipy.misc.imread(filename)
+        im = im.astype(np.float64)
         self.__init__(im, filename)
 
     def plot_image(self, show_plot=True):
