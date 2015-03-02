@@ -6,6 +6,7 @@ matplotlib.use("Qt5Agg")
 import scipy
 from scipy import misc
 import os
+import sys
 
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
@@ -55,8 +56,12 @@ class MaskClass:
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
-        self.image = im
-        self.gray_image = im
+        # FROM RGBA to RGB if necessary
+        if im.shape == 2 and im.shape[2] == 4:
+            self.image = im[:, :, 0:3]
+        else:
+            self.image = im
+        self.gray_image = self.rgb2gray(self.image)
         self.shape = im.shape[:2]
         self.path = filename
         self.name = filename.split("/")[-1]
@@ -71,6 +76,7 @@ class ImageClass:
         :return: An image matrix in the type (y,x)
         '''
         im = scipy.misc.imread(filename)
+        print type(im)
         self.__init__(im, filename)
 
     def plot_image(self, show_plot=True):
@@ -98,6 +104,14 @@ class ImageClass:
         if filename == '':
             filename = self.save_path
         scipy.misc.imsave(filename, self.image)
+
+    def rgb2gray(self, rgb):
+        if len(rgb.shape) == 3:
+            r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+            gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+        else:
+            gray = rgb
+        return gray
 
 
 # ########## VISUALITON
@@ -246,6 +260,8 @@ def get_inputs(arguments):
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
 
+    for a in arguments:
+        print a
     model = arguments[1]  # Model
     image = arguments[2]  # Image
     mask = arguments[3]
@@ -262,6 +278,7 @@ def get_inputs(arguments):
 
     # LOAD Cage/s and Mask
     image = read_png(image)
+    print mask_name
     mask_file = read_png(mask_name)
     mask_file = binarizePgmImage(mask_file)
     init_cage_file = np.loadtxt(init_cage_name, float)

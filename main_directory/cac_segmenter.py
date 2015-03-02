@@ -3,18 +3,20 @@ __author__ = 'jeroni'
 from ctypes_utils import *
 # from ctypes import *
 import time
+import sys
 
 import numpy as np
 
 from utils import *
-from main_directory import energyutils
-import main_directory.energies
+import energyutils
+import energies
+
 from scipy import interpolate
 
 
 def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
     start = time.time()
-    image = rgb2gray(image_obj)
+    image = image_obj.gray_image
 
     nrow, ncol = mask_file.shape
     num_control_point = init_cage_file.shape[0]
@@ -57,7 +59,7 @@ def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
             # axis = mid_point - curr_cage_file
             # axis = normalize_vectors(axis)
             # grad_k = multiple_project_gradient_on_axis(grad_k, axis)
-            grad_k = multiple_normalize(grad_k)
+            grad_k = energies.multiple_normalize(grad_k)
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image)
@@ -73,14 +75,14 @@ def cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file):
         alpha = beta  # find_optimal_alpha(beta, curr_cage_file, grad_k)
 
         if iter % 20 == 0:
-            plotContourOnImage(contour_coord, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
+            plotContourOnImage(contour_coord, image_obj.image, points=curr_cage_file, color=[0., 0., 255.],
                                points2=curr_cage_file - alpha * 10 * grad_k)
         # plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
         # points2=curr_cage_file - alpha * 10 * grad_k)
 
         # Update File current cage
         curr_cage_file = curr_cage_file - alpha * grad_k
-        if first_stage and cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
+        if first_stage and energies.cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
             first_stage = False
 
         # Update contour coordinates
@@ -102,4 +104,6 @@ if __name__ == '__main__':
     # TODO: RUN 1 ../dataset/pear/pear2/pear2.png   ../dataset/pear/pear2/mask_00.png  ../dataset/pear/pear2/cage_8_1.5.txt
 
     rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
-    print cac_segmenter(rgb_image, mask_file, init_cage_file, curr_cage_file)
+    image_obj = ImageClass()
+    image_obj.read_png('../dataset/pear/pear2/pear2.png')
+    print cac_segmenter(image_obj, mask_file, init_cage_file, curr_cage_file)
