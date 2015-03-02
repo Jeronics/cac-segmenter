@@ -32,6 +32,8 @@ class CageClass:
 class MaskClass:
     def __init__(self, mask=np.array([]), filename=''):
         self.mask = self.binarize_image(mask)
+        self.height = mask.shape[0]
+        self.width = mask.shape[1] if len(mask.shape) > 1 else None
         self.shape = mask.shape
         self.path = filename
         self.name = filename.split("/")[-1]
@@ -71,6 +73,8 @@ class ImageClass:
             self.image = im
         self.gray_image = self.rgb2gray(self.image)
         self.shape = im.shape[:2]
+        self.height = im.shape[0]
+        self.width = im.shape[1] if len(im.shape) > 1 else None
         self.path = filename
         self.name = filename.split("/")[-1]
         self.spec_name = self.name.split('.png')[0]

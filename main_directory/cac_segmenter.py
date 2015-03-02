@@ -17,12 +17,15 @@ from scipy import interpolate
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     start = time.time()
     image = image_obj.gray_image
-    mask_file =mask_obj.mask
+    mask_file = mask_obj.mask
     init_cage_file = cage_obj.cage
-    nrow, ncol = mask_file.shape
+    mask_obj.height, mask_obj.width = mask_file.shape
+    print mask_obj.height, mask_obj.width
+    print mask_obj.height, mask_obj.width
+
     num_control_point = init_cage_file.shape[0]
 
-    contour_coord, contour_size = get_contour(mask_file)
+    contour_coord, contour_size = get_contour(mask_obj)
 
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, init_cage_file)
 
@@ -41,7 +44,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
         band_size = 200
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
-                                                                                           contour_size, ncol, nrow)
+                                                                                           contour_size, mask_obj.width, mask_obj.height)
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
@@ -111,4 +114,5 @@ if __name__ == '__main__':
     mask_obj.read_png('../dataset/pear/pear2/mask_00.png')
     cage_obj = CageClass()
     cage_obj.read_txt('../dataset/pear/pear2/cage_8_1.5.txt')
+    curr_cage_file = None
     print cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)

@@ -13,7 +13,8 @@ LP_c_double = POINTER(c_double)
 LP_LP_c_double = POINTER(LP_c_double)
 
 
-def get_contour(mask):
+def get_contour(mask_obj):
+    mask = mask_obj.mask
     nrow, ncol = mask.shape
     contour_size = c_int()
     mat = LP_c_double()
