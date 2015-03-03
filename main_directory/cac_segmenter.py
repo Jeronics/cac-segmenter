@@ -29,42 +29,52 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
     # copy of cage_obj
     iter = 0
-    max_iter = 100
+    max_iter = 50
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
         [num_control_point, 2]), np.zeros([num_control_point, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
-    beta = 20
-    while iter < max_iter:
+    beta = 5
+    continue_while=True
+    while continue_while:
+        if iter > max_iter:
+            continue_while = False
+            print 'Maximum iterations reached'
 
-        band_size = 200
+        band_size = 75
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
-                                                                                           contour_size, mask_obj.width, mask_obj.height)
+                                                                                           contour_size, mask_obj.width,
+                                                                                           mask_obj.height)
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
                                                                                     num_control_point, cage_obj.cage)
 
-        if first_stage:
-            # multiple_norm()
-            # Update gradients
-            grad_k_3 = grad_k_2.copy()
-            grad_k_2 = grad_k_1.copy()
-            grad_k_1 = grad_k.copy()
-            grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                               image)
 
+        # multiple_norm()
+        # Update gradients
+        grad_k_3 = grad_k_2.copy()
+        grad_k_2 = grad_k_1.copy()
+        grad_k_1 = grad_k.copy()
+        grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                           image)
+        grad_k = energies.multiple_normalize(grad_k)
+        if first_stage:
             # mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
             # axis = mid_point - curr_cage_file
             # axis = normalize_vectors(axis)
             # grad_k = multiple_project_gradient_on_axis(grad_k, axis)
-            grad_k = energies.multiple_normalize(grad_k)
+            alpha=beta
+
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image)
-            energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                       contour_size, energy,
-                                       image)
+            alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
+                                               contour_size, energy,
+                                               image)
+            if alpha_new == 0:
+                continue_while= False
+                print 'Local minimum reached. no better alpha'
             # return curr_cage_file
 
         # Calculate alpha
@@ -73,9 +83,10 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         # print curr_cage_file[-2], grad_k[-2]
         alpha = beta  # find_optimal_alpha(beta, curr_cage_file, grad_k)
 
-        if iter % 20 == 0:
-            plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
-                               points2=cage_obj.cage - alpha * 10 * grad_k)
+        # if iter % 20 == 0:
+        #     plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
+        #                        points2=cage_obj.cage - alpha * 10 * grad_k)
+
         # plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
         # points2=curr_cage_file - alpha * 10 * grad_k)
 

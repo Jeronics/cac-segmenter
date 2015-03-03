@@ -21,15 +21,14 @@ def first_step_alpha(beta, curr_cage, grad_k):
 
 def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, image):
     step = 0.1
-    print current_energy, type(current_energy)
-    next_energy = current_energy+1
-    alpha=alpha+step
+    next_energy = current_energy + 1
+    alpha += step
     nrow, ncol = image.shape
     while current_energy < next_energy:
-        alpha-=step
+        alpha -= step
 
         # calculate new contour_coord
-        contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k*alpha)
+        contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k * alpha)
 
         # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
@@ -37,10 +36,13 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
-                                                                                    len(curr_cage), curr_cage - grad_k*alpha)
+                                                                                    len(curr_cage),
+                                                                                    curr_cage - grad_k * alpha)
 
         next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
-        print 'A, EN: ', alpha, next_energy
+    if alpha<0.1:
+        return 0
+    return 1
 
 
 '''
