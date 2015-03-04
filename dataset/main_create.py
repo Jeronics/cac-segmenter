@@ -108,6 +108,12 @@ def open_canvas(in_filename):
     a.exec_()
 
 
+def resize_image(image):
+    if image.height > 500:
+        image.reshape(new_width=400)
+        image.save_image(filename=image.path)
+
+
 if __name__ == '__main__':
 
     RootFolder = '../dataset'
@@ -115,9 +121,9 @@ if __name__ == '__main__':
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth][1:]
-    for r, f in gens:
-        # function to be called when mouse is clicked
-        for files in f:
-            if files.split('.')[-1] == 'png' and files.split("/")[-1].split("_")[0] != 'mask':
-                in_filename = r + "/" + files
-                open_canvas(in_filename)
+    for root, files in gens:
+
+        # All images in each file are found
+        images = utils.get_images(files, root)
+        for image in images:
+            open_canvas(image.path)
