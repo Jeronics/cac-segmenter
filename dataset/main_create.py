@@ -115,7 +115,7 @@ def resize_image(image):
 
 def create_ground_truth(image):
     im=image.gray_image
-    ground_truth = utils.MaskClass(mask=im,filename=image.root+'gt_'+image.spec_name+'.png', threshold=249.)
+    ground_truth = utils.MaskClass(mask=im,filename=image.root+'gt_'+image.spec_name+'.png', threshold=252.)
     ground_truth.save_image(filename=ground_truth.path)
 
 
