@@ -113,6 +113,11 @@ def resize_image(image):
         image.reshape(new_width=400)
         image.save_image(filename=image.path)
 
+def create_ground_truth(image):
+    im=image.gray_image
+    ground_truth = utils.MaskClass(mask=im,filename=image.root+'gt_'+image.spec_name+'.png', threshold=249.)
+    ground_truth.save_image(filename=ground_truth.path)
+
 
 if __name__ == '__main__':
 
@@ -126,4 +131,5 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            open_canvas(image.path)
+            gt=create_ground_truth(image)
+            # open_canvas(image.path)

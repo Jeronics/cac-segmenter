@@ -13,8 +13,6 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 
-
-
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):
         self.cage = cage
@@ -32,8 +30,8 @@ class CageClass:
 
 
 class MaskClass:
-    def __init__(self, mask=np.array([]), filename=''):
-        self.mask = self.binarize_image(mask)
+    def __init__(self, mask=np.array([]), filename='', threshold=125.):
+        self.mask = self.binarize_image(mask, threshold)
         self.height = mask.shape[0]
         self.width = mask.shape[1] if len(mask.shape) > 1 else None
         self.shape = mask.shape
@@ -43,7 +41,7 @@ class MaskClass:
         self.root = "/".join(filename.split("/")[:-1])
         self.save_name = self.spec_name + '_out.png'
 
-    def read_png(self, filename):
+    def read_png(self, filename, threshold=125.):
         '''
         Return mask data from a raw PNG file as numpy array.
         :param name: a directory path to the png image.
@@ -51,19 +49,24 @@ class MaskClass:
         '''
         mask = scipy.misc.imread(filename)
         mask = mask.astype(np.float64)
-        self.__init__(mask, filename)
+        self.__init__(mask, filename, threshold)
 
-    def binarize_image(self, image):
+    def binarize_image(self, image, threshold):
         im = image.copy()
         if len(im.shape) == 3:
             im = im[:, :, 0]
         for i in xrange(0, im.shape[0]):
             for j in xrange(0, im.shape[1]):
-                if im[i, j] >= 125.:
-                    im[i, j] = 155.
+                if im[i, j] >= threshold:
+                    im[i, j] = 255.
                 else:
                     im[i, j] = 0.
         return im
+
+    def save_image(self, filename=''):
+        if filename == '':
+            filename = self.save_path
+        scipy.misc.imsave(filename, self.mask)
 
 
 class ImageClass:
@@ -146,6 +149,10 @@ def is_mask(f):
     return f.split("/")[-1].split("_")[0] == 'mask'
 
 
+def is_gt(f):
+    return f.split("/")[-1].split("_")[0] == 'gt'
+
+
 def is_cage(f):
     return f.split("/")[-1].split("_")[0] == 'cage'
 
@@ -157,7 +164,7 @@ def is_txt(filename):
 def get_images(files, root):
     images = []
     for f in files:
-        if is_png(f) and not is_mask(f):
+        if is_png(f) and not is_mask(f) and not is_gt(f):
             image = ImageClass()
             image.read_png(root + "/" + f)
             images.append(image)
@@ -211,7 +218,7 @@ def binarizePgmImage(image):
     for i in xrange(0, im.shape[0]):
         for j in xrange(0, im.shape[1]):
             if im[i, j] >= 125.:
-                im[i, j] = 155.
+                im[i, j] = 255.
             else:
                 im[i, j] = 0.
     return im
