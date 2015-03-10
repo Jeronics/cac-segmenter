@@ -355,7 +355,7 @@ void init_vals(TURN_REP f, TURN_REP g, double *ht0_rtn, double *slope_rtn, doubl
      * Zero accumulators and compute initial slope.
      */
     ht0 = a = 0;
-    slope = (tr_s(g, 1) < tr_s(f, 1)) ? 0 : -sqrt(tr_theta(g, 0) - 
+    slope = (tr_s(g, 1) < tr_s(f, 1)) ? 0 : -sqrt(tr_theta(g, 0) -
 tr_theta(f, 0));
     /*
      * Count all the strips

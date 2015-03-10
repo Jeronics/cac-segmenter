@@ -1,4 +1,20 @@
-all:
-	gcc -o sim sim.c -lm
+LIB = libsim.so
+
+SRC =   sim.c
+
+CC = gcc
+
+OBJ = $(SRC:%.c=%.o)
+
+all: $(LIB)
+
+re: fclean all
+
+$(LIB): $(OBJ)
+	$(CC) -shared -fPIC $(OBJ) -o $(LIB)
+
 clean:
-	rm sim
+	$(RM) $(OBJ)
+
+fclean: clean
+	$(RM) $(LIB)

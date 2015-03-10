@@ -5,11 +5,24 @@ from sympy import Polygon, Point
 from ctypes import *
 import numpy as np
 
-libcac = CDLL("pol_sym/libcac.so")
+# TARGET=libsim.so
+#
+# all:  $(TARGET)
+# 	gcc -o sim sim.c -lm
+# clean:
+# 	rm sim
+#
+# all:
+# 	gcc -o sim sim.c -lm
+# clean:
+# 	rm sim
+#
+# libcac = CDLL("pol_sym/libsim.so")
+#
+# read_poly = libcac.main
+#
 
-cac_contour_get_interior_contour = libcac.cac_contour_get_interior_contour
-cac_get_affine_coordinates = libcac.cac_get_affine_coordinates
-cac_get_omega1_omega2 = libcac.cac_get_omega1_omega2
+
 
 LP_c_int = POINTER(c_int)
 LP_c_double = POINTER(c_double)
