@@ -101,7 +101,7 @@ def turning_funcion(p):
 
 if __name__ == '__main__':
     poly_1 = np.array([
-        [0, 0],
+        [, 0],
         [0, 2],
         [1, 0]
     ])
