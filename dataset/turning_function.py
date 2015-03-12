@@ -1,5 +1,8 @@
 __author__ = 'jeroni'
 # http://www.cs.cornell.edu/~dph/papers/achkm-tpami-91.pdf
+
+# OTHER IDEAS: http://www8.cs.umu.se/kurser/TDBAfl/VT06/algorithms/BOOK/BOOK5/NODE196.HTM
+# https://www.student.cs.uwaterloo.ca/~cs763/Projects/phil.pdf
 import math
 import numpy as np
 import collections
@@ -31,7 +34,7 @@ def multiple_angles(v1, v2):
     return [angle(a, b) for a, b in zip(v1, v2)]
 
 
-def angle(v1, v2, sign):
+def angle(v1, v2, sign=1):
     # if np.sin(dotproduct(v1, v2) / (length(v1) * length(v2))) == 1.0:
     # return np.pi / 2.
     # elif np.sin(dotproduct(v1, v2) / (length(v1) * length(v2))) == -1.0:
@@ -58,9 +61,10 @@ def plot_discrete_funct(val, f_val, display=True):
     N = 1000
     x = np.linspace(0, val[-1], N)
     plt.plot(x, U(x))
+    plt.xlim(0, val[-1])
+    plt.ylim(int(min(f_val)-1), int(f_val[-1] + 1))
     if display:
-        plt.xlim(0, val[-1])
-        plt.ylim(1, f_val[-1])
+        plt.show
 
 
 def turn(v1, v2):
@@ -75,16 +79,28 @@ def turn(v1, v2):
     v1_ = np.append(v1, z_, axis=1)
     v2_ = np.append(v2, z_, axis=1)
     sign = [0 if np.cross(a, b)[-1] == 0 else 1 if np.cross(a, b)[-1] > 0 else -1 for a, b in zip(v2_, v1_)]
-    angles = [angle(a, b, s) for a, b, s in zip(v2_, v1_, sign)]
+    angles = [angle(a, b, sign=s) for a, b, s in zip(v2_, v1_, sign)]
     return angles
 
 
 def plot_polygon(p):
+    '''
+    This function plots the polygon with the turning function
+    :param p:
+    :return:
+    '''
     x, angles = turning_function(p, plot_func=False)
 
+    # Plots the polygon
     plt.subplot(1, 2, 1)
-    p_ = np.append(p,[p[0]],axis=0)
+    p_ = np.append(p, [p[0]], axis=0)
+    print p[:, 0]
+    print p
+    plt.xlim(int(min(p[:, 0] - 1)), int(max(p[:, 0] + 1)))
+    plt.ylim(int(min(p[:, 1] - 1)), int(max(p[:, 1] + 1)))
     plt.plot(np.transpose(p_)[0], np.transpose(p_)[1])
+
+    # Plots the turning function
     plt.subplot(1, 2, 2)
     plot_discrete_funct(x, angles, display=False)
     plt.show()
