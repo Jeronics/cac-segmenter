@@ -63,9 +63,9 @@ def plot_discrete_funct(val, f_val, display=True, label_points=False):
     plt.plot(x, U(x))
     plt.xlim(0, val[-1])
     plt.ylim(int(min(f_val) - 1), int(f_val[-1] + 1))
-    plt.xticks(val, ['p_' + str(i) for i, v in enumerate([0]+val)])
+    plt.xticks([0]+val, ['p_' + str(i) for i, v in enumerate([0]+val)])
     if display:
-        plt.show
+        plt.show()
 
 
 def turn(v1, v2):
