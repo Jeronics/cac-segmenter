@@ -49,7 +49,7 @@ def radiants_to_degrees(radiant):
     return radiant * 180 / np.pi
 
 
-def plot_discrete_funct(val, f_val, display=True):
+def plot_discrete_funct(val, f_val, display=True, label_points=False):
     def get_value(x):
         for a, b in zip(val, f_val):
             if x <= a:
@@ -62,7 +62,8 @@ def plot_discrete_funct(val, f_val, display=True):
     x = np.linspace(0, val[-1], N)
     plt.plot(x, U(x))
     plt.xlim(0, val[-1])
-    plt.ylim(int(min(f_val)-1), int(f_val[-1] + 1))
+    plt.ylim(int(min(f_val) - 1), int(f_val[-1] + 1))
+    plt.xticks(val, ['p_' + str(i) for i, v in enumerate([0]+val)])
     if display:
         plt.show
 
@@ -91,18 +92,24 @@ def plot_polygon(p):
     '''
     x, angles = turning_function(p, plot_func=False)
 
+    fig = plt.figure()
+    ax = fig.add_subplot(121)
     # Plots the polygon
-    plt.subplot(1, 2, 1)
+    # plt.subplot(1, 2, 1)
     p_ = np.append(p, [p[0]], axis=0)
-    print p[:, 0]
-    print p
+    plt.title('Polygon')
     plt.xlim(int(min(p[:, 0] - 1)), int(max(p[:, 0] + 1)))
     plt.ylim(int(min(p[:, 1] - 1)), int(max(p[:, 1] + 1)))
     plt.plot(np.transpose(p_)[0], np.transpose(p_)[1])
+    for idx, (i, j) in enumerate(p):
+        ax.annotate('p_%s' % idx, xy=(i, j), textcoords='offset points')  # <--
 
     # Plots the turning function
-    plt.subplot(1, 2, 2)
+    fig.add_subplot(122)
     plot_discrete_funct(x, angles, display=False)
+    plt.title('Turning function')
+    plt.xlabel('Perimeter distance')
+    plt.ylabel('Turning angle')
     plt.show()
 
 
@@ -133,7 +140,7 @@ if __name__ == '__main__':
         [1.0, 5],
     ])
     turning_function(poly_1)
-    plot_polygon(poly_1)
+    # plot_polygon(poly_1)
 
     poly_1 = np.array([
         [0, 0],
@@ -150,5 +157,16 @@ if __name__ == '__main__':
         [1.0, 5],
     ])
     turning_function(poly_1)
-
+    poly_1 = np.array([
+        [0, 0],
+        [0, 2],
+        [6, 2],
+        [6, 0],
+        [5, 0],
+        [5, 1],
+        [4, 1],
+        [4, 0],
+    ])
+    turning_function(poly_1)
+    plot_polygon(poly_1)
 
