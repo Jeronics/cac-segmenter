@@ -62,8 +62,8 @@ def plot_discrete_funct(val, f_val, display=True, label_points=False):
     x = np.linspace(0, val[-1], N)
     plt.plot(x, U(x))
     plt.xlim(0, val[-1])
-    plt.ylim(int(min(f_val) - 1), int(f_val[-1] + 1))
-    plt.xticks([0]+val, ['p_' + str(i) for i, v in enumerate([0]+val)])
+    plt.ylim(int(min(min(f_val),0) - 0.9), int(f_val[-1] + 1))
+    plt.xticks(np.append([0],val), ['p_' + str(i) for i, v in enumerate(np.append([0],val))])
     if display:
         plt.show()
 
@@ -139,7 +139,7 @@ if __name__ == '__main__':
         [2, 2.9],
         [1.0, 5],
     ])
-    turning_function(poly_1)
+    # turning_function(poly_1)
     # plot_polygon(poly_1)
 
     poly_1 = np.array([
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         [1, 3],
         [1, 0],
     ])
-    turning_function(poly_1)
+    # turning_function(poly_1)
     poly_1 = np.array([
         [5, 3],
         [4, 0],
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         [2, 2.9],
         [1.0, 5],
     ])
-    turning_function(poly_1)
+    # turning_function(poly_1)
     poly_1 = np.array([
         [0, 0],
         [0, 2],
@@ -167,6 +167,6 @@ if __name__ == '__main__':
         [4, 1],
         [4, 0],
     ])
-    turning_function(poly_1)
+    # turning_function(poly_1)
     plot_polygon(poly_1)
 
