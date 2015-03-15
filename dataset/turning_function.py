@@ -62,7 +62,7 @@ def plot_discrete_funct(val, f_val, display=True, label_points=False):
     x = np.linspace(0, val[-1], N)
     plt.plot(x, U(x))
     plt.xlim(0, val[-1])
-    plt.ylim(int(min(min(f_val),0) - 0.9), int(f_val[-1] + 1))
+    plt.ylim(int(min(min(f_val),0) - 0.9), int(max(f_val) + 1))
     plt.xticks(np.append([0],val), ['p_' + str(i) for i, v in enumerate(np.append([0],val))])
     if display:
         plt.show()
@@ -92,7 +92,7 @@ def plot_polygon(p):
     '''
     x, angles = turning_function(p, plot_func=False)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(20, 5))
     ax = fig.add_subplot(121)
     # Plots the polygon
     # plt.subplot(1, 2, 1)
@@ -118,9 +118,9 @@ def turning_function(p, plot_func=True):
     q.rotate(-1)
     v1 = p - q
     v2 = collections.deque(v1)
-    v2.rotate(-1)
+    v2.rotate(1)
 
-    angles = turn(v1, v2)
+    angles = turn(v2, v1)
     x = multiple_euclid_dist(p, q)
 
     angles = np.cumsum(angles)
