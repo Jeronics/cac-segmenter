@@ -49,23 +49,32 @@ def radiants_to_degrees(radiant):
     return radiant * 180 / np.pi
 
 
+def get_value(x, val, f_val):
+    for a, b in zip(val, f_val):
+        if x <= a:
+            return b
+
+
+def U(x, val, f_val):
+    return np.array([get_value(i, val, f_val) for i in x])
+
+
+
 def plot_discrete_funct(val, f_val, display=True, label_points=False):
-    def get_value(x):
-        for a, b in zip(val, f_val):
-            if x <= a:
-                return b
-
-    def U(x):
-        return [get_value(i) for i in x]
-
     N = 1000
     x = np.linspace(0, val[-1], N)
-    plt.plot(x, U(x))
+    plt.plot(x, U(x, val, f_val))
     plt.xlim(0, val[-1])
-    plt.ylim(int(min(min(f_val),0) - 0.9), int(max(f_val) + 1))
-    plt.xticks(np.append([0],val), ['p_' + str(i) for i, v in enumerate(np.append([0],val))])
+    plt.ylim(int(min(min(f_val), 0) - 0.9), int(max(f_val) + 1))
+    plt.xticks(np.append([0], val), ['p_' + str(i) for i, v in enumerate(np.append([0], val))])
     if display:
         plt.show()
+
+def plot_polygons(p,q):
+
+    plot_polygon(p, display=False)
+    plot_polygon(q, display=False)
+    plt.show()
 
 
 def turn(v1, v2):
@@ -84,7 +93,7 @@ def turn(v1, v2):
     return angles
 
 
-def plot_polygon(p):
+def plot_polygon(p, display=True):
     '''
     This function plots the polygon with the turning function
     :param p:
@@ -110,7 +119,8 @@ def plot_polygon(p):
     plt.title('Turning function')
     plt.xlabel('Perimeter distance')
     plt.ylabel('Turning angle')
-    plt.show()
+    if display:
+        plt.show()
 
 
 def turning_function(p, plot_func=True):

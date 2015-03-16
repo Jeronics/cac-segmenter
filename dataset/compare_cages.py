@@ -2,6 +2,7 @@ __author__ = 'jeroni'
 import turning_function as tf
 import numpy as np
 import collections
+import sets
 
 
 
@@ -48,6 +49,7 @@ def get_angle(input_val):
 
 def integral_of_discrte_function(x, y, interval=[0, 1]):
     x_ = np.append(interval[0], x[:-1])
+    x_ = x_.flatten()
     lengths = x - x_
     integral = sum([a * b for a, b in zip(lengths, y)])
     return integral
@@ -60,13 +62,13 @@ if __name__ == '__main__':
         [0, 2],
         [6, 2],
         [6, 0],
-        [5, 0],
-        [5, 1],
-        [4, 1],
         [4, 0],
+        [4, 1],
+        [3, 1],
+        [3, 0],
     ])
     x_1, angles_1 = tf.turning_function(poly_1, plot_func=False)
-    # tf.plot_polygon(poly_1)
+    tf.plot_polygon(poly_1)
     poly_2 = np.array([
         [0, 0],
         [0, 2],
@@ -78,9 +80,20 @@ if __name__ == '__main__':
         [4, 0],
     ])
     x_2, angles_2 = tf.turning_function(poly_2, plot_func=False)
-    # tf.plot_polygon(poly_2)
+    tf.plot_polygon(poly_2)
 
-    angles_diff = angles_2 - angles_1, 2
-    angles_diff_sq = np.power(angles_diff)
-    integral = integral_of_discrte_function([1 / 3., 2 / 3., 1], [1, 1, 1], interval=[0, 1])
+    set_1 = sets.Set(x_1)
+    set_2 = sets.Set(x_2)
+    x_merge = sorted(set_1.union(set_2))
+    print sorted(set_1)
+    print sorted(set_2)
+    print x_merge
+
+    f_merge_1 = tf.U(x_merge, x_1, angles_1)
+    f_merge_2 = tf.U(x_merge, x_2, angles_2)
+    f_difference = np.array(f_merge_1) - f_merge_2
+    tf.plot_discrete_funct(x_merge, f_difference)
+    angles_diff_sq = np.power(f_difference, 2)
+
+    integral = integral_of_discrte_function(x_merge, angles_diff_sq, interval=[0, 1])
     print integral
