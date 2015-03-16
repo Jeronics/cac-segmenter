@@ -107,6 +107,7 @@ def plot_polygon(p, display=True):
     # plt.subplot(1, 2, 1)
     p_ = np.append(p, [p[0]], axis=0)
     plt.title('Polygon')
+    plt.axis('equal')
     plt.xlim(int(min(p[:, 0] - 1)), int(max(p[:, 0] + 1)))
     plt.ylim(int(min(p[:, 1] - 1)), int(max(p[:, 1] + 1)))
     plt.plot(np.transpose(p_)[0], np.transpose(p_)[1])
