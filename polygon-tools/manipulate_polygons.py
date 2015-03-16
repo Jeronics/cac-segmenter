@@ -16,6 +16,7 @@ def rotate_polygon(poly, rot):
     r_poly=np.dot(poly, rotation_matrix)
     return r_poly
 
+
 if __name__=='__main__':
     poly_1 = np.array([
         [0, 0],
