@@ -57,4 +57,5 @@ if __name__ == '__main__':
         [4, 1],
         [4, 0],
     ])
-    x_2, angles_2 = tf.turning_function(poly_2, plot_func=False)
+    x_1, angles_1 = tf.turning_function(poly_1, plot_func=False)
+    x_2, angles_2 = tf.turning_function(poly_1, plot_func=False)

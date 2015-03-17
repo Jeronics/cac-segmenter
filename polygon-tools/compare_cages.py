@@ -3,6 +3,7 @@ import turning_function as tf
 import numpy as np
 import collections
 import sets
+import manipulate_polygons as mp
 
 
 
@@ -55,6 +56,48 @@ def integral_of_discrte_function(x, y, interval=[0, 1]):
     return integral
 
 
+def shift_polygon(x, angles, i):
+    s = x[i - 1] if i != 0 else 0
+    x_shift = np.append(x[i:], x[:i] + x[-1]) - s
+    f = angles[i - 1] if i != 0 else 0
+    f_shift = np.append(angles[i:], angles[:i] + angles[-1]) - f
+    return x_shift, f_shift
+
+
+def subtract_histograms(x_a, angles_a, x_b, angles_b):
+    set_a = sets.Set(x_a)
+    set_b = sets.Set(x_b)
+    x_merge = sorted(set_a.union(set_b))
+
+    f_merge_a = tf.U(x_merge, x_a, angles_a)
+    f_merge_b = tf.U(x_merge, x_b, angles_b)
+    f_difference = f_merge_a - f_merge_b
+    tf.plot_discrete_funct(x_merge, f_difference, display=False)
+    angles_diff_sq = np.power(f_difference, 2)
+
+    integral = integral_of_discrte_function(x_merge, angles_diff_sq, interval=[0, 1])
+    return integral
+
+
+def polygon_comparison(poly_a, poly_b):
+    x_a, angles_a = tf.turning_function(poly_a, plot_func=False)
+    x_b, angles_b = tf.turning_function(poly_b, plot_func=False)
+    minimum_difference = max(max(abs(angles_a)), max(abs(angles_b)))
+
+    for i, a in enumerate(x_a):
+        x_a_s, angles_a_s = shift_polygon(x_a, angles_a, i)
+        # tf.plot_discrete_funct(x_a_s, angles_a_s, label_points=False)
+        for j, b in enumerate(x_b):
+            x_b_s, angles_b_s = shift_polygon(x_b, angles_b, j)
+            # tf.plot_discrete_funct(x_b_s, angles_b_s, label_points=False)
+            # print x_a_s, angles_a_s, x_b_s, angles_b_s
+            min_aux = subtract_histograms(x_a_s, angles_a_s, x_b_s, angles_b_s)
+            # print min_aux
+            if minimum_difference > min_aux:
+                minimum_difference = min_aux
+    return minimum_difference
+
+
 if __name__ == '__main__':
     # turning_function(poly_1)
     poly_1 = np.array([
@@ -67,9 +110,9 @@ if __name__ == '__main__':
         [3, 1],
         [3, 0],
     ])
-    x_1, angles_1 = tf.turning_function(poly_1, plot_func=False)
-    tf.plot_polygon(poly_1)
-    poly_2 = np.array([
+    # x_1, angles_1 = tf.turning_function(poly_1, plot_func=False)
+    # tf.plot_polygon(poly_1)
+    poly_b = np.array([
         [0, 0],
         [0, 2],
         [6, 2],
@@ -79,21 +122,21 @@ if __name__ == '__main__':
         [4, 1],
         [4, 0],
     ])
-    x_2, angles_2 = tf.turning_function(poly_2, plot_func=False)
+    # x_2, angles_2 = tf.turning_function(poly_2, plot_func=False)
+    # tf.plot_polygon(poly_2)
+    poly_2 = mp.scale_polygon(poly_1,10.3)
+    poly_3 = mp.rotate_polygon(poly_1, np.pi/3.)
+    poly_4 = mp.translate_polygon(poly_1,2.3,-1.01)
+    poly_5 = mp.distort_polygon(poly_1,0.1)
+    tf.plot_polygon(poly_1)
     tf.plot_polygon(poly_2)
-
-    set_1 = sets.Set(x_1)
-    set_2 = sets.Set(x_2)
-    x_merge = sorted(set_1.union(set_2))
-    print sorted(set_1)
-    print sorted(set_2)
-    print x_merge
-
-    f_merge_1 = tf.U(x_merge, x_1, angles_1)
-    f_merge_2 = tf.U(x_merge, x_2, angles_2)
-    f_difference = np.array(f_merge_1) - f_merge_2
-    tf.plot_discrete_funct(x_merge, f_difference)
-    angles_diff_sq = np.power(f_difference, 2)
-
-    integral = integral_of_discrte_function(x_merge, angles_diff_sq, interval=[0, 1])
-    print integral
+    tf.plot_polygon(poly_3)
+    tf.plot_polygon(poly_4)
+    tf.plot_polygon(poly_5)
+    tf.plot_polygon(poly_b)
+    print polygon_comparison(poly_1, poly_1)
+    print polygon_comparison(poly_1, poly_2)
+    print polygon_comparison(poly_1, poly_3)
+    print polygon_comparison(poly_1, poly_4)
+    print polygon_comparison(poly_1, poly_5)
+    print polygon_comparison(poly_1, poly_b)

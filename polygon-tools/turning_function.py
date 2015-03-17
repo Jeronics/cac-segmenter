@@ -7,6 +7,7 @@ import math
 import numpy as np
 import collections
 from matplotlib import pyplot as plt
+import manipulate_polygons as mp
 
 
 def multiple_euclid_dist(p1, p2):
@@ -53,11 +54,11 @@ def get_value(x, val, f_val):
     for a, b in zip(val, f_val):
         if x <= a:
             return b
+    return b
 
 
 def U(x, val, f_val):
     return np.array([get_value(i, val, f_val) for i in x])
-
 
 
 def plot_discrete_funct(val, f_val, display=True, label_points=False):
@@ -70,8 +71,8 @@ def plot_discrete_funct(val, f_val, display=True, label_points=False):
     if display:
         plt.show()
 
-def plot_polygons(p,q):
 
+def plot_polygons(p, q):
     plot_polygon(p, display=False)
     plot_polygon(q, display=False)
     plt.show()
@@ -180,4 +181,3 @@ if __name__ == '__main__':
     ])
     # turning_function(poly_1)
     plot_polygon(poly_1)
-
