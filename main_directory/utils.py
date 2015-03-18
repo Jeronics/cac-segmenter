@@ -51,6 +51,15 @@ class MaskClass:
         mask = mask.astype(np.float64)
         self.__init__(mask, filename, threshold)
 
+
+    def plot_image(self, show_plot=True):
+        im_aux = self.mask.astype('uint8')
+        plt.gray()
+        plt.imshow(im_aux, interpolation='nearest')
+        plt.axis('off')
+        if show_plot:
+            plt.show()
+
     def binarize_image(self, image, threshold):
         im = image.copy()
         if len(im.shape) == 3:

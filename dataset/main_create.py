@@ -123,6 +123,8 @@ def create_ground_truth(image):
         ground_truth.save_image(filename=ground_truth.path)
 
 
+
+
 if __name__ == '__main__':
 
     RootFolder = '../dataset'
@@ -141,5 +143,4 @@ if __name__ == '__main__':
         for image in images:
             # resize_image(image)
             # gt=create_ground_truth(image)
-            if image.spec_name == 'eagle3':
-                open_canvas(image.path)
+            # open_canvas(image.path)
