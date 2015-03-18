@@ -122,21 +122,64 @@ if __name__ == '__main__':
         [4, 1],
         [4, 0],
     ])
+    poly_c = np.array([
+        [0, 0],
+        [0, 1],
+        [1, 0]
+    ])
+    poly_d = np.array([
+        [0, 0],
+        [-1, 1 / 2.],
+        [0, 1],
+        [-1 / 2., 1 / 4.],
+        [1, 0]
+    ])
+    poly_e = np.array([
+        [0, 0],
+        [-1, 0],
+        [0, 1],
+        [-1 / 2., 1 / 4.],
+        [1, 0]
+    ])
+    poly_f = np.array([
+        [0, 0],
+        [0, 2],
+        [3, 2],
+        [3, 1.25],
+        [4, 1.25],
+        [4, 2],
+        [6, 2],
+        [6, 0],
+        [4, 0],
+        [4, 1],
+        [3, 1],
+        [3, 0],
+    ])
+
+
     # x_2, angles_2 = tf.turning_function(poly_2, plot_func=False)
     # tf.plot_polygon(poly_2)
-    poly_2 = mp.scale_polygon(poly_1,10.3)
-    poly_3 = mp.rotate_polygon(poly_1, np.pi/3.)
-    poly_4 = mp.translate_polygon(poly_1,2.3,-1.01)
-    poly_5 = mp.distort_polygon(poly_1,0.1)
+    poly_2 = mp.scale_polygon(poly_1, 10.3)
+    poly_3 = mp.rotate_polygon(poly_1, np.pi / 3.)
+    poly_4 = mp.translate_polygon(poly_1, 2.3, -1.01)
+    poly_5 = mp.distort_polygon(poly_1, 0.1)
     tf.plot_polygon(poly_1)
     tf.plot_polygon(poly_2)
     tf.plot_polygon(poly_3)
     tf.plot_polygon(poly_4)
     tf.plot_polygon(poly_5)
     tf.plot_polygon(poly_b)
+    tf.plot_polygon(poly_c)
+    tf.plot_polygon(poly_d)
+    tf.plot_polygon(poly_e)
+    tf.plot_polygon(poly_f)
     print polygon_comparison(poly_1, poly_1)
     print polygon_comparison(poly_1, poly_2)
     print polygon_comparison(poly_1, poly_3)
     print polygon_comparison(poly_1, poly_4)
     print polygon_comparison(poly_1, poly_5)
     print polygon_comparison(poly_1, poly_b)
+    print polygon_comparison(poly_1, poly_c)
+    print polygon_comparison(poly_1, poly_d)
+    print polygon_comparison(poly_1, poly_e)
+    print polygon_comparison(poly_1, poly_f)
