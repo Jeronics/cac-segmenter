@@ -408,7 +408,7 @@ def walk_level(some_dir, level=1):
 
 def save_cage(cage, filename):
     text_file = open(filename, "w")
-    for x, y in cage:
+    for x, y in cage.cage:
         text_file.write("%.8e\t%.8e\n" % (x, y))
 
 
@@ -426,7 +426,7 @@ def mkdir(str_path):
     if os.path.exists(str_path) and os.path.isdir(str_path):
         return False
 
-    os.system("mkdir -p " + str_path)
+    os.makedirs(str_path)
     if not os.path.exists(str_path) or not os.path.isdir(str_path):
         raise IOError("Could not create path '%s'" % str_path)
 

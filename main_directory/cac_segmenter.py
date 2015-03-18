@@ -17,11 +17,8 @@ from scipy import interpolate
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     start = time.time()
     image = image_obj.gray_image
-
     num_control_point = cage_obj.num_points
-
     contour_coord, contour_size = get_contour(mask_obj)
-
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
     # Update Step of contour coordinates
@@ -50,8 +47,6 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
                                                                                     omega_2_coord, omega_2_size,
                                                                                     num_control_point, cage_obj.cage)
 
-
-        # multiple_norm()
         # Update gradients
         grad_k_3 = grad_k_2.copy()
         grad_k_2 = grad_k_1.copy()
@@ -70,10 +65,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                               contour_size, energy,
-                                               image)
+                                               contour_size, energy, image)
             if alpha_new == 0:
-                continue_while= False
+                continue_while = False
                 print 'Local minimum reached. no better alpha'
             # return curr_cage_file
 
@@ -86,24 +80,23 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         # if iter % 20 == 0:
         #     plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
         #                        points2=cage_obj.cage - alpha * 10 * grad_k)
-
-        # plotContourOnImage(contour_coordinates, rgb_image, points=curr_cage_file, color=[0., 0., 255.],
-        # points2=curr_cage_file - alpha * 10 * grad_k)
+        plot_evolution=False
+        if plot_evolution:
+            plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
+                               points2=cage_obj.cage - alpha * 10 * grad_k)
 
         # Update File current cage
-        cage_obj.cage = cage_obj.cage - alpha * grad_k
+        cage_obj.cage += - alpha * grad_k
         if first_stage and energies.cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
             first_stage = False
+            print 'First stage reached'
+
 
         # Update contour coordinates
         contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
         iter += 1
 
-    return None
-    # THE END
-    # Time elapsed
-    # end = time.time()
-    # print end-start
+    return cage_obj
 
     # TODO
     # IMPLEMENTAR CaLCUL DE ENERGIA I GRADIENT N-Dimensional

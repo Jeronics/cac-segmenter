@@ -12,6 +12,8 @@ import numpy as np
 from main_directory import utils
 from PIL import Image
 
+from polygon_tools import turning_function
+
 PI = 3.14159265358979323846264338327950288419716939937510
 
 
@@ -113,10 +115,11 @@ def resize_image(image):
         image.reshape(new_width=400)
         image.save_image(filename=image.path)
 
+
 def create_ground_truth(image):
     if isinstance(image, utils.ImageClass):
-        im=image.gray_image
-        ground_truth = utils.MaskClass(mask=im,filename=image.root+'gt_'+image.spec_name+'.png', threshold=252.)
+        im = image.gray_image
+        ground_truth = utils.MaskClass(mask=im, filename=image.root + 'gt_' + image.spec_name + '.png', threshold=252.)
         ground_truth.save_image(filename=ground_truth.path)
 
 
@@ -126,11 +129,17 @@ if __name__ == '__main__':
     depth = 2
     generator = utils.walk_level(RootFolder, depth)
 
-    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth][1:]
+    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth]
     for root, files in gens:
+
+        # cages = utils.get_cages(files, root)
+        # for cage in cages:
+        #     turning_function.plot_polygon(cage.cage, fig_title=cage.root)
 
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            gt=create_ground_truth(image)
-            # open_canvas(image.path)
+            # resize_image(image)
+            # gt=create_ground_truth(image)
+            if image.spec_name == 'eagle3':
+                open_canvas(image.path)

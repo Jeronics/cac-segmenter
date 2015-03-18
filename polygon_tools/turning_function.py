@@ -94,7 +94,7 @@ def turn(v1, v2):
     return angles
 
 
-def plot_polygon(p, display=True):
+def plot_polygon(p, display=True, fig_title=''):
     '''
     This function plots the polygon with the turning function
     :param p:
@@ -103,6 +103,7 @@ def plot_polygon(p, display=True):
     x, angles = turning_function(p, plot_func=False)
 
     fig = plt.figure(figsize=(20, 5))
+    plt.suptitle(fig_title)
     ax = fig.add_subplot(121)
     # Plots the polygon
     # plt.subplot(1, 2, 1)

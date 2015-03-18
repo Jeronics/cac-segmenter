@@ -7,7 +7,7 @@ import sys
 def walk_through_dataset(root_folder, depth):
     generator = utils.walk_level(root_folder, depth)
     model = 1
-    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(root_folder.split("/")) + depth][1:]
+    gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(root_folder.split("/")) + depth]
     print gens
     for root, files in gens:
         images = utils.get_images(files, root)
@@ -28,9 +28,13 @@ def walk_through_dataset(root_folder, depth):
             if len(masks) > 1:
                 results_path = results_path + "/" + mask.spec_name
             for image in images:
+                if image.spec_name == 'eagle1':
+                    print 'HERE'
+                else:
+                    continue
                 for mask in masks:
                     for cage in cages:
-                        result_file = results_path + cage.save_name
+                        result_file = results_path + "/" + cage.save_name
                         resulting_cage = cac_segmenter.cac_segmenter(image, mask, cage, None)
                         if not resulting_cage:
                             print 'No convergence reached for the cac-segmenter'
