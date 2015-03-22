@@ -72,7 +72,7 @@ def subtract_histograms(x_a, angles_a, x_b, angles_b):
     f_merge_a = tf.U(x_merge, x_a, angles_a)
     f_merge_b = tf.U(x_merge, x_b, angles_b)
     f_difference = f_merge_a - f_merge_b
-    tf.plot_discrete_funct(x_merge, f_difference, display=False)
+    tf.plot_discrete_funct(x_merge, f_difference, plot_fig=False)
     angles_diff_sq = np.power(f_difference, 2)
 
     integral = integral_of_discrte_function(x_merge, angles_diff_sq, interval=[0, 1])

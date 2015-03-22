@@ -2,6 +2,7 @@ import cac_segmenter
 import numpy as np
 import utils
 import sys
+import copy
 
 
 def walk_through_dataset(root_folder, depth):
@@ -28,18 +29,20 @@ def walk_through_dataset(root_folder, depth):
             if len(masks) > 1:
                 results_path = results_path + "/" + mask.spec_name
             for image in images:
-                if image.spec_name == 'eagle1':
-                    print 'HERE'
-                else:
-                    continue
                 for mask in masks:
                     for cage in cages:
+                        print '\nSegmenting', image.root
                         result_file = results_path + "/" + cage.save_name
-                        resulting_cage = cac_segmenter.cac_segmenter(image, mask, cage, None)
+                        aux_cage = copy.deepcopy(cage)
+                        resulting_cage = cac_segmenter.cac_segmenter(image, mask, aux_cage, None)
                         if not resulting_cage:
                             print 'No convergence reached for the cac-segmenter'
                         else:
                             utils.save_cage(resulting_cage, result_file)
+                            gt_mask = utils.create_ground_truth(cage, resulting_cage, mask)
+                            utils.sorensen_dice_coefficient(mask, gt_mask)
+
+
 
 
 if __name__ == '__main__':

@@ -12,6 +12,9 @@ matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 
+from ctypes_utils import *
+from polygon_tools import compare_cages as cc
+
 
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):
@@ -198,6 +201,33 @@ def get_cages(files, root):
             cage.read_txt(root + "/" + f)
             cages.append(cage)
     return cages
+
+
+def create_ground_truth(initial_cage, final_cage, initial_mask):
+    contour_coord, contour_size = get_contour(initial_mask)
+    affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, initial_cage.cage)
+
+    # Update Step of contour coordinates
+    contour_coord = np.dot(affine_contour_coordinates, final_cage.cage)
+    band_size = int(initial_mask.height)
+    omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
+                                                                                       contour_size, initial_mask.width,
+                                                                                       initial_mask.height)
+    gt_im = np.zeros([initial_mask.width, initial_mask.height])
+    # print cc.polygon_comparison(initial_cage.cage, final_cage.cage)
+    gt_im[omega_1_coord.transpose().astype(int)[0], omega_1_coord.transpose().astype(int)[1]] = 255.
+    gt_mask = MaskClass(gt_im)
+    return gt_mask
+
+
+def sorensen_dice_coefficient(mask1, mask2):
+    mask1_bool = mask1.mask == 255.
+    mask2_bool = mask2.mask == 255.
+    intersection_bool = mask1_bool & mask2_bool
+    intersection_card = sum(intersection_bool)
+    sorensen_dice = 2*intersection_card/float(sum(mask1_bool)+sum(mask2_bool))
+    print 'Sorensen-dice Coefficient', sorensen_dice
+    return sorensen_dice
 
 
 def read_png(name):

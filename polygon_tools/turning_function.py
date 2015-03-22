@@ -61,15 +61,17 @@ def U(x, val, f_val):
     return np.array([get_value(i, val, f_val) for i in x])
 
 
-def plot_discrete_funct(val, f_val, display=True, label_points=False):
+def plot_discrete_funct(val, f_val, display=True, label_points=False, plot_fig=True):
     N = 1000
     x = np.linspace(0, val[-1], N)
-    plt.plot(x, U(x, val, f_val))
-    plt.xlim(0, val[-1])
-    plt.ylim(int(min(min(f_val), 0) - 0.9), int(max(f_val) + 1))
-    plt.xticks(np.append([0], val), ['p_' + str(i) for i, v in enumerate(np.append([0], val))])
-    if display:
-        plt.show()
+    if plot_fig:
+        plt.plot(x, U(x, val, f_val))
+        plt.xlim(0, val[-1])
+        plt.ylim(int(min(min(f_val), 0) - 0.9), int(max(f_val) + 1))
+        plt.xticks(np.append([0], val), ['p_' + str(i) for i, v in enumerate(np.append([0], val))])
+        if display:
+            plt.show()
+
 
 
 def plot_polygons(p, q):

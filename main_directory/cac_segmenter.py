@@ -17,7 +17,6 @@ from scipy import interpolate
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     start = time.time()
     image = image_obj.gray_image
-    num_control_point = cage_obj.num_points
     contour_coord, contour_size = get_contour(mask_obj)
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
@@ -28,24 +27,24 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     iter = 0
     max_iter = 50
     first_stage = True
-    grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([num_control_point, 2]), np.zeros([num_control_point, 2]), np.zeros(
-        [num_control_point, 2]), np.zeros([num_control_point, 2])
+    grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2]), np.zeros(
+        [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
-    beta = 5
+    beta = 10
+    band_size = 40
     continue_while = True
     while continue_while:
         if iter > max_iter:
             continue_while = False
             print 'Maximum iterations reached'
 
-        band_size = 75
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                            contour_size, mask_obj.width,
                                                                                            mask_obj.height)
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
-                                                                                    num_control_point, cage_obj.cage)
+                                                                                    cage_obj.num_points, cage_obj.cage)
 
         # Update gradients
         grad_k_3 = grad_k_2.copy()
@@ -55,10 +54,10 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
                                            image)
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
-            # mid_point = sum(curr_cage_file, 0) / curr_cage_file.shape[0]
-            # axis = mid_point - curr_cage_file
-            # axis = normalize_vectors(axis)
-            # grad_k = multiple_project_gradient_on_axis(grad_k, axis)
+            mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
+            axis = mid_point - cage_obj.cage
+            axis = energies.multiple_normalize(axis)
+            grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
             alpha = beta
 
         else:

@@ -17,7 +17,7 @@ from polygon_tools import turning_function
 PI = 3.14159265358979323846264338327950288419716939937510
 
 
-def create_mask_and_cage_points(c, p, in_filename):
+def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
     '''
     This function creates a mask and a sequence of cages.
     :param c:
@@ -28,9 +28,9 @@ def create_mask_and_cage_points(c, p, in_filename):
     '''
     image = utils.read_png(in_filename)
     im_shape = image.shape
-    num_cage_points = [8, 9]
+    num_cage_points = [10]
     radius = np.linalg.norm(np.array(c) - np.array(p))
-    radius_cage_ratio = [1.5, 1.7]
+    radius_cage_ratio = [1.05]
     im = np.zeros(im_shape, dtype='uint8')
     mask_points = []
 
@@ -58,9 +58,10 @@ def create_mask_and_cage_points(c, p, in_filename):
                 cage.append([y + c[0], x + c[1]])
                 text_file.write("%.8e\t%.8e\n" % (x + c[1], y + c[0]))  # OTHER
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
-    utils.plotContourOnImage(np.array(mask_points), im[:, :, 0],
-                             points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])],
-                             points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
+    if display_mask:
+        utils.plotContourOnImage(np.array(mask_points), im[:, :, 0],
+                                 points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])])
+    a.closeAllWindows()
 
 
 class OverrideGraphicsScene(Qt.QGraphicsScene):
@@ -126,21 +127,22 @@ def create_ground_truth(image):
 
 
 if __name__ == '__main__':
-
     RootFolder = '../dataset'
     depth = 2
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth]
     for root, files in gens:
-
+        #
+        # # All images in each file are found
         # cages = utils.get_cages(files, root)
         # for cage in cages:
         #     turning_function.plot_polygon(cage.cage, fig_title=cage.root)
 
-        # All images in each file are found
-        images = utils.get_images(files, root)
-        for image in images:
-            # resize_image(image)
-            # gt=create_ground_truth(image)
-            # open_canvas(image.path)
+        # # All images in each file are found
+        # images = utils.get_images(files, root)
+        # for image in images:
+        #     # if image.spec_name == 'apple2':
+        #     resize_image(image)
+        #     # gt=create_ground_truth(image)
+        #     # open_canvas(image.path)
