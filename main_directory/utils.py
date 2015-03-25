@@ -12,7 +12,6 @@ matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 
-from ctypes_utils import *
 from polygon_tools import compare_cages as cc
 
 
@@ -74,6 +73,20 @@ class MaskClass:
                 else:
                     im[i, j] = 0.
         return im
+
+    def reshape(self, new_width=-1, new_height=-1):
+        height, width = self.shape
+        im = Image.open(self.path)
+
+        if not (new_width == -1 and new_height == -1):
+            if new_width == -1:
+                new_width = int(width * new_height / float(height))
+            elif new_height == -1:
+                new_height = int(height * new_width / float(width))
+
+            reshaped_image = im.resize((new_width, new_height), Image.ANTIALIAS)
+            self.__init__(np.array(reshaped_image), self.path)
+
 
     def save_image(self, filename=''):
         if filename == '':
@@ -143,6 +156,7 @@ class ImageClass:
         return gray
 
 
+
 # ########## VISUALITON
 def rgb2gray(rgb):
     if len(rgb.shape) == 3:
@@ -183,7 +197,7 @@ def get_images(files, root):
     return images
 
 
-def get_mask(files, root):
+def get_masks(files, root):
     masks = []
     for f in files:
         if is_png(f) and is_mask(f):
@@ -202,8 +216,17 @@ def get_cages(files, root):
             cages.append(cage)
     return cages
 
+def get_ground_truth(image, files):
+    gt_name= 'gt_'+image.name
+    if gt_name in files:
+        gt_image = MaskClass()
+        gt_image.read_png(image.root+gt_name)
+        return gt_image
+    else:
+        return None
 
 def create_ground_truth(initial_cage, final_cage, initial_mask):
+    from ctypes_utils import *
     contour_coord, contour_size = get_contour(initial_mask)
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, initial_cage.cage)
 
@@ -226,7 +249,6 @@ def sorensen_dice_coefficient(mask1, mask2):
     intersection_bool = mask1_bool & mask2_bool
     intersection_card = sum(intersection_bool)
     sorensen_dice = 2*intersection_card/float(sum(mask1_bool)+sum(mask2_bool))
-    print 'Sorensen-dice Coefficient', sorensen_dice
     return sorensen_dice
 
 

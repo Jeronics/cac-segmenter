@@ -123,6 +123,13 @@ def create_ground_truth(image):
         ground_truth = utils.MaskClass(mask=im, filename=image.root + 'gt_' + image.spec_name + '.png', threshold=252.)
         ground_truth.save_image(filename=ground_truth.path)
 
+def resize_mask(mask):
+    print mask.name
+    if mask.height > 500:
+        print 'DO'
+        mask.reshape(new_width=400)
+        mask.save_image(filename=mask.path)
+
 
 
 
@@ -146,3 +153,10 @@ if __name__ == '__main__':
         #     resize_image(image)
         #     # gt=create_ground_truth(image)
         #     # open_canvas(image.path)
+
+        # # All masks in each file are found
+        # images = utils.get_images(files,root)
+        # for image in images:
+        #     gt_im=utils.get_ground_truth(image,files)
+        #     if gt_im:
+        #         resize_mask(gt_im)
