@@ -40,7 +40,7 @@ class MaskClass:
         self.path = filename
         self.name = filename.split("/")[-1]
         self.spec_name = self.name.split('.png')[0]
-        self.root = "/".join(filename.split("/")[:-1])
+        self.root = "/".join(filename.split("/")[:-1])+"/"
         self.save_name = self.spec_name + '_out.png'
 
     def read_png(self, filename, threshold=125.):
@@ -239,6 +239,7 @@ def create_ground_truth(initial_cage, final_cage, initial_mask):
     gt_im = np.zeros([initial_mask.width, initial_mask.height])
     # print cc.polygon_comparison(initial_cage.cage, final_cage.cage)
     gt_im[omega_1_coord.transpose().astype(int)[0], omega_1_coord.transpose().astype(int)[1]] = 255.
+
     gt_mask = MaskClass(gt_im)
     return gt_mask
 

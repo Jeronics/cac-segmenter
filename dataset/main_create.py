@@ -146,13 +146,16 @@ if __name__ == '__main__':
         # for cage in cages:
         #     turning_function.plot_polygon(cage.cage, fig_title=cage.root)
 
-        # # All images in each file are found
-        # images = utils.get_images(files, root)
-        # for image in images:
-        #     # if image.spec_name == 'apple2':
-        #     resize_image(image)
-        #     # gt=create_ground_truth(image)
-        #     # open_canvas(image.path)
+        # All images in each file are found
+        print root.split("/")[-2]
+        if root.split("/")[-2] != 'shapes':
+            continue
+        images = utils.get_images(files, root)
+        for image in images:
+            # if image.spec_name == 'apple2':
+            # resize_image(image)
+            # gt=create_ground_truth(image)
+            open_canvas(image.path)
 
         # # All masks in each file are found
         # images = utils.get_images(files,root)

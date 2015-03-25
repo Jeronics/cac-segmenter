@@ -21,13 +21,14 @@ def walk_through_dataset(root_folder, depth):
         elif not cages:
             print root, 'has no .txt cages'
         else:
-            results_path = root + '/results'
-            utils.mkdir(results_path)
-            if len(images) > 1:
-                results_path = results_path + "/" + image.spec_name
-                utils.mkdir(results_path)
-            if len(masks) > 1:
-                results_path = results_path + "/" + mask.spec_name
+            results_folder = root + '/results'
+            utils.mkdir(results_folder)
+            # TODO: FIX TO ALLOW MORE IMAGES
+            # if len(images) > 1:
+            #     results_folder = results_folder + "/" + image.spec_name
+            #     utils.mkdir(results_folder)
+            # if len(masks) > 1:
+            #     results_folder = results_folder + "/" + mask.spec_name
             for image in images:
                 if image.spec_name == 'banana2':
                     print 'skip banana2'
@@ -35,7 +36,7 @@ def walk_through_dataset(root_folder, depth):
                 for mask in masks:
                     for cage in cages:
                         print '\nSegmenting', image.root
-                        result_file = results_path + "/" + cage.save_name
+                        result_file = results_folder + "/" + cage.save_name
                         aux_cage = copy.deepcopy(cage)
                         resulting_cage = cac_segmenter.cac_segmenter(image, mask, aux_cage, None)
                         if not resulting_cage:
@@ -45,8 +46,8 @@ def walk_through_dataset(root_folder, depth):
                             gt_mask = utils.get_ground_truth(image, files)
                             if gt_mask:
                                 result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
-                                result_mask.save_image(filename=result_mask.save_name)
-                                sorensen_dice_coefficient=utils.sorensen_dice_coefficient(gt_mask, result_mask)
+                                result_mask.save_image(filename=results_folder +"/" +'result'+ cage.spec_name.split("cage_")[-1] + '.png')
+                                sorensen_dice_coefficient = utils.sorensen_dice_coefficient(gt_mask, result_mask)
                                 print 'Sorensen-Dice coefficient', sorensen_dice_coefficient
 
 
