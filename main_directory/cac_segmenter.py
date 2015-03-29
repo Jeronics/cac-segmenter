@@ -25,7 +25,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
     # copy of cage_obj
     iter = 0
-    max_iter = 50
+    max_iter = 500
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2]), np.zeros(
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
