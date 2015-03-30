@@ -25,13 +25,13 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
     # copy of cage_obj
     iter = 0
-    max_iter = 500
+    max_iter = 20
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2]), np.zeros(
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
     beta = 5
-    band_size = 30
+    band_size = 500
     continue_while = True
     while continue_while:
         if iter > max_iter:
@@ -54,10 +54,10 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
                                            image)
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
-            # mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
-            # axis = mid_point - cage_obj.cage
-            # axis = energies.multiple_normalize(axis)
-            # grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
+            mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
+            axis = mid_point - cage_obj.cage
+            axis = energies.multiple_normalize(axis)
+            grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
             alpha = beta
 
         else:
@@ -110,6 +110,6 @@ if __name__ == '__main__':
     mask_obj = MaskClass()
     mask_obj.read_png('../dataset/pear/pear2/mask_00.png')
     cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/pear/pear2/cage_8_1.5.txt')
+    cage_obj.read_txt('../dataset/pear/pear2/cage_10_1.05.txt')
     curr_cage_file = None
-    print cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
+    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)

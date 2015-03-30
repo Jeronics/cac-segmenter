@@ -25,7 +25,7 @@ def walk_through_dataset(root_folder, depth):
             utils.mkdir(results_folder)
             # TODO: FIX TO ALLOW MORE IMAGES
             # if len(images) > 1:
-            #     results_folder = results_folder + "/" + image.spec_name
+            # results_folder = results_folder + "/" + image.spec_name
             #     utils.mkdir(results_folder)
             # if len(masks) > 1:
             #     results_folder = results_folder + "/" + mask.spec_name
@@ -46,7 +46,9 @@ def walk_through_dataset(root_folder, depth):
                             gt_mask = utils.get_ground_truth(image, files)
                             if gt_mask:
                                 result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
-                                result_mask.save_image(filename=results_folder +"/" +'result'+ cage.spec_name.split("cage_")[-1] + '.png')
+                                result_mask.save_image(
+                                    filename=results_folder + "/" + 'result' + cage.spec_name.split("cage_")[
+                                        -1] + '.png')
                                 sorensen_dice_coefficient = utils.sorensen_dice_coefficient(gt_mask, result_mask)
                                 print 'Sorensen-Dice coefficient', sorensen_dice_coefficient
 

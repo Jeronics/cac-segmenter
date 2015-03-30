@@ -40,7 +40,7 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
                                                                                     curr_cage - grad_k * alpha)
 
         next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
-    if alpha<0.1:
+    if alpha < 0.1:
         return 0
     return 1
 
@@ -105,6 +105,32 @@ def get_omega_mean(omega_coord, image):
     omega_mean = omega_intensity / (len(omega_boolean[omega_boolean]))
     omega_std = np.std(image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]])
     return omega_mean, omega_std
+
+
+def grad_vertex_constraint(vertices, d):
+    grad_norm = np.zeros([len(vertices), 1])
+    for i, vi in enumerate(vertices):
+        for j, vj in enumerate(vertices[i:]):
+            aux += (vi - vj) / np.linalig.norm(vi - vj) - d if np.linalig.norm(vi - vj) < d else 0
+            grad_norm[i] += aux
+            grad_norm[j] += aux
+    return grad_norm
+
+
+def vertex_constraint(vertices, d):
+    aux = 0
+    for i, vi in enumerate(vertices):
+        for j, vj in enumerate(vertices[i:]):
+            aux += np.power(np.linalig.norm(vi - vj) - d, 2) if np.linalig.norm(vi - vj) < d else 0
+    return aux
+
+
+def edge_constraint(vertices, d):
+    return 0
+
+
+def energy_contraint(k, vertices):
+    return k * (sum([vertex_constraint(v, vertices) + edge_constraint() for v in vertices]))
 
 
 '''
