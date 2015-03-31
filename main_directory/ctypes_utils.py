@@ -3,9 +3,6 @@ from ctypes import *
 import numpy as np
 
 import os
-print 'HEREREEERE'
-os.system("echo 'hello world'")
-os.system('pwd')
 libcac = CDLL("apicac/libcac.so")
 
 cac_contour_get_interior_contour = libcac.cac_contour_get_interior_contour

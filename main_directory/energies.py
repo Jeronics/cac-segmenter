@@ -51,7 +51,6 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
 
 '''
 
-
 def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
     omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
@@ -108,10 +107,10 @@ def get_omega_mean(omega_coord, image):
 
 
 def grad_vertex_constraint(vertices, d):
-    grad_norm = np.zeros([len(vertices), 1])
+    grad_norm = np.zeros([vertices.shape])
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i:]):
-            aux += (vi - vj) / np.linalig.norm(vi - vj) - d if np.linalig.norm(vi - vj) < d else 0
+            aux = (vi - vj) / np.linalig.norm(vi - vj) - d if np.linalig.norm(vi - vj) < d else 0
             grad_norm[i] += aux
             grad_norm[j] += aux
     return grad_norm
@@ -125,7 +124,11 @@ def vertex_constraint(vertices, d):
     return aux
 
 
+
+
 def edge_constraint(vertices, d):
+    for i, v in enumerate(vertices[:-1]):
+        edge_distance(v,vertices[i],vertices[i+1])
     return 0
 
 
@@ -156,6 +159,31 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_1))) > 0):
         return False
     return True
+
+
+
+
+def perpendicular_vector(v):
+    r""" Finds an arbitrary perpendicular vector to *v*."""
+    # for two vectors (x, y) and (a, b) to be perpendicular,
+    # the following equation has to be fulfilled
+    #     0 = ax + by
+    # x = y = 0 is not an acceptable solution
+    if v[0] == v[1] == 0:
+        raise ValueError('zero-vector')
+
+    # If one dimension is zero, this can be solved by setting that to
+    # non-zero and the others to zero. Example: (4, 0) lies in the
+    # x-y-Plane, so (0, 0, 1) is orthogonal to the plane.
+    if v[0] == 0:
+        return np.array([v[1], 0])
+    if v[1] == 0:
+        return np.array([0, -v[0]])
+
+    # set a = v[0]
+    # then the equation simplifies to
+    #     b = - v[0]/v[1]
+    return np.array([1, -v[0]/float(v[1])])
 
 
 def multiple_project_gradient_on_axis(a, b):
