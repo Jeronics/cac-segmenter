@@ -206,7 +206,7 @@ def perpendicular_vector(v):
     # set a = v[0]
     # then the equation simplifies to
     # b = - v[0]/v[1]
-    return np.array([1, -v[0] / float(v[1])])
+    return np.array([v[1], -v[0]])
 
 
 def multiple_project_gradient_on_axis(a, b):
