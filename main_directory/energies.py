@@ -51,6 +51,7 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
 
 '''
 
+
 def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
     omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
@@ -110,30 +111,54 @@ def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros([vertices.shape])
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i:]):
-            aux = (vi - vj) / np.linalig.norm(vi - vj) - d if np.linalig.norm(vi - vj) < d else 0
+            aux = (vi - vj) / np.linalg.norm(vi - vj) - d if np.linalg.norm(vi - vj) < d else 0
             grad_norm[i] += aux
             grad_norm[j] += aux
     return grad_norm
 
+def grad_edge_constraint( v_1, v_2, d):
+    grad_norm =
+
 
 def vertex_constraint(vertices, d):
-    aux = 0
+    vertex_energy = 0
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i:]):
-            aux += np.power(np.linalig.norm(vi - vj) - d, 2) if np.linalig.norm(vi - vj) < d else 0
-    return aux
+            vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
+    return vertex_energy
 
 
+def edge_distance(v, v_1, v_2, d):
+    q = v_2 - v_1
+    q_orth = perpendicular_vector(q)
+    r = v - v_1
+    range_ = np.dot(q, r) / np.linalg.norm(q)
+    if range_ < 0 or range_ > 1:
+        energy = 0
+    else:
+        dist = abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth)
+        if dist > d:
+            energy = 0
+        else:
+            energy = np.power(abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth) - d, 2)
+
+    return energy
 
 
 def edge_constraint(vertices, d):
-    for i, v in enumerate(vertices[:-1]):
-        edge_distance(v,vertices[i],vertices[i+1])
-    return 0
+    num_points = len(vertices)
+    edge_energy = 0
+    for i, v in enumerate(vertices):
+        for j in range(1, num_points - 1):
+            print i, (i + j) % num_points, (i + j + 1) % num_points
+            v_1 = vertices[(i + j) % num_points]
+            v_2 = vertices[(i + j + 1) % num_points]
+            edge_energy += edge_distance(v, v_1, v_2,d)
+    return edge_energy
 
 
 def energy_contraint(k, vertices):
-    return k * (sum([vertex_constraint(v, vertices) + edge_constraint() for v in vertices]))
+    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices,d))
 
 
 '''
@@ -161,13 +186,11 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     return True
 
 
-
-
 def perpendicular_vector(v):
     r""" Finds an arbitrary perpendicular vector to *v*."""
     # for two vectors (x, y) and (a, b) to be perpendicular,
     # the following equation has to be fulfilled
-    #     0 = ax + by
+    # 0 = ax + by
     # x = y = 0 is not an acceptable solution
     if v[0] == v[1] == 0:
         raise ValueError('zero-vector')
@@ -182,8 +205,8 @@ def perpendicular_vector(v):
 
     # set a = v[0]
     # then the equation simplifies to
-    #     b = - v[0]/v[1]
-    return np.array([1, -v[0]/float(v[1])])
+    # b = - v[0]/v[1]
+    return np.array([1, -v[0] / float(v[1])])
 
 
 def multiple_project_gradient_on_axis(a, b):
