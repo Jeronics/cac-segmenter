@@ -130,7 +130,7 @@ def vertex_constraint(vertices, d):
     '''
     vertex_energy = 0
     for i, vi in enumerate(vertices):
-        for j, vj in enumerate(vertices[i+1:]):
+        for j, vj in enumerate(vertices[i + 1:]):
             vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
     return vertex_energy
 
@@ -236,7 +236,7 @@ def perpendicular_vector(v):
         return np.array([0, -v[0]])
 
     # The rotation matrix R is
-    #     0  1
+    # 0  1
     #    -1  0
     # so we have that Rv is:
     return np.array([v[1], -v[0]])
