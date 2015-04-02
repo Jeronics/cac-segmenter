@@ -116,32 +116,64 @@ def grad_vertex_constraint(vertices, d):
             grad_norm[j] += aux
     return grad_norm
 
-def grad_edge_constraint( v_1, v_2, d):
-    grad_norm =
+
+def grad_edge_constraint(v_1, v_2, d):
+    return None
 
 
 def vertex_constraint(vertices, d):
+    '''
+    Finds the energy of the vertex_constraint, i.e. The closer points are to each other the higher the energy
+    :param vertices (numpy array of 2 dim numpy arrays): numpy List of vertices
+    :param d:
+    :return:
+    '''
     vertex_energy = 0
     for i, vi in enumerate(vertices):
-        for j, vj in enumerate(vertices[i:]):
+        for j, vj in enumerate(vertices[i+1:]):
             vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
     return vertex_energy
 
 
-def edge_distance(v, v_1, v_2, d):
+def dist_point_to_edge(v, v_1, v_2):
+    '''
+    Finds the distance between a point v and a segment v1v2.
+    CAVEAT: if the point cannot be projected perpendicular to the segment, None is returned*.
+    :param v a (2 dim numpy array): A point
+    :param v_1 (2 dim numpy array): initial point of the segment
+    :param v_2 (2 dim numpy array): final point of the segment
+    :return: a distance from the point to an edge if it exist.
+    '''
     q = v_2 - v_1
     q_orth = perpendicular_vector(q)
     r = v - v_1
+
+    # Calculate the range where the band where the distance can be well defined*
     range_ = np.dot(q, r) / np.linalg.norm(q)
     if range_ < 0 or range_ > 1:
-        energy = 0
+        return None
     else:
-        dist = abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth)
-        if dist > d:
+        distance = abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth)
+        return distance
+
+
+def edge_distance(v, v_1, v_2, d):
+    '''
+    Calculates the edge constraint energy of a point with regards to an edge.
+    :param v (2 dim numpy array): A point
+    :param v_1 (2 dim numpy array): initial point of the segment
+    :param v_2 (2 dim numpy array): final point of the segment
+    :param d: a scalar from which if the distance is too large, the energy is 0.
+    :return: an energy value of the point v.
+    '''
+    distance = dist_point_to_edge(v, v_1, v_2)
+    if distance:
+        if distance > d:
             energy = 0
         else:
-            energy = np.power(abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth) - d, 2)
-
+            energy = np.power(distance - d, 2)
+    else:
+        energy = 0
     return energy
 
 
@@ -153,12 +185,12 @@ def edge_constraint(vertices, d):
             print i, (i + j) % num_points, (i + j + 1) % num_points
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
-            edge_energy += edge_distance(v, v_1, v_2,d)
+            edge_energy += edge_distance(v, v_1, v_2, d)
     return edge_energy
 
 
 def energy_contraint(k, vertices):
-    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices,d))
+    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
 
 
 '''
@@ -203,9 +235,10 @@ def perpendicular_vector(v):
     if v[1] == 0:
         return np.array([0, -v[0]])
 
-    # set a = v[0]
-    # then the equation simplifies to
-    # b = - v[0]/v[1]
+    # The rotation matrix R is
+    #     0  1
+    #    -1  0
+    # so we have that Rv is:
     return np.array([v[1], -v[0]])
 
 
