@@ -12,8 +12,6 @@ matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
 
-from polygon_tools import compare_cages as cc
-
 
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):

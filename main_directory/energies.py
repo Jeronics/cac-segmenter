@@ -1,5 +1,5 @@
 __author__ = 'jeroni'
-from main_directory import utils
+import utils
 from ctypes_utils import *
 import numpy as np
 
@@ -117,7 +117,8 @@ def grad_vertex_constraint(vertices, d):
     return grad_norm
 
 
-def grad_edge_constraint(v_1, v_2, d):
+def grad_edge_constraint(vertices, d):
+    # TODO:
     return None
 
 
@@ -182,7 +183,6 @@ def edge_constraint(vertices, d):
     edge_energy = 0
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
-            print i, (i + j) % num_points, (i + j + 1) % num_points
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
             edge_energy += edge_distance(v, v_1, v_2, d)
