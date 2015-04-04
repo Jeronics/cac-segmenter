@@ -143,20 +143,31 @@ def vertex_constraint(vertices, d):
 
 
 '''
-                        VERTEX CONSTRAINT ENERGY
+                        EDGE CONSTRAINT ENERGY
 '''
 
 
 def grad_edge_constraint(vertices, d):
     # TODO:
-    grad_energy = np.zeros([vertices.shape])
+    num_points = len(vertices)
+    print vertices.shape, type(list(vertices.shape))
+    grad_energy = np.zeros(list(vertices.shape))
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
             print i, (i + j) % num_points, (i + j + 1) % num_points
-            grad_energy += grad_point_to_edge_energy_1(v, v_1, v_2, d)
+            grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
     return grad_energy
+
+
+def grad_point_to_edge_energy_1(v, v_1, v_2, d):
+    q = v_2 - v_1
+    q_orth = perpendicular_vector(q)
+    r = v - v_1
+    print q_orth,float(np.linalg.norm(q_orth))
+    grad = q_orth*(np.dot(q_orth, r))/float(np.linalg.norm(q_orth)*abs(np.dot(q_orth, r)))
+    return grad
 
 
 def dist_point_to_edge(v, v_1, v_2):
