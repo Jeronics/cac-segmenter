@@ -107,6 +107,17 @@ def get_omega_mean(omega_coord, image):
     return omega_mean, omega_std
 
 
+'''
+
+                        CONSTRAINT ENERGIES
+
+'''
+
+'''
+                        VERTEX CONSTRAINT ENERGY
+'''
+
+
 def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros([vertices.shape])
     for i, vi in enumerate(vertices):
@@ -115,11 +126,6 @@ def grad_vertex_constraint(vertices, d):
             grad_norm[i] += aux
             grad_norm[j] += aux
     return grad_norm
-
-
-def grad_edge_constraint(vertices, d):
-    # TODO:
-    return None
 
 
 def vertex_constraint(vertices, d):
@@ -134,6 +140,23 @@ def vertex_constraint(vertices, d):
         for j, vj in enumerate(vertices[i + 1:]):
             vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
     return vertex_energy
+
+
+'''
+                        VERTEX CONSTRAINT ENERGY
+'''
+
+
+def grad_edge_constraint(vertices, d):
+    # TODO:
+    grad_energy = np.zeros([vertices.shape])
+    for i, v in enumerate(vertices):
+        for j in range(1, num_points - 1):
+            v_1 = vertices[(i + j) % num_points]
+            v_2 = vertices[(i + j + 1) % num_points]
+            print i, (i + j) % num_points, (i + j + 1) % num_points
+            grad_energy += grad_point_to_edge_energy_1(v, v_1, v_2, d)
+    return grad_energy
 
 
 def dist_point_to_edge(v, v_1, v_2):
@@ -158,7 +181,7 @@ def dist_point_to_edge(v, v_1, v_2):
         return distance
 
 
-def edge_distance(v, v_1, v_2, d):
+def point_to_edge_energy(v, v_1, v_2, d):
     '''
     Calculates the edge constraint energy of a point with regards to an edge.
     :param v (2 dim numpy array): A point
@@ -181,11 +204,13 @@ def edge_distance(v, v_1, v_2, d):
 def edge_constraint(vertices, d):
     num_points = len(vertices)
     edge_energy = 0
+    print 'Num Vertices', len(vertices)
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
-            edge_energy += edge_distance(v, v_1, v_2, d)
+            print i, (i + j) % num_points, (i + j + 1) % num_points
+            edge_energy += point_to_edge_energy(v, v_1, v_2, d)
     return edge_energy
 
 
@@ -237,7 +262,7 @@ def perpendicular_vector(v):
 
     # The rotation matrix R is
     # 0  1
-    #    -1  0
+    # -1  0
     # so we have that Rv is:
     return np.array([v[1], -v[0]])
 

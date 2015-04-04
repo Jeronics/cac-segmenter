@@ -133,10 +133,13 @@ import numpy as np
 
 v1 = np.array([0, 0])
 v2 = np.array([1, 0])
+v3 = np.array([1, 1])
+v4 = np.array([0, 1])
+
 x1 = np.array([1 / 2., 1 / 4.])
 x2 = np.array([1 / 2., -1 / 4.])
 x = np.array([1 / 2., 1])
 
-print 'distance', en.edge_distance(x, v1, v2, 2)
-print 'Energy', en.edge_constraint([x, v1, v2], 2)
+print 'distance', en.point_to_edge_energy(x, v1, v2, 2)
+print 'Energy', en.edge_constraint([x,v1, v2, v3, v4], 2)
 import pdb; pdb.set_trace()
