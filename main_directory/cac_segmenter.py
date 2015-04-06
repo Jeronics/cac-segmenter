@@ -25,13 +25,24 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
     # copy of cage_obj
     iter = 0
-    max_iter = 20
+    max_iter = 50
     first_stage = True
     grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2]), np.zeros(
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
+
+    # PARAMETERS #
+    # pixel steps
     beta = 5
+
+    # Omega1 band size
     band_size = 500
+
+    # constraint energy. k=0 is none.
+    k = 1
+    # Algorithm requires k>=2*beta to work.
+    d = 2*beta
+
     continue_while = True
     while continue_while:
         if iter > max_iter:
@@ -51,7 +62,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         grad_k_2 = grad_k_1.copy()
         grad_k_1 = grad_k.copy()
         grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image)
+                                           image) + energies.energy_constraint(cage_obj.cage, d, k)
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
             mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)

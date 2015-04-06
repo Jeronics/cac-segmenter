@@ -113,9 +113,20 @@ def get_omega_mean(omega_coord, image):
 
 '''
 
+
+def energy_constraint(vertices, d, k):
+    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
+
+
+def grad_energy_constraint(vertices, d, k):
+    return k * (grad_vertex_constraint(vertices, d), grad_edge_constraint(vertices, d))
+
+
+
 '''
                         VERTEX CONSTRAINT ENERGY
 '''
+
 
 
 def grad_vertex_constraint(vertices, d):
@@ -150,13 +161,11 @@ def vertex_constraint(vertices, d):
 def grad_edge_constraint(vertices, d):
     # TODO:
     num_points = len(vertices)
-    print vertices.shape, type(list(vertices.shape))
     grad_energy = np.zeros(list(vertices.shape))
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
-            print i, (i + j) % num_points, (i + j + 1) % num_points
             grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
     return grad_energy
 
@@ -165,8 +174,7 @@ def grad_point_to_edge_energy_1(v, v_1, v_2, d):
     q = v_2 - v_1
     q_orth = perpendicular_vector(q)
     r = v - v_1
-    print q_orth,float(np.linalg.norm(q_orth))
-    grad = q_orth*(np.dot(q_orth, r))/float(np.linalg.norm(q_orth)*abs(np.dot(q_orth, r)))
+    grad = q_orth * (np.dot(q_orth, r)) / float(np.linalg.norm(q_orth) * abs(np.dot(q_orth, r)))
     return grad
 
 
@@ -215,19 +223,12 @@ def point_to_edge_energy(v, v_1, v_2, d):
 def edge_constraint(vertices, d):
     num_points = len(vertices)
     edge_energy = 0
-    print 'Num Vertices', len(vertices)
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
             v_1 = vertices[(i + j) % num_points]
             v_2 = vertices[(i + j + 1) % num_points]
-            print i, (i + j) % num_points, (i + j + 1) % num_points
             edge_energy += point_to_edge_energy(v, v_1, v_2, d)
     return edge_energy
-
-
-def energy_contraint(k, vertices):
-    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
-
 
 '''
 

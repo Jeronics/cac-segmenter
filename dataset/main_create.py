@@ -28,7 +28,7 @@ def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
     '''
     image = utils.read_png(in_filename)
     im_shape = image.shape
-    num_cage_points = [10]
+    num_cage_points = [16]
     radius = np.linalg.norm(np.array(c) - np.array(p))
     radius_cage_ratio = [1.05]
     im = np.zeros(im_shape, dtype='uint8')
@@ -75,7 +75,7 @@ class OverrideGraphicsScene(Qt.QGraphicsScene):
     def mousePressEvent(self, event):
         super(OverrideGraphicsScene, self).mousePressEvent(event)
         position = (event.pos().y(), event.pos().x())
-
+        print '(y,x)=', event.pos().x(), ',', event.pos().y()
         if self.COUNTER == 0:
             # The first point is the center
             self.CENTER = [event.pos().y(), event.pos().x()]
@@ -147,15 +147,16 @@ if __name__ == '__main__':
         #     turning_function.plot_polygon(cage.cage, fig_title=cage.root)
 
         # All images in each file are found
-        print root.split("/")[-2]
-        if root.split("/")[-2] != 'shapes':
-            continue
         images = utils.get_images(files, root)
         for image in images:
+            print image.spec_name
+            if image.spec_name == 'eagle2':
+                open_canvas(image.path)
+
             # if image.spec_name == 'apple2':
             # resize_image(image)
             # gt=create_ground_truth(image)
-            open_canvas(image.path)
+            # open_canvas(image.path)
 
         # # All masks in each file are found
         # images = utils.get_images(files,root)

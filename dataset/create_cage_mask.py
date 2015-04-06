@@ -90,7 +90,7 @@ def open_canvas(File):
 
     # text_file -= open("Center_radius.txt", "w")
 
-    num_cage_points = [8, 9, 10]
+    num_cage_points = [10,16]
 
     def printcoords(event):
         # reading the center and a point on the radius in order to create a mask.
