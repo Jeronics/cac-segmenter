@@ -149,11 +149,9 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            print image.spec_name
-            if image.spec_name == 'eagle2':
+            if image.spec_name == 'star5':
+                print image.spec_name
                 open_canvas(image.path)
-
-            # if image.spec_name == 'apple2':
             # resize_image(image)
             # gt=create_ground_truth(image)
             # open_canvas(image.path)
