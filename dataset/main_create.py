@@ -74,15 +74,15 @@ class OverrideGraphicsScene(Qt.QGraphicsScene):
 
     def mousePressEvent(self, event):
         super(OverrideGraphicsScene, self).mousePressEvent(event)
-        position = (event.pos().y(), event.pos().x())
+        position = (event.pos().x(), event.pos().y())
         print '(y,x)=', event.pos().x(), ',', event.pos().y()
         if self.COUNTER == 0:
             # The first point is the center
-            self.CENTER = [event.pos().y(), event.pos().x()]
+            self.CENTER = [event.pos().x(), event.pos().y()]
             self.COUNTER += 1
         else:
             # The second point is a point in the radius
-            self.RADIUS_POINT = [event.pos().y(), event.pos().x()]
+            self.RADIUS_POINT = [event.pos().x(), event.pos().y()]
             create_mask_and_cage_points(self.CENTER, self.RADIUS_POINT, self.in_filename)
 
 
