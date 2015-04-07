@@ -20,7 +20,7 @@ def first_step_alpha(beta, curr_cage, grad_k):
 
 
 def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, image):
-    step = 0.1
+    step = 0.2
     next_energy = current_energy + 1
     alpha += step
     nrow, ncol = image.shape
@@ -246,11 +246,12 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     :param grad_k:
     :return:
     '''
-    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_2))) > 0):
+
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_2))) > 0.00001):
         return False
-    if not all(np.diagonal(np.dot(grad_k_1, np.transpose(grad_k_3))) > 0):
+    if not all(np.diagonal(np.dot(grad_k_1, np.transpose(grad_k_3))) > 0.00001):
         return False
-    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_1))) > 0):
+    if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_1))) < 0.00001):
         return False
     return True
 
