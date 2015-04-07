@@ -30,9 +30,6 @@ def walk_through_dataset(root_folder, depth):
             # if len(masks) > 1:
             #     results_folder = results_folder + "/" + mask.spec_name
             for image in images:
-                if image.spec_name == 'banana2':
-                    print 'skip banana2'
-                    continue
                 for mask in masks:
                     for cage in cages:
                         print '\nSegmenting', image.root
