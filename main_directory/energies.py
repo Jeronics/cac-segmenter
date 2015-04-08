@@ -135,11 +135,11 @@ def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros(vertices.shape)
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i:]):
-
             # Avoid dividing by 0 and where the function is not defined
-            if np.linalg.norm(vi - vj)< d or not np.linalg.norm(vi - vj)>0:
+            dist_vertices = np.linalg.norm(vi - vj)
+            if dist_vertices < d or not dist_vertices > 0:
                 continue
-            aux = 2*(vi - vj)(np.linalg.norm(vi - vj) - d) / np.linalg.norm(vi - vj)
+            aux = 2 * (vi - vj) * (dist_vertices - d) / float(dist_vertices)
             grad_norm[i] += aux
             grad_norm[j] += -aux
 
