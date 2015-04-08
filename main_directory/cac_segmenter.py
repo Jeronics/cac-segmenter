@@ -39,12 +39,13 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     # Omega1 band size
     band_size = 500
 
+    # Constraint Energy parameters
     # constraint energy. k=0 is none.
     k = 2
 
     # Algorithm requires k>=2*beta to work.
     d = 2*beta
-
+    constraint_params = [d, k]
     continue_while = True
     while continue_while:
         if iter > max_iter:
@@ -75,9 +76,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image)
+                                          image)  + energies.energy_constraint(cage_obj.cage, d, k)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                                   contour_size, energy, image)
+                                                   contour_size, energy, image,constraint_params)
             if alpha_new == 0:
                 continue_while = False
                 print 'Local minimum reached. no better alpha'
@@ -127,13 +128,22 @@ if __name__ == '__main__':
     # curr_cage_file = None
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
 
-
-     # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
     image_obj = ImageClass()
-    image_obj.read_png('../dataset/banana/banana2/banana2.png')
+    image_obj.read_png('../dataset/eagle/eagle2/eagle2.png')
     mask_obj = MaskClass()
-    mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
+    mask_obj.read_png('../dataset/eagle/eagle2/mask_00.png')
     cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
+    cage_obj.read_txt('../dataset/eagle/eagle2/cage_16_1.05.txt')
     curr_cage_file = None
     resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
+
+
+     # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
+    # image_obj = ImageClass()
+    # image_obj.read_png('../dataset/banana/banana2/banana2.png')
+    # mask_obj = MaskClass()
+    # mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
+    # cage_obj = CageClass()
+    # cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
+    # curr_cage_file = None
+    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)

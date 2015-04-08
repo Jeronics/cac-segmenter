@@ -19,7 +19,9 @@ def first_step_alpha(beta, curr_cage, grad_k):
     return alpha
 
 
-def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, image):
+def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, image,
+                      constraint_params):
+    d, k = constraint_params
     step = 0.2
     next_energy = current_energy + 1
     alpha += step
@@ -39,7 +41,8 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
                                                                                     len(curr_cage),
                                                                                     curr_cage - grad_k * alpha)
 
-        next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image)
+        next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                  image) + energy_constraint(curr_cage - grad_k * alpha, d, k)
     if alpha < 0.1:
         return 0
     return 1
@@ -78,6 +81,7 @@ def mean_energy_per_region(omega_coord, affine_omega_coord, image):
 
 def mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
+
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
@@ -122,11 +126,9 @@ def grad_energy_constraint(vertices, d, k):
     return k * (grad_vertex_constraint(vertices, d), grad_edge_constraint(vertices, d))
 
 
-
 '''
                         VERTEX CONSTRAINT ENERGY
 '''
-
 
 
 def grad_vertex_constraint(vertices, d):
@@ -229,6 +231,7 @@ def edge_constraint(vertices, d):
             v_2 = vertices[(i + j + 1) % num_points]
             edge_energy += point_to_edge_energy(v, v_1, v_2, d)
     return edge_energy
+
 
 '''
 
