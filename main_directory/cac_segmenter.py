@@ -6,7 +6,6 @@ import time
 import sys
 
 import numpy as np
-
 from utils import *
 import energyutils
 import energies
@@ -65,7 +64,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         grad_k_2 = grad_k_1.copy()
         grad_k_1 = grad_k.copy()
         grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image) + energies.energy_constraint(cage_obj.cage, d, k)
+                                           image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
+        print 'AQUI'
+        print grad_k
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
             mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -129,11 +130,11 @@ if __name__ == '__main__':
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
 
     image_obj = ImageClass()
-    image_obj.read_png('../dataset/eagle/eagle2/eagle2.png')
+    image_obj.read_png('../dataset/eagle/eagle1/eagle1.png')
     mask_obj = MaskClass()
-    mask_obj.read_png('../dataset/eagle/eagle2/mask_00.png')
+    mask_obj.read_png('../dataset/eagle/eagle1/mask_00.png')
     cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/eagle/eagle2/cage_16_1.05.txt')
+    cage_obj.read_txt('../dataset/eagle/eagle1/cage_16_1.05.txt')
     curr_cage_file = None
     resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
 

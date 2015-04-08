@@ -95,7 +95,6 @@ def gradient_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_p
     # image_gradient_by_point = np.transpose(image_gradient_by_point)
     aux_x = np.multiply(np.transpose(affine_omega_coord), image_gradient_by_point[0])
     aux_y = np.multiply(np.transpose(affine_omega_coord), image_gradient_by_point[1])
-
     aux_x = np.dot(aux, np.transpose(aux_x) - mean_derivative[0])
     aux_y = np.dot(aux, np.transpose(aux_y) - mean_derivative[1])
     aux_1 = np.transpose([aux_x, aux_y])
@@ -123,21 +122,27 @@ def energy_constraint(vertices, d, k):
 
 
 def grad_energy_constraint(vertices, d, k):
-    return k * (grad_vertex_constraint(vertices, d), grad_edge_constraint(vertices, d))
+    grad = (grad_vertex_constraint(vertices, d), grad_edge_constraint(vertices, d))
+    return grad * k  # Give a weight k
 
 
 '''
-                        VERTEX CONSTRAINT ENERGY
+                        VERTEX Minimum distance CONSTRAINT ENERGY
 '''
 
 
 def grad_vertex_constraint(vertices, d):
-    grad_norm = np.zeros([vertices.shape])
+    grad_norm = np.zeros(vertices.shape)
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i:]):
-            aux = (vi - vj) / np.linalg.norm(vi - vj) - d if np.linalg.norm(vi - vj) < d else 0
+
+            # Avoid dividing by 0 and where the function is not defined
+            if np.linalg.norm(vi - vj)< d or not np.linalg.norm(vi - vj)>0:
+                continue
+            aux = 2*(vi - vj)(np.linalg.norm(vi - vj) - d) / np.linalg.norm(vi - vj)
             grad_norm[i] += aux
-            grad_norm[j] += aux
+            grad_norm[j] += -aux
+
     return grad_norm
 
 
@@ -153,6 +158,32 @@ def vertex_constraint(vertices, d):
         for j, vj in enumerate(vertices[i + 1:]):
             vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
     return vertex_energy
+
+
+'''
+                        LENGTH CONSTRAINT ENERGY
+'''
+
+
+def length_constraint_energy(vertices, d):
+    energy = 0
+    for i in xrange(len(vertices)):
+        # Distance between two neighboring points
+        dist_pair = np.linalg.norm(vertices[i] - vertices[(i + 1) % len(vertices)])
+
+        energy += np.linalg.norm(dist_pair - d)
+
+    return energy
+
+
+def grad_length_constraint_energy(vertices, d):
+    grad_norm = np.zeros([vertices.shape])
+    for i in xrange(len(vertices)):
+        # Distance between two neighboring points
+        dist_pair = np.linalg.norm(vertices[i] - vertices[(i + 1) % len(vertices)])
+        denom1 = np.linalg.norm(dist_pair - d) * dist_pair
+
+    return grad_norm
 
 
 '''
