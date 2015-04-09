@@ -13,9 +13,12 @@ import energies
 from scipy import interpolate
 
 
-def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
+def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False):
     start = time.time()
     image = image_obj.gray_image
+    if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
+        print 'Cage is out of the image! Not converged. Try a smaller cage'
+        return None
     contour_coord, contour_size = get_contour(mask_obj)
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
@@ -27,7 +30,8 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     max_iter = 50
     max_iter_step_2 = 10
     first_stage = True
-    grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2]), np.zeros(
+    grad_k_3, grad_k_2, grad_k_1, grad_k = np.zeros([cage_obj.num_points, 2]), np.zeros(
+        [cage_obj.num_points, 2]), np.zeros(
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
 
@@ -43,7 +47,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
     k = 2
 
     # Algorithm requires k>=2*beta to work.
-    d = 2*beta
+    d = 2 * beta
     constraint_params = [d, k]
     continue_while = True
     while continue_while:
@@ -51,6 +55,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
             continue_while = False
             print 'Maximum iterations reached'
 
+        if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
+            print 'Cage is out of the image! Not converged. Try a smaller cage'
+            return None
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                            contour_size, mask_obj.width,
                                                                                            mask_obj.height)
@@ -65,8 +72,6 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         grad_k_1 = grad_k.copy()
         grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                            image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
-        print 'AQUI'
-        print grad_k
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
             mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -77,9 +82,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
 
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image)  + energies.energy_constraint(cage_obj.cage, d, k)
+                                          image) + energies.energy_constraint(cage_obj.cage, d, k)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                                   contour_size, energy, image,constraint_params)
+                                                   contour_size, energy, image, constraint_params)
             if alpha_new == 0:
                 continue_while = False
                 print 'Local minimum reached. no better alpha'
@@ -92,9 +97,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file):
         alpha = beta  # find_optimal_alpha(beta, curr_cage_file, grad_k)
 
         # if iter % 20 == 0:
-        plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
-                               points2=cage_obj.cage - alpha * 10 * grad_k)
-        plot_evolution = False
+        # plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
+        # points2=cage_obj.cage - alpha * 10 * grad_k)
+
         if plot_evolution:
             plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
                                points2=cage_obj.cage - alpha * 10 * grad_k)
@@ -125,21 +130,21 @@ if __name__ == '__main__':
     # mask_obj = MaskClass()
     # mask_obj.read_png('../dataset/pear/pear2/mask_00.png')
     # cage_obj = CageClass()
-    # cage_obj.read_txt('../dataset/pear/pear2/cage_10_1.05.txt')
+    # cage_obj.read_txt('../dataset/pear/pear2/cage_16_1.05.txt')
     # curr_cage_file = None
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
 
     image_obj = ImageClass()
-    image_obj.read_png('../dataset/eagle/eagle1/eagle1.png')
+    image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
     mask_obj = MaskClass()
-    mask_obj.read_png('../dataset/eagle/eagle1/mask_00.png')
+    mask_obj.read_png('../dataset/eagle/eagle3/mask_00.png')
     cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/eagle/eagle1/cage_16_1.05.txt')
+    cage_obj.read_txt('../dataset/eagle/eagle3/cage_16_1.05.txt')
     curr_cage_file = None
-    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
+    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
 
 
-     # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
+    # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
     # image_obj = ImageClass()
     # image_obj.read_png('../dataset/banana/banana2/banana2.png')
     # mask_obj = MaskClass()

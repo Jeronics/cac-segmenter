@@ -38,7 +38,7 @@ class MaskClass:
         self.path = filename
         self.name = filename.split("/")[-1]
         self.spec_name = self.name.split('.png')[0]
-        self.root = "/".join(filename.split("/")[:-1])+"/"
+        self.root = "/".join(filename.split("/")[:-1]) + "/"
         self.save_name = self.spec_name + '_out.png'
 
     def read_png(self, filename, threshold=125.):
@@ -154,7 +154,6 @@ class ImageClass:
         return gray
 
 
-
 # ########## VISUALITON
 def rgb2gray(rgb):
     if len(rgb.shape) == 3:
@@ -214,17 +213,20 @@ def get_cages(files, root):
             cages.append(cage)
     return cages
 
+
 def get_ground_truth(image, files):
-    gt_name= 'gt_'+image.name
+    gt_name = 'gt_' + image.name
     if gt_name in files:
         gt_image = MaskClass()
-        gt_image.read_png(image.root+gt_name)
+        gt_image.read_png(image.root + gt_name)
         return gt_image
     else:
         return None
 
+
 def create_ground_truth(initial_cage, final_cage, initial_mask):
     from ctypes_utils import *
+
     contour_coord, contour_size = get_contour(initial_mask)
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, initial_cage.cage)
 
@@ -247,7 +249,7 @@ def sorensen_dice_coefficient(mask1, mask2):
     mask2_bool = mask2.mask == 255.
     intersection_bool = mask1_bool & mask2_bool
     intersection_card = sum(intersection_bool)
-    sorensen_dice = 2*intersection_card/float(sum(mask1_bool)+sum(mask2_bool))
+    sorensen_dice = 2 * intersection_card / float(sum(mask1_bool) + sum(mask2_bool))
     return sorensen_dice
 
 
@@ -399,6 +401,17 @@ def evaluate_bilinear_interpolation(coordinates, image, outside_value=255.):
     image_with_border = np.insert(image_with_border, (0, image_with_border.shape[0]), 255, axis=0)
     evaluated_values = [bilinear_interpolate(image_with_border, coord[0] + 1, coord[1] + 1) for coord in coordinates]
     return evaluated_values
+
+
+def cage_out_of_the_picture(coordinates, size):
+    '''
+    Test if the WHOLE cage, ie. all of the points are out of the image with the specified size.
+    :param coordinates:
+    :param size:
+    :return:
+    '''
+    are_inside = are_inside_image(coordinates, size)
+    return not bool(sum(are_inside))
 
 
 # Check if list of points are inside an image given only the shape.
