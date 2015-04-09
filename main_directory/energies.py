@@ -122,7 +122,7 @@ def energy_constraint(vertices, d, k):
 
 
 def grad_energy_constraint(vertices, d, k):
-    grad = (grad_vertex_constraint(vertices, d), grad_edge_constraint(vertices, d))
+    grad = (grad_vertex_constraint(vertices, d)+ grad_edge_constraint(vertices, d))
     return grad * k  # Give a weight k
 
 
