@@ -203,10 +203,16 @@ def grad_edge_constraint(vertices, d):
     grad_energy = np.zeros(list(vertices.shape))
     for i, v in enumerate(vertices):
         for j in range(1, num_points - 1):
-            v_1 = vertices[(i + j) % num_points]
-            v_2 = vertices[(i + j + 1) % num_points]
+            i1_ = (i + j) % num_points
+            i2_ = (i + j + 1) % num_points
+            print  i, i1_, i2_
+            v_1 = vertices[i1_]
+            v_2 = vertices[i2_]
             grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
     return grad_energy
+
+
+
 
 
 def grad_point_to_edge_energy_1(v, v_1, v_2, d):
