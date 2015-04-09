@@ -122,9 +122,9 @@ def energy_constraint(vertices, d, k):
 
 
 def grad_energy_constraint(vertices, d, k):
-    print 'd',d
+    print 'd', d
     print 'k', k
-    grad = (grad_vertex_constraint(vertices, d)+ grad_edge_constraint(vertices, d))
+    grad = (grad_vertex_constraint(vertices, d) + grad_edge_constraint(vertices, d))
     return grad * k  # Give a weight k
 
 
@@ -136,13 +136,15 @@ def grad_energy_constraint(vertices, d, k):
 def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros(vertices.shape)
     for i, vi in enumerate(vertices):
-        for j, vj in enumerate(vertices[i:]):
+        for j, vj in enumerate(vertices[i + 1:]):
+            print i, i + j
+            print vi, vj
             # Avoid dividing by 0 and where the function is not defined
             dist_vertices = np.linalg.norm(vi - vj)
             if dist_vertices >= d or not dist_vertices > 0:
-                print i,j,'dist_vertices', dist_vertices
+                # print i,j,'dist_vertices', dist_vertices
                 continue
-            print i, j, 'INSIDE'
+            # print i, j, 'INSIDE'
             aux = 2 * (vi - vj) * (dist_vertices - d) / float(dist_vertices)
             grad_norm[i] += aux
             grad_norm[j] += -aux
@@ -371,3 +373,4 @@ def multiple_normalize(a):
 def multiple_dot_products(a, b):
     c = a * b
     return np.array([sum(x) for x in c])
+
