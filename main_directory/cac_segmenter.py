@@ -134,12 +134,21 @@ if __name__ == '__main__':
     # curr_cage_file = None
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
 
+    # image_obj = ImageClass()
+    # image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
+    # mask_obj = MaskClass()
+    # mask_obj.read_png('../dataset/eagle/eagle3/mask_00.png')
+    # cage_obj = CageClass()
+    # cage_obj.read_txt('../dataset/eagle/eagle3/cage_16_1.05.txt')
+    # curr_cage_file = None
+    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
+
     image_obj = ImageClass()
-    image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
+    image_obj.read_png('../dataset/apple/apple4/apple4.png')
     mask_obj = MaskClass()
-    mask_obj.read_png('../dataset/eagle/eagle3/mask_00.png')
+    mask_obj.read_png('../dataset/apple/apple4/mask_00.png')
     cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/eagle/eagle3/cage_16_1.05.txt')
+    cage_obj.read_txt('../dataset/apple/apple4/cage_16_1.05.txt')
     curr_cage_file = None
     resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
 

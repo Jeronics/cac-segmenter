@@ -15,7 +15,7 @@ class UiForm(object):
     def setupUi(self, formObject):
         formObject.setObjectName(formObject.path+"Click on the center and radius")
         image = utils.read_png(formObject.path)
-        formObject.resize(image.shape[0], image.shape[1])
+        formObject.resize(image.shape[1], image.shape[0])
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
