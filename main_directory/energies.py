@@ -122,8 +122,6 @@ def energy_constraint(vertices, d, k):
 
 
 def grad_energy_constraint(vertices, d, k):
-    print 'd', d
-    print 'k', k
     grad = (grad_vertex_constraint(vertices, d) + grad_edge_constraint(vertices, d))
     return grad * k  # Give a weight k
 
@@ -137,14 +135,10 @@ def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros(vertices.shape)
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i + 1:]):
-            print i, i + j
-            print vi, vj
             # Avoid dividing by 0 and where the function is not defined
             dist_vertices = np.linalg.norm(vi - vj)
             if dist_vertices >= d or not dist_vertices > 0:
-                # print i,j,'dist_vertices', dist_vertices
                 continue
-            # print i, j, 'INSIDE'
             aux = 2 * (vi - vj) * (dist_vertices - d) / float(dist_vertices)
             grad_norm[i] += aux
             grad_norm[j] += -aux
@@ -205,7 +199,6 @@ def grad_edge_constraint(vertices, d):
         for j in range(1, num_points - 1):
             i1_ = (i + j) % num_points
             i2_ = (i + j + 1) % num_points
-            print  i, i1_, i2_
             v_1 = vertices[i1_]
             v_2 = vertices[i2_]
             grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
