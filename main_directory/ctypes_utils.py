@@ -1,6 +1,7 @@
 __author__ = 'jeroni'
 from ctypes import *
 import numpy as np
+import utils
 
 import os
 libcac = CDLL("apicac/libcac.so")
@@ -69,3 +70,12 @@ def get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size, omega_2_coord, o
                                np.ctypeslib.as_ctypes(omega_2_coord), c_int(num_control_point),
                                np.ctypeslib.as_ctypes(init_cage_file))
     return affine_omega_1_coord, affine_omega_2_coord
+
+
+mask_obj = utils.MaskClass()
+mask_obj.read_png('../dataset/apple/apple5/mask_00.png')
+
+coords, size = get_contour(mask_obj)
+
+print coords
+
