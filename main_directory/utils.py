@@ -26,6 +26,8 @@ class CageClass:
 
     def read_txt(self, filename):
         cage = np.loadtxt(filename, float)
+        rot = np.array([[0, 1], [1, 0]])
+        cage = np.dot(cage, rot)
         self.__init__(cage, filename)
 
 
