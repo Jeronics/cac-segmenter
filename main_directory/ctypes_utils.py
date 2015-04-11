@@ -48,7 +48,7 @@ def get_omega_1_and_2_coord(band_size, contour_coord, contour_size, ncol, nrow):
 
     # Get contour OMEGA 1 and OMEGA 2
     cac_get_omega1_omega2(byref(omega_1_size), byref(omega_1_coord), byref(omega_2_size), byref(omega_2_coord),
-                          contour_size, np.ctypeslib.as_ctypes(contour_coord), c_int(ncol), c_int(nrow),
+                          contour_size, np.ctypeslib.as_ctypes(contour_coord), c_int(nrow), c_int(ncol),
                           c_int(band_size))
 
     omega_1_size = np.ctypeslib.as_array(omega_1_size)
