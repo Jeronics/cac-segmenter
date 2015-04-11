@@ -133,7 +133,7 @@ if __name__ == '__main__':
     #
     # # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
-
+    #
     # image_obj = ImageClass()
     # image_obj.read_png('../dataset/pear/pear2/pear2.png')
     # mask_obj = MaskClass()
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     # cage_obj = CageClass()
     # cage_obj.read_txt('../dataset/pear/pear2/cage_16_1.05.txt')
     # curr_cage_file = None
-    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
+    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
 
     # image_obj = ImageClass()
     # image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
