@@ -35,11 +35,12 @@ def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
     mask_points = []
 
     # careful im_shape is (max(y), max(x))
+    print im.shape
     for x in xrange(im_shape[1]):
         for y in xrange(im_shape[0]):
-            if pow(y - c[0], 2) + pow(x - c[1], 2) <= pow(radius, 2):
-                im[y, x] = 255
-                mask_points.append([y, x])
+            if pow(y - c[1], 2) + pow(x - c[0], 2) <= pow(radius, 2):
+                im[y,x] = 255
+                mask_points.append([x, y])
 
     ima = Image.fromarray(im[:, :, 0], mode='L')
     folder = '/'.join(in_filename.split("/")[:-1])
@@ -54,9 +55,9 @@ def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
             cage = []
             for i in xrange(0, n):
                 angle = 2 * i * PI / n
-                y, x = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
-                cage.append([y + c[0], x + c[1]])
-                text_file.write("%.8e\t%.8e\n" % (x + c[1], y + c[0]))  # OTHER
+                x, y = radius * ratio * np.cos(angle), radius * ratio * np.sin(angle)
+                cage.append([x + c[0], y + c[1]])
+                text_file.write("%.8e\t%.8e\n" % (x + c[0], y + c[1]))  # OTHER
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
     if display_mask:
         utils.plotContourOnImage(np.array(mask_points), im[:, :, 0],
@@ -75,7 +76,7 @@ class OverrideGraphicsScene(Qt.QGraphicsScene):
     def mousePressEvent(self, event):
         super(OverrideGraphicsScene, self).mousePressEvent(event)
         position = (event.pos().x(), event.pos().y())
-        print '(y,x)=', event.pos().x(), ',', event.pos().y()
+        print '(x,y)=', event.pos().x(), ',', event.pos().y()
         if self.COUNTER == 0:
             # The first point is the center
             self.CENTER = [event.pos().x(), event.pos().y()]
@@ -123,14 +124,13 @@ def create_ground_truth(image):
         ground_truth = utils.MaskClass(mask=im, filename=image.root + 'gt_' + image.spec_name + '.png', threshold=252.)
         ground_truth.save_image(filename=ground_truth.path)
 
+
 def resize_mask(mask):
     print mask.name
     if mask.height > 500:
         print 'DO'
         mask.reshape(new_width=400)
         mask.save_image(filename=mask.path)
-
-
 
 
 if __name__ == '__main__':
@@ -144,21 +144,22 @@ if __name__ == '__main__':
         # # All images in each file are found
         # cages = utils.get_cages(files, root)
         # for cage in cages:
-        #     turning_function.plot_polygon(cage.cage, fig_title=cage.root)
+        # turning_function.plot_polygon(cage.cage, fig_title=cage.root)
 
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            if image.spec_name == 'apple4':
+            if image.spec_name == 'apple5':
                 print image.spec_name
                 resize_image(image)
                 open_canvas(image.path)
-            # gt=create_ground_truth(image)
-            # open_canvas(image.path)
+                # gt=create_ground_truth(image)
+                # open_canvas(image.path)
 
-        # # All masks in each file are found
-        # images = utils.get_images(files,root)
-        # for image in images:
-        #     gt_im=utils.get_ground_truth(image,files)
-        #     if gt_im:
-        #         resize_mask(gt_im)
+                # # All masks in each file are found
+                # images = utils.get_images(files,root)
+                # for image in images:
+
+                #     gt_im=utils.get_ground_truth(image,files)
+                #     if gt_im:
+                #         resize_mask(gt_im)
