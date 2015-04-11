@@ -17,10 +17,12 @@ LP_LP_c_double = POINTER(LP_c_double)
 
 def get_contour(mask_obj):
     mask = mask_obj.mask
-    nrow, ncol = mask.shape
+    mask_t=mask.transpose()
+    mask_=mask_t.copy()
+    nrow, ncol = mask_.shape
     contour_size = c_int()
     mat = LP_c_double()
-    cac_contour_get_interior_contour(byref(contour_size), byref(mat), np.ctypeslib.as_ctypes(mask), c_int(ncol),
+    cac_contour_get_interior_contour(byref(contour_size), byref(mat), np.ctypeslib.as_ctypes(mask_), c_int(ncol),
                                      c_int(nrow), c_int(4))
     contour_coord = np.ctypeslib.as_array(mat, shape=(contour_size.value, 2))
     return contour_coord, contour_size
