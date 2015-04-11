@@ -16,9 +16,9 @@ from scipy import interpolate
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False):
     start = time.time()
     image = image_obj.gray_image
-    # if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
-    #     print 'Cage is out of the image! Not converged. Try a smaller cage'
-    #     return None
+    if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
+        print 'Cage is out of the image! Not converged. Try a smaller cage'
+        return None
     contour_coord, contour_size = get_contour(mask_obj)
 
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
