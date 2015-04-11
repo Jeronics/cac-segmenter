@@ -149,7 +149,7 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            if image.spec_name == 'apple4':
+            if image.spec_name == 'apple5':
                 print image.spec_name
                 resize_image(image)
                 open_canvas(image.path)
