@@ -41,8 +41,7 @@ def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
             if pow(y - c[1], 2) + pow(x - c[0], 2) <= pow(radius, 2):
                 im[y,x] = 255
                 mask_points.append([x, y])
-
-    ima = Image.fromarray(im[:, :, 0], mode='L')
+    ima = Image.fromarray(im[:, :], mode='L')
     folder = '/'.join(in_filename.split("/")[:-1])
     ima.save(folder + "/mask_00.png")
     if type(num_cage_points) is not list:
@@ -135,7 +134,7 @@ def resize_mask(mask):
 
 if __name__ == '__main__':
     RootFolder = '../dataset'
-    depth = 2
+    depth = 1
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth]
@@ -149,17 +148,17 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            if image.spec_name == 'banana2':
+            if image.spec_name == 'elephant':
                 print image.spec_name
                 resize_image(image)
                 open_canvas(image.path)
-                # gt=create_ground_truth(image)
-                # open_canvas(image.path)
+            # gt=create_ground_truth(image)
+            # open_canvas(image.path)
 
-                # # All masks in each file are found
-                # images = utils.get_images(files,root)
-                # for image in images:
+            # # All masks in each file are found
+            # images = utils.get_images(files,root)
+            # for image in images:
 
-                #     gt_im=utils.get_ground_truth(image,files)
-                #     if gt_im:
-                #         resize_mask(gt_im)
+            #     gt_im=utils.get_ground_truth(image,files)
+            #     if gt_im:
+            #         resize_mask(gt_im)
