@@ -26,10 +26,17 @@ class CageClass:
 
     def read_txt(self, filename):
         cage = np.loadtxt(filename, float)
-        # Rotate the cage
+        # Rotate the cage to (y,x)
         rot = np.array([[0, 1], [1, 0]])
         cage = np.dot(cage, rot)
         self.__init__(cage, filename)
+
+    def save_cage(self, filename):
+        text_file = open(filename, "w")
+
+        for x, y in self.cage:
+            # Un-Rotate to (y,x)
+            text_file.write("%.8e\t%.8e\n" % (y, x))
 
 
 class MaskClass:
@@ -92,7 +99,9 @@ class MaskClass:
     def save_image(self, filename=''):
         if filename == '':
             filename = self.save_path
-        scipy.misc.imsave(filename, self.mask)
+        # Transpose the image before returning it to be saved
+        mask = np.transpose(self.mask)
+        scipy.misc.imsave(filename, mask)
 
 
 class ImageClass:
@@ -241,7 +250,9 @@ def create_ground_truth(initial_cage, final_cage, initial_mask):
                                                                                        initial_mask.height)
     gt_im = np.zeros([initial_mask.width, initial_mask.height])
     # print cc.polygon_comparison(initial_cage.cage, final_cage.cage)
-    gt_im[omega_1_coord.transpose().astype(int)[0], omega_1_coord.transpose().astype(int)[1]] = 255.
+
+    # Flip the coordinate points
+    gt_im[omega_1_coord.transpose().astype(int)[1], omega_1_coord.transpose().astype(int)[0]] = 255.
 
     gt_mask = MaskClass(gt_im)
     return gt_mask
@@ -262,7 +273,9 @@ def read_png(name):
     :param name: a directory path to the png image.
     :return: An image matrix in the type (y,x)
     '''
-    im = scipy.misc.imread(name)
+    im = Image.open(name) #scipy.misc.imread(name)
+    im= im.convert('RGB').convert('L')
+    im=np.array(im)
     im = im.astype(np.float64)
     return im
 
@@ -485,6 +498,7 @@ def walk_level(some_dir, level=1):
 def save_cage(cage, filename):
     text_file = open(filename, "w")
     for x, y in cage.cage:
+
         text_file.write("%.8e\t%.8e\n" % (x, y))
 
 

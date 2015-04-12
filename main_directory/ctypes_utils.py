@@ -73,11 +73,11 @@ def get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size, omega_2_coord, o
                                np.ctypeslib.as_ctypes(init_cage_file))
     return affine_omega_1_coord, affine_omega_2_coord
 
-
-mask_obj = utils.MaskClass()
-mask_obj.read_png('../dataset/apple/apple5/mask_00.png')
-
-coords, size = get_contour(mask_obj)
-
-print coords
-
+# #
+# mask_obj = utils.MaskClass()
+# mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
+#
+# coords, size = get_contour(mask_obj)
+#
+# print coords
+#
