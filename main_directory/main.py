@@ -41,7 +41,7 @@ def walk_through_dataset(root_folder, depth, start_from=False):
                 if image.spec_name == start_from:
                     go = True
 
-                if image.spec_name == 'banana2' or image.spec_name =='eagle1':
+                if image.spec_name in ['banana2', 'eagle1', 'eagle2', 'eagle3', 'apple35','apple72','apple58','apple43']:
                     print 'ERROR: cac_holefilling (0,0) point is not zero'
                     continue
                 if not go:
@@ -68,6 +68,6 @@ def walk_through_dataset(root_folder, depth, start_from=False):
 
 
 if __name__ == '__main__':
-    RootFolder = '../dataset'
-    depth = 2
-    walk_through_dataset(RootFolder, depth, start_from='eagle1')
+    RootFolder = '../dataset/elephant'
+    depth = 0
+    walk_through_dataset(RootFolder, depth)
