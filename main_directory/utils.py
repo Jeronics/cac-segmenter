@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import *
 import matplotlib
+from time import sleep
 
 matplotlib.use("Qt5Agg")
 import scipy
@@ -57,9 +58,15 @@ class MaskClass:
         :param name: a directory path to the png image.
         :return: An image matrix in the type (y,x)
         '''
-        mask = scipy.misc.imread(filename)
-        mask = mask.astype(np.float64)
-        self.__init__(mask, filename, threshold)
+        # mask = scipy.misc.imread(filename)
+        # mask = mask.astype(np.float64)
+        # self.__init__(mask, filename, threshold)
+
+        im = Image.open(filename)  # scipy.misc.imread(name)
+        im = im.convert('RGB').convert('L')
+        im = np.array(im)
+        im = im.astype(np.float64)
+        self.__init__(im, filename, threshold)
 
 
     def plot_image(self, show_plot=True):
@@ -127,9 +134,15 @@ class ImageClass:
         :param name: a directory path to the png image.
         :return: An image matrix in the type (y,x)
         '''
-        im = scipy.misc.imread(filename)
+        # im = scipy.misc.imread(filename)
+        # im = im.astype(np.float64)
+        # self.__init__(im, filename)
+        im = Image.open(filename)
+        im = im.convert('RGB')
+        im = np.array(im)
         im = im.astype(np.float64)
         self.__init__(im, filename)
+
 
     def plot_image(self, show_plot=True):
         im_aux = self.image.astype('uint8')
@@ -273,9 +286,9 @@ def read_png(name):
     :param name: a directory path to the png image.
     :return: An image matrix in the type (y,x)
     '''
-    im = Image.open(name) #scipy.misc.imread(name)
-    im= im.convert('RGB').convert('L')
-    im=np.array(im)
+    im = Image.open(name)  # scipy.misc.imread(name)
+    im = im.convert('RGB').convert('L')
+    im = np.array(im)
     im = im.astype(np.float64)
     return im
 
@@ -304,6 +317,7 @@ def binarizePgmImage(image):
 
 def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.], points2=[]):
     f = plt.figure()
+
     matriu = contour_coordinates.astype(int)
     image_copy = np.copy(image)
 
@@ -498,7 +512,6 @@ def walk_level(some_dir, level=1):
 def save_cage(cage, filename):
     text_file = open(filename, "w")
     for x, y in cage.cage:
-
         text_file.write("%.8e\t%.8e\n" % (x, y))
 
 
