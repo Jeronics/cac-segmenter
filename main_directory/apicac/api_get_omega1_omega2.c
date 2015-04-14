@@ -407,8 +407,8 @@ void cac_holefilling(struct image *mask)
   j = 0;
 
   /* Check if value is 0 at this point */
-  if (mask->gray[i * mask->ncol + j] != 0)
-    cac_error("ERROR: cac_holefilling (0,0) point is not zero\n");
+//  if (mask->gray[i * mask->ncol + j] != 0)
+//    cac_error("ERROR: cac_holefilling (0,0) point is not zero\n");
 
   /* Perform holefilling */
   cac_holefilling_child(mask, j, i);
