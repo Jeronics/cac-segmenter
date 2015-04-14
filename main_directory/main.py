@@ -5,11 +5,12 @@ import sys
 import copy
 
 
-def walk_through_dataset(root_folder, depth, start_from=False):
+def walk_through_dataset(root_folder, depth, start_from=False, plot_evolution=False):
     generator = utils.walk_level(root_folder, depth)
     model = 1
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(root_folder.split("/")) + depth]
     print gens
+
 
     # This boolean controls whether the algorithm will be used on a specific image or not
     if start_from:
@@ -40,10 +41,10 @@ def walk_through_dataset(root_folder, depth, start_from=False):
             for image in images:
                 if image.spec_name == start_from:
                     go = True
-
-                if image.spec_name in ['banana2', 'eagle1', 'eagle2', 'eagle3', 'apple35','apple72','apple58','apple43']:
-                    print 'ERROR: cac_holefilling (0,0) point is not zero'
-                    continue
+                from matplotlib import pyplot as plt
+                # if image.spec_name in ['banana2', 'eagle1', 'eagle2', 'eagle3', 'apple35','apple72','apple58','apple43']:
+                # print 'ERROR: cac_holefilling (0,0) point is not zero'
+                #     continue
                 if not go:
                     continue
                 for mask in masks:
@@ -51,7 +52,8 @@ def walk_through_dataset(root_folder, depth, start_from=False):
                         print '\nSegmenting', image.root
                         result_file = results_folder + "/" + cage.save_name
                         aux_cage = copy.deepcopy(cage)
-                        resulting_cage = cac_segmenter.cac_segmenter(image, mask, aux_cage, None)
+                        resulting_cage = cac_segmenter.cac_segmenter(image, mask, aux_cage, None,
+                                                                     plot_evolution=plot_evolution)
                         if not resulting_cage:
                             print 'No convergence reached for the cac-segmenter'
                         else:
@@ -68,6 +70,6 @@ def walk_through_dataset(root_folder, depth, start_from=False):
 
 
 if __name__ == '__main__':
-    RootFolder = '../dataset/elephant'
-    depth = 0
-    walk_through_dataset(RootFolder, depth)
+    RootFolder = '../dataset'
+    depth = 2
+    walk_through_dataset(RootFolder, depth, start_from='eagle2', plot_evolution=False)

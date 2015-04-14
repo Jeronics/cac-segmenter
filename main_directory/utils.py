@@ -113,6 +113,7 @@ class MaskClass:
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):
+
         # FROM RGBA to RGB if necessary
         if im.shape == 2 and im.shape[2] == 4:
             self.image = im[:, :, 0:3]
@@ -367,8 +368,7 @@ def get_inputs(arguments):
     """Return imagage, cage/s and mask from input as numpy array.
         Specification:  ./cac model imatge mascara caixa_init [caixa_curr]
     """
-
-    if (len(arguments) != 6 and len(arguments) != 5 ):
+    if len(arguments) != 6 and len(arguments) != 5:
         print 'Wrong Use!!!! Expected Input ' + sys.argv[0] + \
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)

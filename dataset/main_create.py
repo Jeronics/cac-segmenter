@@ -20,8 +20,9 @@ PI = 3.14159265358979323846264338327950288419716939937510
 def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
     '''
     This function creates a mask and a sequence of cages.
+        The cages are created clockwise from (x,y)=( c_x + r*R, c_y)
     :param c:
-    :param p:
+    :param p: is the radius point chosen
     :param im_shape:
     :param num_cage_points:
     :return:
@@ -134,7 +135,7 @@ def resize_mask(mask):
 
 if __name__ == '__main__':
     RootFolder = '../dataset'
-    depth = 1
+    depth = 2
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth]
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            if image.spec_name == 'elephant':
+            if image.spec_name == 'apple58':
                 print image.spec_name
                 resize_image(image)
                 open_canvas(image.path)
