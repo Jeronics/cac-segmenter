@@ -195,14 +195,15 @@ def grad_energy_constraint(vertices, d, k):
 def grad_vertex_constraint(vertices, d):
     grad_norm = np.zeros(vertices.shape)
     for i, vi in enumerate(vertices):
+        print vi
         for j, vj in enumerate(vertices[i + 1:]):
             # Avoid dividing by 0 and where the function is not defined
             dist_vertices = np.linalg.norm(vi - vj)
             if dist_vertices >= d or not dist_vertices > 0:
                 continue
-            aux = 2 * (vi - vj) * (d-dist_vertices) / float(dist_vertices)
+            aux = 2 * (vi - vj) * (d - dist_vertices) / float(dist_vertices)
             grad_norm[i] += aux
-            grad_norm[j] += -aux
+            grad_norm[(j + i + 1) % len(vertices)] += -aux
 
     return grad_norm
 
