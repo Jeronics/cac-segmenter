@@ -13,6 +13,7 @@ from scipy import interpolate
 
 eagle_mask = utils.MaskClass()
 eagle_mask.read_png('../dataset/eagle/eagle2/results/result16_1.05.png')
+
 # eagle_mask.plot_image()
 
 eagle_cage = utils.CageClass()
@@ -29,10 +30,17 @@ pear_image.read_png('../dataset/pear/pear1/pear1.png')
 end_mask = eagle_mask.mask
 
 eagle_coord = np.array(np.where(end_mask == 255.)).transpose()
+eagle_coord_ = eagle_coord.copy()
+eagle_coord_ = eagle_coord_.astype(dtype=float64)
 print eagle_coord
+import matplotlib.pyplot as plt
+
+# plt.scatter(eagle_coord[:,0],eagle_coord[:,1])
+# plt.show()
+
+affine_contour_coordinates = ctypes_utils.get_affine_contour_coordinates(eagle_coord_, eagle_cage.cage)
 
 
-affine_contour_coordinates = ctypes_utils.get_affine_contour_coordinates(eagle_coord.copy(), eagle_cage.cage)
 transformed_coord = np.dot(affine_contour_coordinates, pear_cage.cage)
 print transformed_coord
 
