@@ -4,6 +4,7 @@ import numpy as np
 import utils
 
 import os
+
 libcac = CDLL("apicac/libcac.so")
 
 cac_contour_get_interior_contour = libcac.cac_contour_get_interior_contour
@@ -17,8 +18,8 @@ LP_LP_c_double = POINTER(LP_c_double)
 
 def get_contour(mask_obj):
     mask = mask_obj.mask
-    mask_t=mask.transpose()
-    mask_=mask_t.copy()
+    mask_t = mask.transpose()
+    mask_ = mask_t.copy()
     nrow, ncol = mask_.shape
     contour_size = c_int()
     mat = LP_c_double()
