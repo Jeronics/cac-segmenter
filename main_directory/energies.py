@@ -111,6 +111,66 @@ def get_omega_mean(omega_coord, image):
 
 
 '''
+                        GAUSSIAN ENERGY
+'''
+
+
+def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    '''
+    Computes the Gaussian Energy of an Image
+    :param omega_1_coord (numpy array): Omega coordinates for region Omega 1
+    :param omega_2_coord (numpy array): Omega coordinates for region Omega 2
+    :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
+    :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
+    :param image (numpy array): The Image
+    :return:
+    '''
+    omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+    omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+    energy = (omega_1 + omega_2) / float(2)
+    return energy
+
+
+def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    '''
+    Computes the derivative of the Gaussian Energy of an Image with respect to the control points
+    :param omega1_coord (numpy array): Omega coordinates for region Omega 1
+    :param omega2_coord (numpy array): Omega coordinates for region Omega 2
+    :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
+    :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
+    :param image (numpy array): The Image
+    :return:
+    '''
+    # Calculate Image gradient
+    image_gradient = np.array(np.gradient(image))
+
+    # Calculate Energy Per region:
+    omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
+    omega_2 = grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
+
+    energy = omega_1 + omega_2
+    return energy
+
+
+def gauss_energy_per_region(omega_coord, affine_omega_coord, image):
+    omega_mean, omega_std = get_omega_mean(omega_coord, image)
+    aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
+    return np.dot(aux, np.transpose(aux))
+
+
+def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_gradient):
+    # E_mean
+
+    omega_mean, omega_std = get_omega_mean(omega_coord, image)
+    aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
+    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
+                               utils.evaluate_image(omega_coord, image_gradient[1], 0)]
+    mean_derivative = np.dot(image_gradient_by_point, affine_omega_coord) / float(len(omega_coord))
+    grad = gradient_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point, mean_derivative)
+    return grad  # *(1/pow(omega_std, 2)) for GAUSS
+
+
+'''
 
                         CONSTRAINT ENERGIES
 
@@ -118,7 +178,8 @@ def get_omega_mean(omega_coord, image):
 
 
 def energy_constraint(vertices, d, k):
-    return k * (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
+    energy = (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
+    return energy * k  # Give a weight k
 
 
 def grad_energy_constraint(vertices, d, k):
@@ -139,7 +200,7 @@ def grad_vertex_constraint(vertices, d):
             dist_vertices = np.linalg.norm(vi - vj)
             if dist_vertices >= d or not dist_vertices > 0:
                 continue
-            aux = 2 * (vi - vj) * (dist_vertices - d) / float(dist_vertices)
+            aux = 2 * (vi - vj) * (d-dist_vertices) / float(dist_vertices)
             grad_norm[i] += aux
             grad_norm[j] += -aux
 
@@ -156,7 +217,7 @@ def vertex_constraint(vertices, d):
     vertex_energy = 0
     for i, vi in enumerate(vertices):
         for j, vj in enumerate(vertices[i + 1:]):
-            vertex_energy += np.power(np.linalg.norm(vi - vj) - d, 2) if np.linalg.norm(vi - vj) < d else 0
+            vertex_energy += np.power(d - np.linalg.norm(vi - vj), 2) if np.linalg.norm(vi - vj) < d else 0
     return vertex_energy
 
 
@@ -203,9 +264,6 @@ def grad_edge_constraint(vertices, d):
             v_2 = vertices[i2_]
             grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
     return grad_energy
-
-
-
 
 
 def grad_point_to_edge_energy_1(v, v_1, v_2, d):
