@@ -41,4 +41,13 @@ if __name__ == '__main__':
 
     morphed_image = morphing(pear_image, pear_cage, eagle_mask, eagle_cage)
 
+
+    eagle_mask = utils.MaskClass()
+    eagle_mask.read_png('../dataset/apple/apple1/results/result16_1.05.png')
+
+    eagle_cage = utils.CageClass()
+    eagle_cage.read_txt('../dataset/apple/apple1/results/cage_16_1.05_out.txt')
+
+    morphed_image = morphing(pear_image, pear_cage, eagle_mask, eagle_cage)
+
     morphed_image.plot_image()
