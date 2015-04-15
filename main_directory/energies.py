@@ -178,12 +178,12 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_g
 
 
 def energy_constraint(vertices, d, k):
-    energy = (vertex_constraint(vertices, d) + edge_constraint(vertices, d))
+    energy = vertex_constraint(vertices, d) #+ edge_constraint(vertices, d)
     return energy * k  # Give a weight k
 
 
 def grad_energy_constraint(vertices, d, k):
-    grad = (grad_vertex_constraint(vertices, d) + grad_edge_constraint(vertices, d))
+    grad = grad_vertex_constraint(vertices, d) #+ grad_edge_constraint(vertices, d)
     return grad * k  # Give a weight k
 
 
@@ -201,9 +201,6 @@ def grad_vertex_constraint(vertices, d):
             if dist_vertices >= d or not dist_vertices > 0:
                 continue
             aux = 2 * (vi - vj) * (d - dist_vertices) / float(dist_vertices)
-            print '\nEnergies'
-            print vi, vj
-            print aux
             grad_norm[i] += aux
             grad_norm[(j + i + 1) % len(vertices)] += -aux
 
