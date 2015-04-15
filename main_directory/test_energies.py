@@ -110,20 +110,16 @@ class TestEnergies(unittest.TestCase):
         '''
         for input_vars, expected, _ in self.expected_values:
             predicted = energies.grad_vertex_constraint(*input_vars)
-            print '\n'
-            print predicted
-            print expected
-            # print np.linalg.norm(predicted - expected)
             self.assertEqual(np.linalg.norm(predicted - expected) < 0.0001, True)
 
-            # def test_vertex_constraint(self):
-            # '''
-            # Tests whether the vertex_constraint function works.
-            # :return:
-            # '''
-            # for input_vars, _, expected in self.expected_values:
-            # predicted = energies.vertex_constraint(*input_vars)
-            # self.assertEqual(predicted, expected)
+    def test_vertex_constraint(self):
+        '''
+        Tests whether the vertex_constraint function works.
+        :return:
+        '''
+        for input_vars, _, expected in self.expected_values:
+            predicted = energies.vertex_constraint(*input_vars)
+            self.assertEqual(abs(predicted - expected) < 0.0001, True)
 
 
 if __name__ == '__main__':
