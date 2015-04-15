@@ -4,7 +4,7 @@ import energies
 import numpy as np
 
 
-class TestEnergies(unittest.TestCase):
+class TestVertexConstraint(unittest.TestCase):
     '''
 
     '''
