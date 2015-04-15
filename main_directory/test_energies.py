@@ -122,5 +122,64 @@ class TestVertexConstraint(unittest.TestCase):
             self.assertEqual(abs(predicted - expected) < 0.0001, True)
 
 
+class TestEdgeConstraint(unittest.TestCase):
+    '''
+
+    '''
+
+    def setUp(self):
+        '''
+
+        :return:
+        '''
+        '''
+        case 1: A point is influenced by an edge.
+
+                  (1,5) *
+             (0,0)*-----------* (10,0)
+
+        '''
+        vertices1 = np.array([
+            [0, 0],
+            [1, 1],
+            [11, 0]
+        ])
+        d1 = 5
+        gradients1 = np.array([
+            [0, 18],
+            [0, 0],
+            [0, -18]
+        ])
+        energy1 = 81
+
+
+        self.expected_values = (
+            ((vertices1, d1), gradients1, energy1),
+            ((vertices1 + 1212, d1), gradients1, energy1),
+            ((vertices2, d2), gradients2, energy2),
+            ((vertices3, d3), gradients3, energy3),
+            ((vertices4, d4), gradients4, energy4),
+
+        )
+
+    # def test_vertex_constraint_grad(self):
+    #     '''
+    #     Tests whether the vertex_constraint_grad function works.
+    #     :return:
+    #     '''
+    #     for input_vars, expected, _ in self.expected_values:
+    #         predicted = energies.grad_vertex_constraint(*input_vars)
+    #         self.assertEqual(np.linalg.norm(predicted - expected) < 0.0001, True)
+    #
+    # def test_vertex_constraint(self):
+    #     '''
+    #     Tests whether the vertex_constraint function works.
+    #     :return:
+    #     '''
+    #     for input_vars, _, expected in self.expected_values:
+    #         predicted = energies.vertex_constraint(*input_vars)
+    #         self.assertEqual(abs(predicted - expected) < 0.0001, True)
+    #
+
 if __name__ == '__main__':
     unittest.main()
