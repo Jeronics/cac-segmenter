@@ -21,7 +21,6 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         return None
     contour_coord, contour_size = get_contour(mask_obj)
 
-    print contour_coord
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
     if plot_evolution:
@@ -50,7 +49,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
 
     # Constraint Energy parameters
     # constraint energy. k=0 is none.
-    k = 0
+    k = 10
 
     # Algorithm requires k>=2*beta to work.
     d = 2 * beta
@@ -176,4 +175,4 @@ if __name__ == '__main__':
     cage_obj = CageClass()
     cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
     curr_cage_file = None
-    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
+    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False)
