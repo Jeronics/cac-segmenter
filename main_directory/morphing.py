@@ -25,6 +25,10 @@ def morphing(origin_image, origin_cage, destination_mask, destination_cage):
 
     return end_image
 
+#
+# def morphing_by_points(origin_image, origin_cage, origin_points, destination_points, destination_image, destination_points):
+#     end_image = utils.ImageClass()
+#     return end_image
 
 if __name__ == '__main__':
     eagle_mask = utils.MaskClass()
