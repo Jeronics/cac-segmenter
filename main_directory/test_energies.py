@@ -97,6 +97,7 @@ class TestVertexConstraint(unittest.TestCase):
         self.expected_values = (
             ((vertices1, d1), gradients1, energy1),
             ((vertices1 + 1212, d1), gradients1, energy1),
+            ((vertices1 - 233, d1), gradients1, energy1),
             ((vertices2, d2), gradients2, energy2),
             ((vertices3, d3), gradients3, energy3),
             ((vertices4, d4), gradients4, energy4),
@@ -106,7 +107,6 @@ class TestVertexConstraint(unittest.TestCase):
     def test_vertex_constraint_grad(self):
         '''
         Tests whether the vertex_constraint_grad function works.
-        :return:
         '''
         for input_vars, expected, _ in self.expected_values:
             predicted = energies.grad_vertex_constraint(*input_vars)
@@ -115,7 +115,6 @@ class TestVertexConstraint(unittest.TestCase):
     def test_vertex_constraint(self):
         '''
         Tests whether the vertex_constraint function works.
-        :return:
         '''
         for input_vars, _, expected in self.expected_values:
             predicted = energies.vertex_constraint(*input_vars)
@@ -141,45 +140,84 @@ class TestEdgeConstraint(unittest.TestCase):
         '''
         vertices1 = np.array([
             [0, 0],
-            [1, 1],
-            [11, 0]
+            [5, 1],
+            [10, 0]
         ])
         d1 = 5
         gradients1 = np.array([
-            [0, 18],
             [0, 0],
-            [0, -18]
+            [0, 8],
+            [0, 0]
         ])
-        energy1 = 81
+        energy1 = 16
 
+        '''
+        case 2: Case 1 in inverse order
+        '''
+        vertices2 = np.array([
+            [0, 0],
+            [10, 0],
+            [5, 1]
+        ])
+        d2 = 5
+        gradients2 = np.array([
+            [0, 0],
+            [0, 0],
+            [0, 8]
+        ])
+        energy2 = 16
+
+        '''
+        case 3: A rectangle
+
+            (0,3) * - - * (1,3)
+                  |     |
+                  |     |
+                  |     |
+            (0,0) * - - * (1,0)
+
+        '''
+        vertices3 = np.array([
+            [0, 0],
+            [0, 3],
+            [1, 3],
+            [1, 0]
+        ])
+        d3 = 5
+        gradients3 = np.array([
+            [-8, -4],
+            [-8, 4],
+            [8, 4],
+            [8, -4]
+        ])
+        energy3 = 4 * 2 * 2 + 4 * 4 * 4
 
         self.expected_values = (
             ((vertices1, d1), gradients1, energy1),
             ((vertices1 + 1212, d1), gradients1, energy1),
+            ((vertices1 - 322, d1), gradients1, energy1),
             ((vertices2, d2), gradients2, energy2),
             ((vertices3, d3), gradients3, energy3),
-            ((vertices4, d4), gradients4, energy4),
+            # ((vertices4, d4), gradients4, energy4),
 
         )
 
-    # def test_vertex_constraint_grad(self):
-    #     '''
-    #     Tests whether the vertex_constraint_grad function works.
-    #     :return:
-    #     '''
-    #     for input_vars, expected, _ in self.expected_values:
-    #         predicted = energies.grad_vertex_constraint(*input_vars)
-    #         self.assertEqual(np.linalg.norm(predicted - expected) < 0.0001, True)
-    #
-    # def test_vertex_constraint(self):
-    #     '''
-    #     Tests whether the vertex_constraint function works.
-    #     :return:
-    #     '''
-    #     for input_vars, _, expected in self.expected_values:
-    #         predicted = energies.vertex_constraint(*input_vars)
-    #         self.assertEqual(abs(predicted - expected) < 0.0001, True)
-    #
+    def test_edge_constraint_grad(self):
+        '''
+        Tests whether the vertex_constraint_grad function works.
+        '''
+        for input_vars, expected, _ in self.expected_values:
+            predicted = energies.grad_edge_constraint(*input_vars)
+            self.assertEqual(np.linalg.norm(predicted - expected) < 0.0001, True)
+
+    def test_vertex_constraint(self):
+        '''
+        Tests whether the edge_constraint function works.
+        '''
+        for input_vars, _, expected in self.expected_values:
+            predicted = energies.edge_constraint(*input_vars)
+            self.assertEqual(abs(predicted - expected) < 0.0001, True)
+
 
 if __name__ == '__main__':
     unittest.main()
