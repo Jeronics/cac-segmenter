@@ -178,12 +178,12 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_g
 
 
 def energy_constraint(vertices, d, k):
-    energy = vertex_constraint(vertices, d) #+ edge_constraint(vertices, d)
+    energy = vertex_constraint(vertices, d) + edge_constraint(vertices, d)
     return energy * k  # Give a weight k
 
 
 def grad_energy_constraint(vertices, d, k):
-    grad = grad_vertex_constraint(vertices, d) #+ grad_edge_constraint(vertices, d)
+    grad = grad_vertex_constraint(vertices, d) + grad_edge_constraint(vertices, d)
     return grad * k  # Give a weight k
 
 
@@ -252,20 +252,6 @@ def grad_length_constraint_energy(vertices, d):
 '''
 
 
-def grad_edge_constraint(vertices, d):
-    # TODO:
-    num_points = len(vertices)
-    grad_energy = np.zeros(list(vertices.shape))
-    for i, v in enumerate(vertices):
-        for j in range(1, num_points - 1):
-            i1_ = (i + j) % num_points
-            i2_ = (i + j + 1) % num_points
-            v_1 = vertices[i1_]
-            v_2 = vertices[i2_]
-            grad_energy[i] += grad_point_to_edge_energy_1(v, v_1, v_2, d)
-    return grad_energy
-
-
 def grad_point_to_edge_energy_1(v, v_1, v_2, d):
     q = v_2 - v_1
     q_orth = perpendicular_vector(q)
@@ -274,7 +260,7 @@ def grad_point_to_edge_energy_1(v, v_1, v_2, d):
     return grad
 
 
-def dist_point_to_edge(v, v_1, v_2):
+def dist_point_to_edge(v, v_1, v_2, d):
     '''
     Finds the distance between a point v and a segment v1v2.
     CAVEAT: if the point cannot be projected perpendicular to the segment, None is returned*.
@@ -286,14 +272,13 @@ def dist_point_to_edge(v, v_1, v_2):
     q = v_2 - v_1
     q_orth = perpendicular_vector(q)
     r = v - v_1
-
     # Calculate the range where the band where the distance can be well defined*
-    range_ = np.dot(q, r) / np.linalg.norm(q)
+    range_ = np.dot(q, r) / np.power(np.linalg.norm(q), 2)
     if range_ < 0 or range_ > 1:
-        return None
+        return d
     else:
         distance = abs(np.dot(q_orth, r)) / np.linalg.norm(q_orth)
-        return distance
+        return distance if distance < d else d
 
 
 def point_to_edge_energy(v, v_1, v_2, d):
@@ -305,14 +290,7 @@ def point_to_edge_energy(v, v_1, v_2, d):
     :param d: a scalar from which if the distance is too large, the energy is 0.
     :return: an energy value of the point v.
     '''
-    distance = dist_point_to_edge(v, v_1, v_2)
-    if distance:
-        if distance > d:
-            energy = 0
-        else:
-            energy = np.power(distance - d, 2)
-    else:
-        energy = 0
+    energy = np.power(d - dist_point_to_edge(v,v_1,v_2,d), 2)
     return energy
 
 
@@ -325,6 +303,21 @@ def edge_constraint(vertices, d):
             v_2 = vertices[(i + j + 1) % num_points]
             edge_energy += point_to_edge_energy(v, v_1, v_2, d)
     return edge_energy
+
+
+def grad_edge_constraint(vertices, d):
+    # TODO:
+    num_points = len(vertices)
+    grad_energy = np.zeros(list(vertices.shape))
+    for i, v in enumerate(vertices):
+        for j in range(1, num_points - 1):
+            i1_ = (i + j) % num_points
+            i2_ = (i + j + 1) % num_points
+            v_1 = vertices[i1_]
+            v_2 = vertices[i2_]
+            aux = grad_point_to_edge_energy_1(v, v_1, v_2, d)
+            grad_energy[i] += 2 * (d - dist_point_to_edge(v, v_1, v_2, d)) * aux
+    return grad_energy
 
 
 '''
