@@ -290,7 +290,7 @@ def point_to_edge_energy(v, v_1, v_2, d):
     :param d: a scalar from which if the distance is too large, the energy is 0.
     :return: an energy value of the point v.
     '''
-    energy = np.power(d - dist_point_to_edge(v,v_1,v_2,d), 2)
+    energy = np.power(d - dist_point_to_edge(v, v_1, v_2, d), 2)
     return energy
 
 
@@ -318,6 +318,59 @@ def grad_edge_constraint(vertices, d):
             aux = grad_point_to_edge_energy_1(v, v_1, v_2, d)
             grad_energy[i] += 2 * (d - dist_point_to_edge(v, v_1, v_2, d)) * aux
     return grad_energy
+
+
+'''
+                    MEAN COLOR ENERGY
+'''
+
+
+def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    energy1 = mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+    energy2 = mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+    energy = energy1 + energy2
+    return energy
+
+
+def mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image):
+    mean_color_in_region(omega_1_coord, affine_omega_1_coord, image)
+    return 0
+
+
+def mean_color_in_region():
+    return 0
+
+
+def rgb_to_hsi(coordinates, omega):
+    color_list = np.transpose(omega[coordinates[:, 0], coordinates[:, 1]])
+    hsi_transformation = np.array([
+        [1 / 3., 1 / 3., 1 / 3.],
+        [1, -1 / 2., -1 / 2.],
+        [0, -np.sqrt(3) / 2., np.sqrt(3) / 2.]
+    ])
+    hsi_ = np.dot(hsi_transformation, color_list)
+    C1 = hsi_[1]
+    C2 = hsi_[2]
+    intensity = hsi_[0]
+
+    # Saturation = sqrt( C1^2 + C2^2 )
+    saturation = np.sqrt(sum(np.power(hsi_[1:], 2)))
+
+    # Hue Value
+    # . | ArcCos(C2/saturation)  if C1>=0
+    # H=|
+    # . | 2*Pi - ArcCos(C2/saturation) if C2<0
+
+    hue = C1.copy() * 0
+
+    # get boolean vector of C1>0
+    positives = (C2 <= 0)
+    negatives = (positives == False)
+
+    # Note that in one article this is incorrectly written with C2 instead of C1.
+    hue[positives] = np.arccos(C1[positives] / saturation[positives])
+    hue[negatives] = 2 * np.pi - np.arccos(C1[negatives] / saturation[negatives])
+    return hue, saturation, intensity, C1, C2,
 
 
 '''
