@@ -341,8 +341,16 @@ def mean_color_in_region():
     return 0
 
 
-def rgb_to_hsi(coordinates, omega):
-    color_list = np.transpose(omega[coordinates[:, 0], coordinates[:, 1]])
+def rgb_to_hsi(coordinates, image):
+    '''
+    Convert RGB values to HSI given the coordinates of the pixels in a region omega and the region.
+    If saturation is zero, the Hue value will be 0.
+    :param coordinates (numpy array): a numpy array containing coordinates in the image.
+    :param omega (numpy): An image with RGB values
+    :return:
+    '''
+    # TODO: Check if points are inside the image before accessing them. This could be done outside!
+    color_list = np.transpose(image[coordinates[:, 0], coordinates[:, 1]])
     hsi_transformation = np.array([
         [1 / 3., 1 / 3., 1 / 3.],
         [1, -1 / 2., -1 / 2.],
@@ -360,7 +368,6 @@ def rgb_to_hsi(coordinates, omega):
     # . | ArcCos(C1/saturation)  if C2<=0
     # H=|
     # . | 2*Pi - ArcCos(C1/saturation) if C2>0
-
     hue = C1.copy() * 1
 
     # get boolean vector of C1>0
