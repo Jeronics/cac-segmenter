@@ -357,20 +357,29 @@ def rgb_to_hsi(coordinates, omega):
     saturation = np.sqrt(sum(np.power(hsi_[1:], 2)))
 
     # Hue Value
-    # . | ArcCos(C2/saturation)  if C1>=0
+    # . | ArcCos(C1/saturation)  if C2<=0
     # H=|
-    # . | 2*Pi - ArcCos(C2/saturation) if C2<0
+    # . | 2*Pi - ArcCos(C1/saturation) if C2>0
 
-    hue = C1.copy() * 0
+    hue = C1.copy() * 1
 
     # get boolean vector of C1>0
     positives = (C2 <= 0)
     negatives = (positives == False)
 
+    # Avoid dividing by zero:
+    # if saturation is 0, so is C1, then we can avoid by dividing by one.
+    denom = saturation.copy()
+    denom[saturation == 0.] = 1
+
     # Note that in one article this is incorrectly written with C2 instead of C1.
-    hue[positives] = np.arccos(C1[positives] / saturation[positives])
-    hue[negatives] = 2 * np.pi - np.arccos(C1[negatives] / saturation[negatives])
-    return hue, saturation, intensity, C1, C2,
+    hue[positives] = np.arccos(C1[positives] / denom[positives])
+    hue[negatives] = 2 * np.pi - np.arccos(C1[negatives] / denom[negatives])
+
+    # If saturation is zero or maximum, then hue value will be 0. This is just a notation
+    hue[saturation == 0.] = 0
+
+    return hue, saturation, intensity
 
 
 '''
