@@ -219,5 +219,142 @@ class TestEdgeConstraint(unittest.TestCase):
             self.assertEqual(abs(predicted - expected) < 0.0001, True)
 
 
+class TestColorMean(unittest.TestCase):
+    '''
+
+    '''
+
+    def setUp(self):
+        '''
+
+        :return:
+        '''
+        '''
+        case 1: Red
+        '''
+        import numpy as np
+        import utils
+
+        color1 = np.ones([15, 20, 3])
+
+
+        # Red
+        col = color1.copy()
+        col[:, :, 0] *= 255.
+        col[:, :, 1] *= 0.
+        col[:, :, 2] *= 0.
+        red_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_red = utils.ImageClass(col)
+        h_red = 0
+        s_red = 100
+        i_red = 100
+
+        # Green
+        col = color1.copy()
+        col[:, :, 0] *= 0.
+        col[:, :, 1] *= 255.
+        col[:, :, 2] *= 0.
+        green_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_green = utils.ImageClass(col)
+        h_green = 2*np.pi/3.
+        s_green = 100
+        i_green = 100
+
+        # Blue
+        col = color1.copy()
+        col[:, :, 0] *= 0.
+        col[:, :, 1] *= 0.
+        col[:, :, 2] *= 255.
+        blue_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_blue = utils.ImageClass(col)
+        h_blue = 3*np.pi/2.
+        s_blue = 100
+        i_blue = 100
+
+        # Yellow
+        col = color1.copy()
+        col[:, :, 0] *= 255.
+        col[:, :, 1] *= 255.
+        col[:, :, 2] *= 0.
+        yellow_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_yellow = utils.ImageClass(col)
+        h_yellow = np.pi/3.
+        s_yellow = 100
+        i_yellow = 100
+
+        # Pink
+        col = color1.copy()
+        col[:, :, 0] *= 255.
+        col[:, :, 1] *= 0.
+        col[:, :, 2] *= 255.
+        pink_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_pink = utils.ImageClass(col)
+        h_pink = 7*np.pi/3.
+        s_pink = 100
+        i_pink = 100
+
+        # Clear Blue
+        col = color1.copy()
+        col[:, :, 0] *= 0.
+        col[:, :, 1] *= 255.
+        col[:, :, 2] *= 255.
+        clear_blue_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_clear_blue = utils.ImageClass(col)
+        h_clear_blue = np.pi
+        s_clear_blue = 100
+        i_clear_blue = 100
+
+        # Black
+        col = color1.copy()
+        col[:, :, 0] *= 0.
+        col[:, :, 1] *= 0.
+        col[:, :, 2] *= 0.
+        black_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_black = utils.ImageClass(col)
+        h_black = 0
+        s_black = 0
+        i_black = 0
+
+        # White
+        col = color1.copy()
+        col[:, :, 0] *= 255.
+        col[:, :, 1] *= 255.
+        col[:, :, 2] *= 255.
+        white_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_white = utils.ImageClass(col)
+        h_white = 0
+        s_white = 0
+        i_white = 100
+
+        self.expected_values = (
+            ((red_coordinates, im_red.image), h_red, s_red, i_red),
+            ((green_coordinates, im_green.image), h_green, s_green, i_green),
+            ((blue_coordinates, im_blue.image), h_blue, s_blue,i_blue),
+            ((yellow_coordinates, im_yellow.image), h_yellow, s_yellow, i_yellow),
+            ((pink_coordinates, im_pink.image), h_pink, s_pink, i_pink),
+            ((clear_blue_coordinates, im_clear_blue.image), h_clear_blue, s_clear_blue, i_clear_blue),
+            ((black_coordinates, im_black.image), h_black, s_black, i_black),
+            ((white_coordinates, im_white.image), h_white, s_white, i_white),
+        )
+
+    def test_rgb_to_green(self):
+        '''
+        Tests whether the vertex_constraint_grad function works.
+        '''
+        for input_vars, h, s, i in self.expected_values:
+            pred_h,pred_s, pred_i = energies.rgb_to_hsi(*input_vars)
+            # self.assertEqual(np.linalg.norm(pred_h - h) < 0.0001, True)
+            # self.assertEqual(np.linalg.norm(pred_s - s) < 0.0001, True)
+            self.assertEqual(np.linalg.norm(pred_i - i) < 0.0001, True)
+
+    def test_vertex_constraint(self):
+        '''
+        Tests whether the edge_constraint function works.
+        '''
+        for input_vars, _, expected in self.expected_values:
+            predicted = energies.edge_constraint(*input_vars)
+            self.assertEqual(abs(predicted - expected) < 0.0001, True)
+
+
 if __name__ == '__main__':
     unittest.main()
