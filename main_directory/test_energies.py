@@ -361,6 +361,30 @@ class TestColorMean(unittest.TestCase):
         self.expected_mix_mean = (
             ((mix1_coordinates, im_mix1.image), mean_mix1),
         )
+        self.color_pairs = (
+            (
+                np.array([
+                    [0],
+                    [0],
+                    [0.01],
+                    [0],
+                    [2 * np.pi / 3.],
+                ]),
+                np.array([
+                    [0],
+                    [np.pi],
+                    [np.pi + 0.01],
+                    [3 * np.pi / 2.],
+                    [3 * np.pi / 2.]
+                ])
+            ), np.array([
+                [0],
+                [np.pi],
+                [np.pi],
+                [np.pi / 2.],
+                [5 * np.pi / 6.]
+            ])
+        )
 
     def test_rgb_to_green(self):
         '''
@@ -389,11 +413,15 @@ class TestColorMean(unittest.TestCase):
         for input_vars, expected_mean_angle in self.expected_mix_mean:
             predicted_mean_angle = energies.mean_color_in_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_mean_angle - predicted_mean_angle) < 0.0001, True)
-    #
-    # def test_distance_between_colors(self):
-    #     '''
-    #     :return:
-    #     '''
+
+    def test_hue_color_distance(self):
+        '''
+        :return:
+        '''
+        input_vars, expected_distance = self.color_pairs
+        predicted_distance = energies.hue_color_distance(*input_vars)
+        self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
+
 
 
 if __name__ == '__main__':

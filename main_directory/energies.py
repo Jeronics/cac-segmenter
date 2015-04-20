@@ -306,7 +306,6 @@ def edge_constraint(vertices, d):
 
 
 def grad_edge_constraint(vertices, d):
-    # TODO:
     num_points = len(vertices)
     grad_energy = np.zeros(list(vertices.shape))
     for i, v in enumerate(vertices):
@@ -338,7 +337,20 @@ def mean_color_energy_per_region(omega_1_coord, image):
 
 
 def hue_color_distance(hue1, hue2):
-    return 0
+    '''
+    Note that all inputed angles must be positive
+    :param hue1:
+    :param hue2:
+    :return:
+    '''
+    assert (all(hue1) >= 0), 'Hue values must be positive!'
+    assert (all(hue2) >= 0), 'Hue values must be positive!'
+    cond1 = (np.abs(hue1 - hue2) <= np.pi)
+    cond2 = False == cond1
+    dist=hue1.copy()
+    dist[cond1] = np.abs(hue1 - hue2)[cond1]
+    dist[cond2] = 2*np.pi - np.abs(hue1 - hue2)[cond2]
+    return dist
 
 
 def mean_color_in_region(omega_coord, image):
@@ -368,7 +380,10 @@ def rgb_to_hsi(coordinates, image):
     If saturation is zero, the Hue value will be 0.
     :param coordinates (numpy array): a numpy array containing coordinates in the image.
     :param omega (numpy): An image with RGB values
-    :return:
+    :return : hue, saturation, intensity which are respectiveley:
+        hue: values range from [0, 2*Pi)
+        saturation: values range from [0, 255.]
+        intensity: values range from [0, 255.]
     '''
     # TODO: Check if points are inside the image before accessing them. This could be done outside!
     color_list = np.transpose(image[coordinates[:, 0], coordinates[:, 1]])
