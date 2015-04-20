@@ -326,19 +326,40 @@ def grad_edge_constraint(vertices, d):
 
 
 def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    energy1 = mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-    energy2 = mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+    energy1 = mean_color_energy_per_region(omega_1_coord, image)
+    energy2 = mean_color_energy_per_region(omega_2_coord, image)
     energy = energy1 + energy2
     return energy
 
 
-def mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image):
-    mean_color_in_region(omega_1_coord, affine_omega_1_coord, image)
+def mean_color_energy_per_region(omega_1_coord, image):
+    mean = mean_color_in_region(omega_1_coord, image)
+    return mean_color_energy
+
+
+def hue_color_distance(hue1, hue2):
     return 0
 
 
-def mean_color_in_region():
-    return 0
+def mean_color_in_region(omega_coord, image):
+    '''
+    Returns the mean color of an image all positive.
+    Exception: White and Black have 0 saturation. This means that they should be avoided when doing the mean.
+    :param omega_coord:
+    :param affine_omega_coord:
+    :param image:
+    :return:
+    '''
+    hue, saturation, intensity = rgb_to_hsi(omega_coord, image)
+    if len(hue[saturation > 0]) == 0:
+        # Avoid dividing by zero
+        mean_angle = 0.0
+    else:
+        mean_angle = np.arctan2(sum(np.sin(hue[saturation > 0])) / float(len(hue[saturation > 0])),
+                                sum(np.cos(hue[saturation > 0])) / float(len(hue[saturation > 0])))
+    if mean_angle < 0:
+        mean_angle = 2 * np.pi + mean_angle
+    return mean_angle
 
 
 def rgb_to_hsi(coordinates, image):
