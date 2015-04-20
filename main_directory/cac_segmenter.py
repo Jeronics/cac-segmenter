@@ -49,7 +49,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
 
     # Constraint Energy parameters
     # constraint energy. k=0 is none.
-    k = 10
+    k = 50
 
     # Algorithm requires k>=2*beta to work.
     d = 2 * beta
