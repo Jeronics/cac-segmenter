@@ -348,10 +348,20 @@ def hue_color_distance(hue1, hue2):
     '''
     cond1 = (np.abs(hue1 - hue2) <= np.pi)
     cond2 = False == cond1
+
     dist = hue1.copy()
     dist[cond1] = np.abs(hue1 - hue2)[cond1]
     dist[cond2] = 2 * np.pi - np.abs(hue1 - hue2)[cond2]
     return dist
+
+def directed_hue_color_distance():
+    cond1 = (np.abs(hue1 - hue2) <= np.pi)
+    cond2 = False == cond1
+    dist = hue1.copy()
+    dist[cond1] = np.abs(hue1 - hue2)[cond1]
+    dist[cond2] = 2 * np.pi - np.abs(hue1 - hue2)[cond2]
+    return dist
+
 
 
 def mean_color_in_region(omega_coord, image):
