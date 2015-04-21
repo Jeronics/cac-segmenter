@@ -386,6 +386,18 @@ class TestColorMean(unittest.TestCase):
             ])
         )
 
+        color2 = np.ones([4, 3, 3])
+
+        col = color2.copy()
+        col[:2, :, 0], col[:2, :, 1], col[:2, :, 2] = 255., 0., 0.
+        col[2:, :, 0], col[2:, :, 1], col[2:, :, 2] = 0., 255., 0.
+        mix2_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_mix2 = utils.ImageClass(col)
+        energy_mix2 = 2*np.pi*np.pi/3.
+        self.energy_color = (
+            ((mix2_coordinates,im_mix2.image),energy_mix2),
+        )
+
     def test_rgb_to_green(self):
         '''
         Tests whether the rgb_to_hsi function works.
@@ -402,7 +414,6 @@ class TestColorMean(unittest.TestCase):
         '''
         for input_vars, _, _, _, expected_angle in self.expected_values:
             predicted_angle = energies.mean_color_in_region(*input_vars)
-            print expected_angle, predicted_angle
             self.assertEqual(np.linalg.norm(expected_angle - predicted_angle) < 0.0001, True)
 
     def test_mean_color_in_region_on_mixed_colored_surface(self):
@@ -422,6 +433,10 @@ class TestColorMean(unittest.TestCase):
         predicted_distance = energies.hue_color_distance(*input_vars)
         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
 
+    def test_mean_color_energy(self):
+        for input_vars, expected_energy in self.energy_color:
+            predicted_energy = energies.mean_color_energy_per_region(*input_vars)
+            self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
 
 
 if __name__ == '__main__':

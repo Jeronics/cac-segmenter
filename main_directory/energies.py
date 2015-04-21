@@ -327,13 +327,16 @@ def grad_edge_constraint(vertices, d):
 def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     energy1 = mean_color_energy_per_region(omega_1_coord, image)
     energy2 = mean_color_energy_per_region(omega_2_coord, image)
-    energy = energy1 + energy2
+    energy = (energy1 + energy2) / 2.
     return energy
 
 
 def mean_color_energy_per_region(omega_1_coord, image):
     mean = mean_color_in_region(omega_1_coord, image)
-    return mean_color_energy
+    hue_comp, _, _ = rgb_to_hsi(omega_1_coord, image)
+    distance = hue_color_distance(hue_comp, mean)
+    energy = sum(np.power(distance, 2))
+    return energy
 
 
 def hue_color_distance(hue1, hue2):
@@ -347,9 +350,9 @@ def hue_color_distance(hue1, hue2):
     assert (all(hue2) >= 0), 'Hue values must be positive!'
     cond1 = (np.abs(hue1 - hue2) <= np.pi)
     cond2 = False == cond1
-    dist=hue1.copy()
+    dist = hue1.copy()
     dist[cond1] = np.abs(hue1 - hue2)[cond1]
-    dist[cond2] = 2*np.pi - np.abs(hue1 - hue2)[cond2]
+    dist[cond2] = 2 * np.pi - np.abs(hue1 - hue2)[cond2]
     return dist
 
 
