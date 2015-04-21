@@ -341,13 +341,11 @@ def mean_color_energy_per_region(omega_1_coord, image):
 
 def hue_color_distance(hue1, hue2):
     '''
-    Note that all inputed angles must be positive
+    Note that all input angles must be positive.
     :param hue1:
     :param hue2:
     :return:
     '''
-    assert (all(hue1) >= 0), 'Hue values must be positive!'
-    assert (all(hue2) >= 0), 'Hue values must be positive!'
     cond1 = (np.abs(hue1 - hue2) <= np.pi)
     cond2 = False == cond1
     dist = hue1.copy()
@@ -358,7 +356,7 @@ def hue_color_distance(hue1, hue2):
 
 def mean_color_in_region(omega_coord, image):
     '''
-    Returns the mean color of an image all positive.
+    Returns the mean hue color of an image from [0, 2*Pi).
     Exception: White and Black have 0 saturation. This means that they should be avoided when doing the mean.
     :param omega_coord:
     :param affine_omega_coord:

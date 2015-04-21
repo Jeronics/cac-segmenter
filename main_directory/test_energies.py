@@ -358,9 +358,7 @@ class TestColorMean(unittest.TestCase):
             ((black_coordinates, im_black.image), h_black, s_black, i_black, mean_black),
             ((white_coordinates, im_white.image), h_white, s_white, i_white, mean_white),
         )
-        self.expected_mix_mean = (
-            ((mix1_coordinates, im_mix1.image), mean_mix1),
-        )
+
         self.color_pairs = (
             (
                 np.array([
@@ -393,10 +391,40 @@ class TestColorMean(unittest.TestCase):
         col[2:, :, 0], col[2:, :, 1], col[2:, :, 2] = 0., 255., 0.
         mix2_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
         im_mix2 = utils.ImageClass(col)
-        energy_mix2 = 2*np.pi*np.pi/3.
-        self.energy_color = (
-            ((mix2_coordinates,im_mix2.image),energy_mix2),
+        mean_mix2 = np.pi / 3.
+        energy_mix2_region = 4 * np.pi * np.pi / 3.
+
+        col = color2.copy()
+        col[:, :1, 0], col[:, :1, 1], col[:, :1, 2] = 255., 0., 0.
+        col[:, 1:2, 0], col[:, 1:2, 1], col[:, 1:2, 2] = 0., 0., 0.
+        col[:, 2:3, 0], col[:, 2:3, 1], col[:, 2:3, 2] = 0., 255., 0.
+        mix3_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_mix3 = utils.ImageClass(col)
+        mean_mix3 = np.pi / 3.
+        energy_mix3_region = 3 * 4 * np.pi * np.pi / 9.
+
+        col = color2.copy()
+        col[:, :1, 0], col[:, :1, 1], col[:, :1, 2] = 255., 0., 0.
+        col[:, 1:2, 0], col[:, 1:2, 1], col[:, 1:2, 2] = 255., 255., 255.
+        col[:, 2:3, 0], col[:, 2:3, 1], col[:, 2:3, 2] = 0., 255., 0.
+        mix4_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
+        im_mix4 = utils.ImageClass(col)
+        mean_mix4 = np.pi / 3.
+        energy_mix4_region = 3 * 4 * np.pi * np.pi / 9.
+
+        self.expected_mix_mean = (
+            ((mix1_coordinates, im_mix1.image), mean_mix1),
+            ((mix2_coordinates, im_mix2.image), mean_mix2),
+            ((mix3_coordinates, im_mix3.image), mean_mix3),  # Check that white does not add up to mean
+            ((mix4_coordinates, im_mix4.image), mean_mix4),  # Check that black does not add up to mean
         )
+
+        self.energy_color = (
+            ((mix2_coordinates, im_mix2.image), energy_mix2_region),
+            ((mix3_coordinates, im_mix3.image), energy_mix3_region),
+            ((mix4_coordinates, im_mix4.image), energy_mix4_region),
+        )
+
 
     def test_rgb_to_green(self):
         '''
@@ -408,6 +436,7 @@ class TestColorMean(unittest.TestCase):
             self.assertEqual(np.linalg.norm(pred_s - s) < 0.0001, True)
             self.assertEqual(np.linalg.norm(pred_i - i) < 0.0001, True)
 
+
     def test_mean_color_in_region_on_homogeneously_colored_surfaces(self):
         '''
         Tests whether the mean_color_in_region function works.
@@ -415,6 +444,7 @@ class TestColorMean(unittest.TestCase):
         for input_vars, _, _, _, expected_angle in self.expected_values:
             predicted_angle = energies.mean_color_in_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_angle - predicted_angle) < 0.0001, True)
+
 
     def test_mean_color_in_region_on_mixed_colored_surface(self):
         '''
@@ -425,6 +455,7 @@ class TestColorMean(unittest.TestCase):
             predicted_mean_angle = energies.mean_color_in_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_mean_angle - predicted_mean_angle) < 0.0001, True)
 
+
     def test_hue_color_distance(self):
         '''
         :return:
@@ -433,7 +464,8 @@ class TestColorMean(unittest.TestCase):
         predicted_distance = energies.hue_color_distance(*input_vars)
         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
 
-    def test_mean_color_energy(self):
+
+    def test_mean_color_energy_per_region(self):
         for input_vars, expected_energy in self.energy_color:
             predicted_energy = energies.mean_color_energy_per_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
