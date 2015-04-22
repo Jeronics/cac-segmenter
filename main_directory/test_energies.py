@@ -358,47 +358,47 @@ class TestColorMean(unittest.TestCase):
             ((black_coordinates, im_black.image), h_black, s_black, i_black, mean_black),
             ((white_coordinates, im_white.image), h_white, s_white, i_white, mean_white),
         )
-        pi_=np.pi
+        pi_ = np.pi
         self.directed_color_pairs = (
             (
                 np.array([
                     [0],
                     [0],
-                    [2*pi_/3.],
+                    [2 * pi_ / 3.],
                     [0],
                     [pi_],
-                    [2*pi_-0.01],
-                    [2*pi_/3.],
-                    [2*pi_-0.01],
+                    [2 * pi_ - 0.01],
+                    [2 * pi_ / 3.],
+                    [2 * pi_ - 0.01],
                     [pi_],
-                    [2*pi_/3.],
-                    [4*pi_/3.],
+                    [2 * pi_ / 3.],
+                    [4 * pi_ / 3.],
                 ]),
                 np.array([
                     [0],
-                    [2*pi_/3.],
+                    [2 * pi_ / 3.],
                     [0],
                     [pi_],
                     [0],
-                    [2*pi_/3.],
-                    [2*pi_-0.01],
+                    [2 * pi_ / 3.],
+                    [2 * pi_ - 0.01],
                     [pi_],
-                    [2*pi_-0.01],
-                    [4*pi_/3.],
-                    [2*pi_/3.],
+                    [2 * pi_ - 0.01],
+                    [4 * pi_ / 3.],
+                    [2 * pi_ / 3.],
                 ])
             ), np.array([
                 [0],
-                [2*pi_/3.],
-                [2*pi_/3.],
+                [2 * pi_ / 3.],
+                [-2 * pi_ / 3.],
                 [pi_],
                 [-pi_],
-                [2*pi_/3+0.01],
-                [-2*pi_/3.-0.01],
-                [-pi_+0.01],
-                [pi_-0.01],
-                [2*pi_/3.],
-                [-2*pi_/3.],
+                [2 * pi_ / 3. + 0.01],
+                [-2 * pi_ / 3. - 0.01],
+                [-pi_ + 0.01],
+                [pi_ - 0.01],
+                [2 * pi_ / 3.],
+                [-2 * pi_ / 3.],
             ])
         )
         self.color_pairs = (
@@ -513,15 +513,13 @@ class TestColorMean(unittest.TestCase):
         '''
         input_vars, expected_distance = self.directed_color_pairs
         predicted_distance = energies.directed_hue_color_distance(*input_vars)
+        print expected_distance - predicted_distance < 0.0001
         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
-
 
     def test_mean_color_energy_per_region(self):
         for input_vars, expected_energy in self.energy_color:
             predicted_energy = energies.mean_color_energy_per_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
-
-
 
 
 if __name__ == '__main__':
