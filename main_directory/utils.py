@@ -8,6 +8,7 @@ import scipy
 from scipy import misc
 import os
 import sys
+import energies
 
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
@@ -119,7 +120,11 @@ class ImageClass:
             self.image = im[:, :, 0:3]
         else:
             self.image = im
+
+        # Gray image
         self.gray_image = self.rgb2gray(self.image)
+        # Hue image
+        self.hsi_image = self.rgb2hsi(self.image)
         self.shape = im.shape[:2]
         self.height = im.shape[0]
         self.width = im.shape[1] if len(im.shape) > 1 else None
@@ -178,6 +183,15 @@ class ImageClass:
         else:
             gray = rgb
         return gray
+
+    def rgb2hsi(self, rgb):
+        hsi = rgb.copy()
+        if len(rgb.shape) == 3:
+            coordinates = np.array([[i, j] for i in np.arange(rgb.shape[0]) for j in np.arange(rgb.shape[1])])
+            hsi[coordinates[:, 0], coordinates[:, 1]] = energies.rgb_to_hsi(coordinates, rgb)
+        else:
+            hsi = rgb
+        return hsi
 
 
 # ########## VISUALITON
@@ -534,4 +548,3 @@ def mkdir(str_path):
         raise IOError("Could not create path '%s'" % str_path)
 
     return True
-

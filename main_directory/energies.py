@@ -81,7 +81,6 @@ def mean_energy_per_region(omega_coord, affine_omega_coord, image):
 
 def mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
-
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
@@ -370,8 +369,8 @@ def directed_hue_color_distance(hue1, hue2):
     cond4 = cond3 == False
 
     dist[cond1] = (hue2 - hue1)[cond1]
-    dist[cond2 & cond3] = (hue2 - hue1)[cond2 & cond3]-2*np.pi
-    dist[cond2 & cond4] = 2*np.pi + (hue2 - hue1)[cond2 & cond4]
+    dist[cond2 & cond3] = (hue2 - hue1)[cond2 & cond3] - 2 * np.pi
+    dist[cond2 & cond4] = 2 * np.pi + (hue2 - hue1)[cond2 & cond4]
     return dist
 
 
@@ -443,8 +442,22 @@ def rgb_to_hsi(coordinates, image):
 
     # If saturation is zero or maximum, then hue value will be 0. This is just a notation
     hue[saturation == 0.] = 0
+    return np.concatenate((np.concatenate(([hue], [saturation]),axis=0),[intensity])).T
 
-    return hue, saturation, intensity
+
+def get_neighboring_values(coordinates, image):
+    '''
+    Gets neighboring pixels of an array of pixels.
+    :param coordinates (numpy array):
+    :return returns 8 arrays of coordinate pixels:
+    '''
+    x = np.zero([len(coordinates), 3, 3])
+    for i in xrange(-1, 2):
+        for i in xrange(-1, 2):
+            x[:, i + 1, j + 1] = directed_hue_color_distance(utils.evaluate_image(coordinates), utils.evaluate_image(coordinates - [i, j]))
+    dx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
+    derivative = sum(sum(np.transpose(x * dx)))
+    print
 
 
 '''
@@ -463,7 +476,6 @@ def cage_vertex_do_not_evolve(grad_k_3, grad_k_2, grad_k_1, grad_k):
     :param grad_k:
     :return:
     '''
-
     if not all(np.diagonal(np.dot(grad_k, np.transpose(grad_k_2))) > 0.00001):
         return False
     if not all(np.diagonal(np.dot(grad_k_1, np.transpose(grad_k_3))) > 0.00001):
