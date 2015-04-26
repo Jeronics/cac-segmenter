@@ -332,7 +332,7 @@ def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine
 
 def mean_color_energy_per_region(omega_1_coord, image):
     mean = mean_color_in_region(omega_1_coord, image)
-    hue_comp, _, _ = rgb_to_hsi(omega_1_coord, image)
+    hue_comp = image.hsi_image[omega_1_coord[0, :], omega_1_coord[1, :]]
     distance = hue_color_distance(hue_comp, mean)
     energy = sum(np.power(distance, 2))
     return energy
@@ -383,7 +383,9 @@ def mean_color_in_region(omega_coord, image):
     :param image:
     :return:
     '''
-    hue, saturation, intensity = rgb_to_hsi(omega_coord, image)
+    hsi = image.hsi_image[omega_coord[0, :], omega_coord[1, :]]
+    hue = hsi[:, 0]
+    saturation = hsi[:, 1]
     if len(hue[saturation > 0]) == 0:
         # Avoid dividing by zero
         mean_angle = 0.0
@@ -391,7 +393,7 @@ def mean_color_in_region(omega_coord, image):
         mean_angle = np.arctan2(sum(np.sin(hue[saturation > 0])) / float(len(hue[saturation > 0])),
                                 sum(np.cos(hue[saturation > 0])) / float(len(hue[saturation > 0])))
     if mean_angle < 0:
-        mean_angle = 2 * np.pi + mean_angle
+        mean_angle += 2 * np.pi
     return mean_angle
 
 
@@ -442,7 +444,7 @@ def rgb_to_hsi(coordinates, image):
 
     # If saturation is zero or maximum, then hue value will be 0. This is just a notation
     hue[saturation == 0.] = 0
-    return np.concatenate((np.concatenate(([hue], [saturation]),axis=0),[intensity])).T
+    return np.concatenate((np.concatenate(([hue], [saturation]), axis=0), [intensity])).T
 
 
 def get_neighboring_values(coordinates, image):
@@ -454,7 +456,8 @@ def get_neighboring_values(coordinates, image):
     x = np.zero([len(coordinates), 3, 3])
     for i in xrange(-1, 2):
         for i in xrange(-1, 2):
-            x[:, i + 1, j + 1] = directed_hue_color_distance(utils.evaluate_image(coordinates), utils.evaluate_image(coordinates - [i, j]))
+            x[:, i + 1, j + 1] = directed_hue_color_distance(utils.evaluate_image(coordinates),
+                                                             utils.evaluate_image(coordinates - [i, j]))
     dx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
     derivative = sum(sum(np.transpose(x * dx)))
     print
