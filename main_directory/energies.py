@@ -469,6 +469,8 @@ def get_neighboring_values(coordinates, image):
     derivative_y = sum(sum(np.transpose(x * dy)))
 
     return derivative_x, derivative_y
+
+
 '''
 
                     STOP CRITERIA
