@@ -79,12 +79,10 @@ class TestImageClass(unittest.TestCase):
         expected_hsi[1, 2] = [5 * pi_ / 3., 0., 255.]
         expected_hsi[2, 2] = [4 * pi_ / 3., 0., 255.]
         expected_hsi[3, 2] = [4 * pi_ / 3., 0., 255.]
-        # red_coordinates = np.array(
-        # [[i, j] for i in np.arange(expected_hsi.shape[0]) for j in np.arange(expected_hsi.shape[1])]
-        # )
         im_color1 = utils.ImageClass(im=col)
         predicted = im_color1.hsi_image
         self.assertEqual(np.linalg.norm(predicted[:, :, 0] - expected_hsi[:, :, 0]) < 0.0001, True)
+
 
 
 if __name__ == '__main__':

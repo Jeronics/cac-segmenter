@@ -2,6 +2,7 @@ __author__ = 'jeroni'
 import unittest
 import energies
 import numpy as np
+import utils
 
 
 class TestVertexConstraint(unittest.TestCase):
@@ -513,7 +514,6 @@ class TestColorMean(unittest.TestCase):
         '''
         input_vars, expected_distance = self.directed_color_pairs
         predicted_distance = energies.directed_hue_color_distance(*input_vars)
-        print expected_distance - predicted_distance < 0.0001
         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
 
     def test_mean_color_energy_per_region(self):
@@ -521,17 +521,25 @@ class TestColorMean(unittest.TestCase):
             predicted_energy = energies.mean_color_energy_per_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
 
-#
-# class TestNeighboringCoordinates(unittest.TestCase):
-# def setUp(self):
-# return 0
-#
-# def test_get_neighboring_coordinates(self):
-#         input_vars, expected_distance = self.directed_color_pairs
-#         predicted_distance = energies.directed_hue_color_distance(*input_vars)
-#         print expected_distance - predicted_distance < 0.0001
-#         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
-#
+
+class TestColorDerivative(unittest.TestCase):
+    def test_hsi_derivative(self):
+        color1 = np.zeros([5, 4, 3])
+        # Image
+        col = color1.copy()
+        col[:, :] = [255., 0., 0.]
+        col[2, :] = [0., 255., 0.]
+        colIm = utils.ImageClass(col)
+        coord = np.array([
+            [0, 0],
+            [0, 2],
+            [1, 2],
+            [2, 2],
+            [3, 2],
+            [4, 2],
+        ])
+        result= energies.get_neighboring_values(coord, colIm)
+
 
 
 if __name__ == '__main__':

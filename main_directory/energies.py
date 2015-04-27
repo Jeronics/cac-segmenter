@@ -333,8 +333,6 @@ def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine
 def mean_color_energy_per_region(omega_1_coord, image):
     mean = mean_color_in_region(omega_1_coord, image)
     hue_comp = image.hsi_image[omega_1_coord[:, 0], omega_1_coord[:, 1]][:, 0]
-    print hue_comp
-
     distance = hue_color_distance(hue_comp, mean)
     energy = sum(np.power(distance, 2))
     return energy
@@ -385,7 +383,7 @@ def mean_color_in_region(omega_coord, image):
     :param image:
     :return:
     '''
-    hsi = image.hsi_image[omega_coord[:,0], omega_coord[:, 1]]
+    hsi = image.hsi_image[omega_coord[:, 0], omega_coord[:, 1]]
     hue = hsi[:, 0]
     saturation = hsi[:, 1]
     if len(hue[saturation > 0]) == 0:
@@ -455,16 +453,22 @@ def get_neighboring_values(coordinates, image):
     :param coordinates (numpy array):
     :return returns 8 arrays of coordinate pixels:
     '''
-    x = np.zero([len(coordinates), 3, 3])
+    x = np.zeros([len(coordinates), 3, 3])
     for i in xrange(-1, 2):
-        for i in xrange(-1, 2):
-            x[:, i + 1, j + 1] = directed_hue_color_distance(utils.evaluate_image(coordinates),
-                                                             utils.evaluate_image(coordinates - [i, j]))
-    dx = np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]])
-    derivative = sum(sum(np.transpose(x * dx)))
-    print
+        for j in xrange(-1, 2):
+            x[:, i + 1, j + 1] = directed_hue_color_distance(
+                utils.evaluate_image(coordinates, image.hsi_image[:, :, 0], outside_value=0.),
+                utils.evaluate_image(coordinates + [i, j], image.hsi_image[:, :, 0], outside_value=0.))
+    dy = np.array([
+        [-1, 0, 1],
+        [-1, 0, 1],
+        [-1, 0, 1]
+    ])
+    dx = dy.T
+    derivative_x = sum(sum(np.transpose(x * dx)))
+    derivative_y = sum(sum(np.transpose(x * dy)))
 
-
+    return derivative_x, derivative_y
 '''
 
                     STOP CRITERIA
