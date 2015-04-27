@@ -452,7 +452,7 @@ class TestColorMean(unittest.TestCase):
         mix4_coordinates = np.array([[i, j] for i in np.arange(col.shape[0]) for j in np.arange(col.shape[1])])
         im_mix4 = utils.ImageClass(col)
         mean_mix4 = np.pi / 3.
-        energy_mix4_region = 3 * 4 * np.pi * np.pi / 9.
+        energy_mix4_region = 4 * np.pi * np.pi / 3.
 
         self.expected_mix_mean = (
             ((mix1_coordinates, im_mix1), mean_mix1),
@@ -519,8 +519,6 @@ class TestColorMean(unittest.TestCase):
     def test_mean_color_energy_per_region(self):
         for input_vars, expected_energy in self.energy_color:
             predicted_energy = energies.mean_color_energy_per_region(*input_vars)
-            print expected_energy
-            print predicted_energy
             self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
 
 #

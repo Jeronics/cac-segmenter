@@ -385,7 +385,7 @@ def mean_color_in_region(omega_coord, image):
     :param image:
     :return:
     '''
-    hsi = image.hsi_image[omega_coord[0, :], omega_coord[1, :]]
+    hsi = image.hsi_image[omega_coord[:,0], omega_coord[:, 1]]
     hue = hsi[:, 0]
     saturation = hsi[:, 1]
     if len(hue[saturation > 0]) == 0:
