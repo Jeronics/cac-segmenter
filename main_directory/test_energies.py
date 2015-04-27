@@ -349,14 +349,14 @@ class TestColorMean(unittest.TestCase):
         mean_mix1 = np.pi / 6.
 
         self.expected_values = (
-            ((red_coordinates, im_red.image), h_red, s_red, i_red, mean_red),
-            ((green_coordinates, im_green.image), h_green, s_green, i_green, mean_green),
-            ((blue_coordinates, im_blue.image), h_blue, s_blue, i_blue, mean_blue),
-            ((yellow_coordinates, im_yellow.image), h_yellow, s_yellow, i_yellow, mean_yellow),
-            ((pink_coordinates, im_pink.image), h_pink, s_pink, i_pink, mean_pink),
-            ((clear_blue_coordinates, im_clear_blue.image), h_clear_blue, s_clear_blue, i_clear_blue, mean_clear_blue),
-            ((black_coordinates, im_black.image), h_black, s_black, i_black, mean_black),
-            ((white_coordinates, im_white.image), h_white, s_white, i_white, mean_white),
+            ((red_coordinates, im_red), h_red, s_red, i_red, mean_red),
+            ((green_coordinates, im_green), h_green, s_green, i_green, mean_green),
+            ((blue_coordinates, im_blue), h_blue, s_blue, i_blue, mean_blue),
+            ((yellow_coordinates, im_yellow), h_yellow, s_yellow, i_yellow, mean_yellow),
+            ((pink_coordinates, im_pink), h_pink, s_pink, i_pink, mean_pink),
+            ((clear_blue_coordinates, im_clear_blue), h_clear_blue, s_clear_blue, i_clear_blue, mean_clear_blue),
+            ((black_coordinates, im_black), h_black, s_black, i_black, mean_black),
+            ((white_coordinates, im_white), h_white, s_white, i_white, mean_white),
         )
         pi_ = np.pi
         self.directed_color_pairs = (
@@ -455,16 +455,16 @@ class TestColorMean(unittest.TestCase):
         energy_mix4_region = 3 * 4 * np.pi * np.pi / 9.
 
         self.expected_mix_mean = (
-            ((mix1_coordinates, im_mix1.image), mean_mix1),
-            ((mix2_coordinates, im_mix2.image), mean_mix2),
-            ((mix3_coordinates, im_mix3.image), mean_mix3),  # Check that white does not add up to mean
-            ((mix4_coordinates, im_mix4.image), mean_mix4),  # Check that black does not add up to mean
+            ((mix1_coordinates, im_mix1), mean_mix1),
+            ((mix2_coordinates, im_mix2), mean_mix2),
+            ((mix3_coordinates, im_mix3), mean_mix3),  # Check that white does not add up to mean
+            ((mix4_coordinates, im_mix4), mean_mix4),  # Check that black does not add up to mean
         )
 
         self.energy_color = (
-            ((mix2_coordinates, im_mix2.image), energy_mix2_region),
-            ((mix3_coordinates, im_mix3.image), energy_mix3_region),
-            ((mix4_coordinates, im_mix4.image), energy_mix4_region),
+            ((mix2_coordinates, im_mix2), energy_mix2_region),
+            ((mix3_coordinates, im_mix3), energy_mix3_region),
+            ((mix4_coordinates, im_mix4), energy_mix4_region),
         )
 
 
@@ -473,10 +473,11 @@ class TestColorMean(unittest.TestCase):
         Tests whether the rgb_to_hsi function works.
         '''
         for input_vars, h, s, i, m in self.expected_values:
-            pred_h, pred_s, pred_i = energies.rgb_to_hsi(*input_vars)
-            self.assertEqual(np.linalg.norm(pred_h - h) < 0.0001, True)
-            self.assertEqual(np.linalg.norm(pred_s - s) < 0.0001, True)
-            self.assertEqual(np.linalg.norm(pred_i - i) < 0.0001, True)
+            coord, image = input_vars
+            predicted = image.hsi_image[coord[0, :], coord[0, :]]
+            self.assertEqual(np.linalg.norm(predicted[:, 0] - h) < 0.0001, True)
+            self.assertEqual(np.linalg.norm(predicted[:, 1] - s) < 0.0001, True)
+            self.assertEqual(np.linalg.norm(predicted[:, 2] - i) < 0.0001, True)
 
 
     def test_mean_color_in_region_on_homogeneously_colored_surfaces(self):
@@ -496,7 +497,6 @@ class TestColorMean(unittest.TestCase):
         for input_vars, expected_mean_angle in self.expected_mix_mean:
             predicted_mean_angle = energies.mean_color_in_region(*input_vars)
             self.assertEqual(np.linalg.norm(expected_mean_angle - predicted_mean_angle) < 0.0001, True)
-
 
     def test_hue_color_distance(self):
         '''
@@ -519,7 +519,21 @@ class TestColorMean(unittest.TestCase):
     def test_mean_color_energy_per_region(self):
         for input_vars, expected_energy in self.energy_color:
             predicted_energy = energies.mean_color_energy_per_region(*input_vars)
+            print expected_energy
+            print predicted_energy
             self.assertEqual(np.linalg.norm(expected_energy - predicted_energy) < 0.0001, True)
+
+#
+# class TestNeighboringCoordinates(unittest.TestCase):
+# def setUp(self):
+# return 0
+#
+# def test_get_neighboring_coordinates(self):
+#         input_vars, expected_distance = self.directed_color_pairs
+#         predicted_distance = energies.directed_hue_color_distance(*input_vars)
+#         print expected_distance - predicted_distance < 0.0001
+#         self.assertEqual(np.linalg.norm(expected_distance - predicted_distance) < 0.0001, True)
+#
 
 
 if __name__ == '__main__':
