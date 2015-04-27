@@ -460,11 +460,15 @@ def get_neighboring_values(coordinates, image):
                 utils.evaluate_image(coordinates, image.hsi_image[:, :, 0], outside_value=0.),
                 utils.evaluate_image(coordinates + [i, j], image.hsi_image[:, :, 0], outside_value=0.))
     dy = np.array([
-        [-1, 0, 1],
-        [-1, 0, 1],
-        [-1, 0, 1]
+        [1, 0, -1],
+        [2, 0, -2],
+        [1, 0, -1]
     ])
-    dx = dy.T
+    dx = np.array([
+        [-1, -2, -1],
+        [0, 0, 0],
+        [1, 2, 1]
+    ])
     derivative_x = sum(sum(np.transpose(x * dx)))
     derivative_y = sum(sum(np.transpose(x * dy)))
 
