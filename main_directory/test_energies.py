@@ -524,6 +524,17 @@ class TestColorMean(unittest.TestCase):
 
 class TestColorDerivative(unittest.TestCase):
     def test_hsi_derivative_with_variation_on_x_axis(self):
+        '''
+
+        :return:
+        '''
+        '''
+                                _
+                |R|R|G|R|R|   _/_\_   | | | | |
+                |R|R|G|R|R|   _/_\_   | | | | |
+                |R|R|G|R|R|   _/_\_   | | | | |
+                |R|R|G|R|R|   _/ \_   | | | | |
+        '''
         color1 = np.zeros([5, 4, 3])
         # Image
         col = color1.copy()
@@ -538,12 +549,36 @@ class TestColorDerivative(unittest.TestCase):
             [3, 2],
             [4, 2],
         ])
+        result_x = np.array([
+            [0],
+            [0],
+            [8.37758040957],
+            [0],
+            [-8.37758040957],
+            [0],
+        ])
+        result_y = np.array([
+            [0],
+            [0],
+            [0],
+            [0],
+            [0],
+            [0],
+        ])
         result = energies.get_neighboring_values(coord, colIm)
-        print result[0]
-        print result[1]
+        self.assertEqual(np.linalg.norm(result_x.T - result[0]) < 0.001, True)
+        self.assertEqual(np.linalg.norm(result_y.T - result[1]) < 0.001, True)
 
     def test_hsi_derivative_with_variation_on_y_axis(self):
         color2 = np.zeros([5, 4, 3])
+        '''
+
+                |R|R|R|R|R|   _____  | | | | |
+                |R|R|R|R|R|   _____   \ \ \ \ \
+                |G|G|G|G|G|   _____    | | | | |
+                |R|R|R|R|R|   _____   / / / / /
+
+        '''
         # Image
         col2 = color2.copy()
         col2[:, :] = [255., 0., 0.]
@@ -556,9 +591,24 @@ class TestColorDerivative(unittest.TestCase):
             [1, 2],
             [1, 3],
         ])
+        result_x = np.array([
+            [0],
+            [0],
+            [0],
+            [0],
+        ])
+
+        result_y = np.array([
+            [0],
+            [8.37758040957],
+            [0],
+            [-8.37758040957],
+        ])
         result2 = energies.get_neighboring_values(coord2, colIm2)
         print result2[0]
-        print result2[1]
+        print result2[1], result_y
+        # self.assertEqual(np.linalg.norm(result_x.T - result2[0]) < 0.001, True)
+        self.assertEqual(np.linalg.norm(result_y.T - result2[1]) < 0.001, True)
 
 
 if __name__ == '__main__':
