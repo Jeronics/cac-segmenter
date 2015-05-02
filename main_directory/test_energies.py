@@ -523,7 +523,7 @@ class TestColorMean(unittest.TestCase):
 
 
 class TestColorDerivative(unittest.TestCase):
-    def test_hsi_derivative(self):
+    def test_hsi_derivative_with_variation_on_x_axis(self):
         color1 = np.zeros([5, 4, 3])
         # Image
         col = color1.copy()
@@ -538,8 +538,27 @@ class TestColorDerivative(unittest.TestCase):
             [3, 2],
             [4, 2],
         ])
-        result= energies.get_neighboring_values(coord, colIm)
+        result = energies.get_neighboring_values(coord, colIm)
+        print result[0]
+        print result[1]
 
+    def test_hsi_derivative_with_variation_on_y_axis(self):
+        color2 = np.zeros([5, 4, 3])
+        # Image
+        col2 = color2.copy()
+        col2[:, :] = [255., 0., 0.]
+        col2[:, 2] = [0., 255., 0.]
+        colIm2 = utils.ImageClass(col2)
+        coord2 = np.array([
+            [1, 0],
+            [1, 1],
+
+            [1, 2],
+            [1, 3],
+        ])
+        result2 = energies.get_neighboring_values(coord2, colIm2)
+        print result2[0]
+        print result2[1]
 
 
 if __name__ == '__main__':
