@@ -605,9 +605,7 @@ class TestColorDerivative(unittest.TestCase):
             [-8.37758040957],
         ])
         result2 = energies.get_neighboring_values(coord2, colIm2)
-        print result2[0]
-        print result2[1], result_y
-        # self.assertEqual(np.linalg.norm(result_x.T - result2[0]) < 0.001, True)
+        self.assertEqual(np.linalg.norm(result_x.T - result2[0]) < 0.001, True)
         self.assertEqual(np.linalg.norm(result_y.T - result2[1]) < 0.001, True)
 
 

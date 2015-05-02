@@ -469,10 +469,10 @@ def get_neighboring_values(coordinates, image):
         [-2, 0, 2],
         [-1, 0, 1]
     ])
-    derivative_x = sum(sum(np.transpose(x * dx)))
-    derivative_y = sum(sum(np.transpose(x * dy)))
-
-    return derivative_x, derivative_y
+    derivative_x = np.array([sum(sum(np.transpose(x * dx)))])
+    derivative_y = np.array([sum(sum(np.transpose(x * dy)))])
+    derivative = np.concatenate((derivative_x, derivative_y))
+    return derivative
 
 
 '''
