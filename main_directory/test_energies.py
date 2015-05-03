@@ -565,7 +565,7 @@ class TestColorDerivative(unittest.TestCase):
             [0],
             [0],
         ])
-        result = energies.get_neighboring_values(coord, colIm)
+        result = energies.get_hsi_derivatives(coord, colIm)
         self.assertEqual(np.linalg.norm(result_x.T - result[0]) < 0.001, True)
         self.assertEqual(np.linalg.norm(result_y.T - result[1]) < 0.001, True)
 
@@ -604,10 +604,16 @@ class TestColorDerivative(unittest.TestCase):
             [0],
             [-8.37758040957],
         ])
-        result2 = energies.get_neighboring_values(coord2, colIm2)
+        result2 = energies.get_hsi_derivatives(coord2, colIm2)
         self.assertEqual(np.linalg.norm(result_x.T - result2[0]) < 0.001, True)
         self.assertEqual(np.linalg.norm(result_y.T - result2[1]) < 0.001, True)
 
+
+class TestGradMeanEnergyInRegion(unittest.TestCase):
+
+    def test_mean_energy_in_region(self):
+        energies.grad_mean_color_energy_per_region(omega_1_coord, affine_omega_coord, image)
+        self.assertEqual()
 
 if __name__ == '__main__':
     unittest.main()

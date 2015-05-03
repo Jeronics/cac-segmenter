@@ -71,5 +71,5 @@ def walk_through_dataset(root_folder, depth, start_from=False, plot_evolution=Fa
 
 if __name__ == '__main__':
     RootFolder = '../dataset'
-    depth = 1
+    depth = 2
     walk_through_dataset(RootFolder, depth, start_from=False, plot_evolution=False)

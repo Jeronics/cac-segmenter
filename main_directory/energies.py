@@ -1,6 +1,6 @@
 __author__ = 'jeroni'
 import utils
-from ctypes_utils import *
+import ctypes_utils as ctypes
 import numpy as np
 
 
@@ -33,10 +33,10 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
         contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k * alpha)
 
         # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-        omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
+        omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                            contour_size, ncol, nrow)
 
-        affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
+        affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
                                                                                     len(curr_cage),
                                                                                     curr_cage - grad_k * alpha)
@@ -338,6 +338,15 @@ def mean_color_energy_per_region(omega_1_coord, image):
     return energy
 
 
+def grad_mean_color_energy_per_region(omega_1_coord, affine_omega_coord, image):
+    mean = mean_color_in_region(omega_1_coord, image)
+    hue_values = image.hsi_image[omega_1_coord[:, 0], omega_1_coord[:, 1]][:, 0]
+    directed_distances = directed_hue_color_distance(hue_values, mean)
+    hue_gradient = get_hsi_derivatives(omega_1_coord, image)
+    grad_energy = np.dot(directed_distances, hue_gradient) * affine_omega_coord
+    return grad_energy
+
+
 def hue_color_distance(hue1, hue2):
     '''
     Note that all input angles must be positive.
@@ -447,7 +456,7 @@ def rgb_to_hsi(coordinates, image):
     return np.concatenate((np.concatenate(([hue], [saturation]), axis=0), [intensity])).T
 
 
-def get_neighboring_values(coordinates, image):
+def get_hsi_derivatives(coordinates, image):
     '''
     Gets neighboring pixels of an array of pixels.
     :param coordinates (numpy array):

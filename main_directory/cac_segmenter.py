@@ -176,3 +176,4 @@ if __name__ == '__main__':
     cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
     curr_cage_file = None
     resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False)
+

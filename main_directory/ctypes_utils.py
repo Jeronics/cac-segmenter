@@ -5,7 +5,9 @@ import utils
 
 import os
 
-libcac = CDLL("apicac/libcac.so")
+directory=os.curdir
+
+libcac = CDLL(directory+"./main_directory/apicac/libcac.so")
 
 cac_contour_get_interior_contour = libcac.cac_contour_get_interior_contour
 cac_get_affine_coordinates = libcac.cac_get_affine_coordinates
@@ -73,12 +75,3 @@ def get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size, omega_2_coord, o
                                np.ctypeslib.as_ctypes(omega_2_coord), c_int(num_control_point),
                                np.ctypeslib.as_ctypes(init_cage_file))
     return affine_omega_1_coord, affine_omega_2_coord
-
-# #
-# mask_obj = utils.MaskClass()
-# mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
-#
-# coords, size = get_contour(mask_obj)
-#
-# print coords
-#
