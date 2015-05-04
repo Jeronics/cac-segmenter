@@ -1,24 +1,19 @@
 __author__ = 'jeroni'
 
 from ctypes_utils import *
-# from ctypes import *
 import time
-import sys
-
-import numpy as np
 from utils import *
-import energyutils
 import energies
 
-from scipy import interpolate
 
 
-def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False):
+def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
     start = time.time()
     image = image_obj.gray_image
     if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
         print 'Cage is out of the image! Not converged. Try a smaller cage'
         return None
+
     contour_coord, contour_size = get_contour(mask_obj)
 
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
@@ -38,7 +33,6 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         [cage_obj.num_points, 2]), np.zeros(
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
-
 
     # PARAMETERS #
     # pixel steps
@@ -76,7 +70,7 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         grad_k_2 = grad_k_1.copy()
         grad_k_1 = grad_k.copy()
         grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
+                                           image_obj.gray_image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
         grad_k = energies.multiple_normalize(grad_k)
         if first_stage:
             mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -87,9 +81,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
 
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image) + energies.energy_constraint(cage_obj.cage, d, k)
+                                          image_obj.gray_image) + energies.energy_constraint(cage_obj.cage, d, k)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                                   contour_size, energy, image, constraint_params)
+                                                   contour_size, energy, image_obj.gray_image, constraint_params)
             if alpha_new == 0:
                 continue_while = False
                 print 'Local minimum reached. no better alpha'
@@ -175,5 +169,5 @@ if __name__ == '__main__':
     cage_obj = CageClass()
     cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
     curr_cage_file = None
-    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False)
+    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False)
 

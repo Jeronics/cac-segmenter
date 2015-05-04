@@ -1,18 +1,10 @@
 import sys
-
 from PyQt5 import Qt
-from PyQt5 import uic
-from PyQt5.QtGui import *
-
 a = Qt.QApplication(sys.argv)
-
 from untitled import UiForm
-
 import numpy as np
 from main_directory import utils
 from PIL import Image
-
-from polygon_tools import turning_function
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
