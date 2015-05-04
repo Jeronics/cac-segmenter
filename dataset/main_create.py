@@ -134,8 +134,8 @@ def resize_mask(mask):
 
 
 if __name__ == '__main__':
-    RootFolder = '../main_directory/images_tester/synthetic_images'
-    depth = 1
+    RootFolder = '../dataset'
+    depth = 2
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth]
