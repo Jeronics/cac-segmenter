@@ -33,12 +33,31 @@ class CageClass:
         cage = np.dot(cage, rot)
         self.__init__(cage, filename)
 
+    def create_from_points(self, c, p, ratio, num_cage_points, filename=''):
+        '''
+        This function instantiates a cage.
+            The cages are created clockwise from (x,y)=( c_x + r*R, c_y)
+        '''
+
+        radius_cage_ratio = ratio
+        folder = '/'.join(in_filename.split("/")[:-1])
+        name_output = folder + '/cage_' + str(num_cage_points) + '_' + str(ratio) + '.txt'
+        text_file = open(name_output, "w")
+        cage = []
+        for i in xrange(0, num_cage_points):
+            angle = 2 * i * PI / num_cage_points
+            x, y = radius * ratio * np.cos(angle), radius * ratio * np.sin(angle)
+            cage.append([x + c[0], y + c[1]])
+            text_file.write("%.8e\t%.8e\n" % (x + c[0], y + c[1]))  # OTHER
+        self.__init__(im=np.array(cage), filename='')
+
     def save_cage(self, filename):
         text_file = open(filename, "w")
 
         for x, y in self.cage:
             # Un-Rotate to (y,x)
             text_file.write("%.8e\t%.8e\n" % (y, x))
+
 
 
 class MaskClass:
@@ -120,7 +139,6 @@ class ImageClass:
             self.image = im[:, :, 0:3]
         else:
             self.image = im
-
         # Gray image
         self.gray_image = self.rgb2gray(self.image)
         # Hue image
@@ -148,7 +166,6 @@ class ImageClass:
         im = np.array(im)
         im = im.astype(np.float64)
         self.__init__(im, filename)
-
 
     def plot_image(self, show_plot=True):
         im_aux = self.image.astype('uint8')

@@ -35,7 +35,13 @@ class CACSegmenter():
         This function uses cross validation to lean the optimal parameters
         :return:
         '''
-        return params
+        params_indexes={}
+        specific_params = {}
+        len(self.parameters)
+        for params in self.parameters:
+            len(self.parameters[params])
+                specific_params[params] = p
+
 
     def load_dataset(self):
         return dataset
