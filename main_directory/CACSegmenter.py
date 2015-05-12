@@ -2,19 +2,27 @@ from ctypes_utils import *
 import time
 import utils as utils
 import energies
+from sklearn.grid_search import ParameterGrid
 
 
 class CACSegmenter():
-    def __init__(self, dataset_filename=None):
-        self.dataset = self.load_dataset(dataset_filename)
+    def __init__(self):
         self.band_size = 500
         self.k = 50
         self.d = 10
         self.other = 10
         self.parameters = {
             'num_points': [6, 8, 10, 12, 14],
-            'ratio': [1.05, 1.1, 1.15, 1.2, 1.25]
+            'ratio': [1.05, 1.1, 1.15, 1.2, 1.25],
         }
+
+    def _load_dataset(self, dataset_name):
+        return dataset_name
+
+    def _partition_dataset(self, dataset_name):
+        train = None
+        test = None
+        return train, test
 
     def energy(self):
         return None
@@ -35,32 +43,19 @@ class CACSegmenter():
         This function uses cross validation to lean the optimal parameters
         :return:
         '''
-        params_indexes={}
-        specific_params = {}
-        len(self.parameters)
-        for params in self.parameters:
-            len(self.parameters[params])
-                specific_params[params] = p
+        specific_params = list(ParameterGrid(self.parameters))
 
-
-    def load_dataset(self):
-        return dataset
-
-    def _partition_dataset(self, i):
-        return train, test
+        print specific_params
 
 
 class MeanColorCAC(CACSegmenter):
-    def __init__(self, image_txt, center_point, outside_point, ratio):
+    def __init__(self):
         CACSegmenter.__init__(self)
         self.energy = 1
-        image = utils.ImageClass()
-        self.image_obj = image.read_png(filename=image_txt)
-        mask = utils.MaskClass()
-        self.mask_obj = mask.create_from_points(self.center_point, self.outside_point, self.ratio)
+        self.parameters['other'] = [1, 2, 3, 4]
 
 
 if __name__ == '__main__':
     color = MeanColorCAC()
-    color.test_model()
+    color.train_model(None, None)
     print color.other
