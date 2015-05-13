@@ -3,7 +3,7 @@ import time
 import utils as utils
 import energies
 from sklearn.grid_search import ParameterGrid
-
+import pandas as pd
 
 class CACSegmenter():
     def __init__(self):
@@ -18,10 +18,11 @@ class CACSegmenter():
 
     def _load_dataset(self, dataset_name):
         assert os.path.isfile(dataset_name)
+        dataset = pd.read_csv(dataset_name, sep='\t')
+        return dataset
 
-        return dataset_name
-
-    def _partition_dataset(self, dataset_name):
+    def _partition_dataset(self, dataset_name, k=):
+        dataset =
         train = None
         test = None
         return train, test

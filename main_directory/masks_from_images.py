@@ -35,14 +35,21 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
     f = open(output_file_name, 'w')
 
     id = 0
+    f.write(
+            'image_name' + '\t'
+            + 'center_x' + '\t'
+            + 'center_y' + '\t'
+            + 'radius_x' + '\t'
+            + 'radius_y' + '\t'
+            + 'gt_name' + '\n'
+    )
     for image_name in input_images:
         gt = check_for_ground_truth(image_name, gt_file_name)
         if not gt and only_with_gt:
             continue
         center_point, radius_point = read_clicked_points(image_name)
         f.write(
-            str(id) + '\t'
-            + image_name + '\t'
+            image_name + '\t'
             + str(center_point[0]) + '\t'
             + str(center_point[1]) + '\t'
             + str(radius_point[0]) + '\t'
@@ -57,7 +64,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    file_name = 'images.txt'
-    gt_file_name = 'gt_images.txt'
-    output_file_name = 'input.txt'
+    file_name = 'testing_files/images_1.txt'
+    gt_file_name = 'testing_files/gt_images_1.txt'
+    output_file_name = 'testing_files/input_1.txt'
     create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=False)

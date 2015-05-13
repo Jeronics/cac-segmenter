@@ -5,6 +5,7 @@ import os.path
 
 class TestLoadDataset(unittest.TestCase):
     def test_load_dataset(self):
+        color_cac = MeanColorCAC()
 
 
 
