@@ -5,6 +5,7 @@ import energies
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
 
+
 class CACSegmenter():
     def __init__(self):
         self.band_size = 500
@@ -17,12 +18,12 @@ class CACSegmenter():
         }
 
     def _load_dataset(self, dataset_name):
-        assert os.path.isfile(dataset_name)
+        assert os.path.isfile(dataset_name), 'The input dataset file name is not valid!'
         dataset = pd.read_csv(dataset_name, sep='\t')
         return dataset
 
-    def _partition_dataset(self, dataset_name, k=):
-        dataset =
+    def _partition_dataset(self, dataset_name, CV=5):
+        dataset = None
         train = None
         test = None
         return train, test
@@ -40,14 +41,25 @@ class CACSegmenter():
         '''
         return resulting_cages, evaluation
 
+    def _cross_validation(self, dataset, parameters, CV=5):
+        split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
+        split_points[0] = -1
+        split_points[-1] = len(dataset)
+
+        print split_points
+        for i in xrange(CV):
+            print 'hi', split_points[i] + 1, split_points[i + 1]
+            # _partition_dataset(i,CV)
 
     def train_model(self, input_file, CV=5):
         '''
         This function uses cross validation to lean the optimal parameters
         :return:
         '''
+        dataset = self._load_dataset(input_file)
         specific_params = list(ParameterGrid(self.parameters))
-
+        parameter_performances = pd.DataFrame(specific_params)  # columns=['partition_'+ str(i) for i in xrange(CV)]
+        self._cross_validation(dataset, CV)
         print specific_params
-
+        print parameter_performances
 

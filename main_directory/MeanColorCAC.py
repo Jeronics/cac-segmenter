@@ -9,3 +9,4 @@ class MeanColorCAC(CACSegmenter):
 if __name__=='__main__':
     color_cac = MeanColorCAC()
     color_cac._load_dataset('testing_files/input_1.txt')
+    color_cac.train_model('testing_files/input_1.txt')
