@@ -17,6 +17,8 @@ class CACSegmenter():
         }
 
     def _load_dataset(self, dataset_name):
+        assert os.path.isfile(dataset_name)
+
         return dataset_name
 
     def _partition_dataset(self, dataset_name):
@@ -32,13 +34,13 @@ class CACSegmenter():
 
     def test_model(self, image_obj, cage_obj, plot_evolution=False):
         '''
-        segments a single image given a set of parameters.
-        :return:
+        segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
+        :return resulting cages:
         '''
-        return evaluation
+        return resulting_cages, evaluation
 
 
-    def train_model(self, Images, masks, C=5):
+    def train_model(self, input_file, CV=5):
         '''
         This function uses cross validation to lean the optimal parameters
         :return:
@@ -48,14 +50,3 @@ class CACSegmenter():
         print specific_params
 
 
-class MeanColorCAC(CACSegmenter):
-    def __init__(self):
-        CACSegmenter.__init__(self)
-        self.energy = 1
-        self.parameters['other'] = [1, 2, 3, 4]
-
-
-if __name__ == '__main__':
-    color = MeanColorCAC()
-    color.train_model(None, None)
-    print color.other
