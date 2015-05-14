@@ -22,12 +22,6 @@ class CACSegmenter():
         dataset = pd.read_csv(dataset_name, sep='\t')
         return dataset
 
-    def _partition_dataset(self, dataset_name, CV=5):
-        dataset = None
-        train = None
-        test = None
-        return train, test
-
     def energy(self):
         return None
 
@@ -41,6 +35,23 @@ class CACSegmenter():
         '''
         return resulting_cages, evaluation
 
+    def _partition_dataset(self, dataset, i_th, CV):
+        '''
+        Divides the dataset into Train or Test based on the i_th partition
+        :param dataset:
+        :param i_th:
+        :param CV:
+        :return:
+        '''
+        split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
+        split_points[0] = -1
+        split_points[-1] = len(dataset)
+        a = split_points[i_th] + 1
+        b = split_points[i_th + 1]
+        Test = dataset[a:b]
+        Train = pd.concat([dataset[:a], dataset[b:]])
+        return Train, Test
+
     def _cross_validation(self, dataset, parameters, CV=5):
         split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
         split_points[0] = -1
@@ -50,6 +61,8 @@ class CACSegmenter():
         for i in xrange(CV):
             print 'hi', split_points[i] + 1, split_points[i + 1]
             # _partition_dataset(i,CV)
+
+        return
 
     def train_model(self, input_file, CV=5):
         '''
