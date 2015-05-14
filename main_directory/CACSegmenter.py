@@ -28,20 +28,21 @@ class CACSegmenter():
     def _gradient_descent(self, images):
         return 0
 
-    def test_model(self, image_obj, cage_obj, plot_evolution=False):
+    def test_model(self, dataset, params, plot_evolution=False):
         '''
         segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
         :return resulting cages:
         '''
+        
         return resulting_cages, evaluation
 
     def _partition_dataset(self, dataset, i_th, CV):
         '''
         Divides the dataset into Train or Test based on the i_th partition
-        :param dataset:
-        :param i_th:
-        :param CV:
-        :return:
+        :param dataset (pandas dataframe):
+        :param i_th (int):
+        :param CV (int):
+        :return: Train and Test pandas dataframes
         '''
         split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
         split_points[0] = -1
@@ -52,15 +53,24 @@ class CACSegmenter():
         Train = pd.concat([dataset[:a], dataset[b:]])
         return Train, Test
 
-    def _cross_validation(self, dataset, parameters, CV=5):
+    def _
+
+    def _evaluate_model(self, dataset, parameters, CV=5):
         split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
         split_points[0] = -1
         split_points[-1] = len(dataset)
 
         print split_points
         for i in xrange(CV):
-            print 'hi', split_points[i] + 1, split_points[i + 1]
-            # _partition_dataset(i,CV)
+            Train, Test = self._partition_dataset(dataset, i, CV)
+
+            self.test_model()
+            for j in xrange(CV):
+                learn, validate = self._partition_dataset(Train,j,CV)
+
+
+
+
 
         return
 
