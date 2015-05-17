@@ -109,11 +109,14 @@ class TestPartitionDataset(unittest.TestCase):
         dataset = pd.DataFrame(np.ones([10, 4]))
         color_cac.test_model = Mock(return_value=0.8)
         expected = pd.DataFrame(color_cac.get_parameters())
+        expected['arithmetic_mean'] = 0.8
+        expected['harmonic_mean'] = 0.8
         expected[str(0)] = 0.8
         expected[str(1)] = 0.8
         predicted = color_cac._find_best_model(dataset, color_cac.parameters, CV=2)
         for column in expected.columns:
             self.assertListEqual(list(predicted[column]), list(expected[column]))
+
 
 if __name__ == '__main__':
     unittest.main()

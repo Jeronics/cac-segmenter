@@ -55,13 +55,17 @@ class CACSegmenter():
 
     def _find_best_model(self, dataset, parameters, CV=5):
         parameters_performance = pd.DataFrame(self.get_parameters())
+        performance_df = pd.DataFrame(dtype=float)
         for i in xrange(CV):
             _, Test = self._partition_dataset(dataset, i, CV)
             performance = []
             for p in self.get_parameters():
                 performance.append(self.test_model(Test, p))
             # Add a column with the performance of the method on the dataset
-            parameters_performance[str(i)] = performance
+            performance_df[str(i)] = performance
+        parameters_performance['arithmetic_mean'] = performance_df.mean(axis=1)
+        parameters_performance['harmonic_mean'] = len(performance_df.columns) / (1 / performance_df).sum(axis=1)
+        parameters_performance = pd.concat([parameters_performance, performance_df], axis=1)
         return parameters_performance
 
     def _evaluate_method(self):
