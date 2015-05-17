@@ -22,7 +22,7 @@ class CACSegmenter():
         dataset = pd.read_csv(dataset_name, sep='\t')
         return dataset
 
-    def energy(self):
+    def _energy(self):
         return None
 
     def _gradient_descent(self, images):
@@ -33,7 +33,7 @@ class CACSegmenter():
         segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
         :return resulting cages:
         '''
-        
+
         return resulting_cages, evaluation
 
     def _partition_dataset(self, dataset, i_th, CV):
@@ -53,26 +53,27 @@ class CACSegmenter():
         Train = pd.concat([dataset[:a], dataset[b:]])
         return Train, Test
 
-    def _
-
-    def _evaluate_model(self, dataset, parameters, CV=5):
-        split_points = [int(i * len(dataset) / 5.) for i in xrange(CV + 1)]
-        split_points[0] = -1
-        split_points[-1] = len(dataset)
-
-        print split_points
+    def _find_best_model(self, dataset, parameters, CV=5):
+        parameters_performance = pd.DataFrame(self.get_parameters())
         for i in xrange(CV):
-            Train, Test = self._partition_dataset(dataset, i, CV)
+            _, Test = self._partition_dataset(dataset, i, CV)
+            performance = []
+            for p in self.get_parameters():
+                performance.append(self.test_model(Test, p))
+            # Add a column with the performance of the method on the dataset
+            parameters_performance[str(i)] = performance
+        return parameters_performance
 
-            self.test_model()
-            for j in xrange(CV):
-                learn, validate = self._partition_dataset(Train,j,CV)
+    def _evaluate_method(self):
+        return 0
 
-
-
-
-
-        return
+    def get_parameters(self):
+        '''
+        Returns a list of all possible combinations of parameters.
+        :return: list with a dictionary of parameter_name: value
+        '''
+        specific_params = list(ParameterGrid(self.parameters))
+        return specific_params
 
     def train_model(self, input_file, CV=5):
         '''
@@ -80,9 +81,6 @@ class CACSegmenter():
         :return:
         '''
         dataset = self._load_dataset(input_file)
-        specific_params = list(ParameterGrid(self.parameters))
-        parameter_performances = pd.DataFrame(specific_params)  # columns=['partition_'+ str(i) for i in xrange(CV)]
+        parameter_performances = pd.DataFrame(self.get_parameters())
         self._cross_validation(dataset, CV)
-        print specific_params
-        print parameter_performances
 
