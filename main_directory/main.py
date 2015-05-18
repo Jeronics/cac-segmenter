@@ -17,7 +17,7 @@ def evaluate_results(image, cage, mask, resulting_cage, files, root):
         res_fold = results_folder + "/" + 'result' + cage.spec_name.split("cage_")[-1] + '.png'
         result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
         if result_mask:
-            result_mask.save_image(filename=res_fold)
+            result_mask.save_imsage(filename=res_fold)
         print res_fold
         if gt_mask:
             sorensen_dice_coefficient = utils.sorensen_dice_coefficient(gt_mask, result_mask)

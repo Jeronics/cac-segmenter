@@ -41,6 +41,10 @@ class CACSegmenter():
         '''
         for i, x in dataset.iterrows():
             print x.image_name
+            image = utils.ImageClass()
+            image.read_png(x.image_name)
+            mask = utils.MaskClass()
+            mask.
         return 0
         # return resulting_cages, evaluation
 
