@@ -64,7 +64,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    file_name = 'testing_files/images_1.txt'
-    gt_file_name = 'testing_files/gt_images_1.txt'
-    output_file_name = 'testing_files/input_1.txt'
-    create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=False)
+    file_name = '../../BSDS300_images.txt'
+    gt_file_name = '../../BSDS300_gt.txt'
+    output_file_name = 'BSDS300_input.txt'
+    create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)

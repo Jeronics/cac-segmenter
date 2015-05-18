@@ -39,8 +39,10 @@ class CACSegmenter():
         segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
         :return resulting cages:
         '''
-
-        return resulting_cages, evaluation
+        for i, x in dataset.iterrows():
+            print x.image_name
+        return 0
+        # return resulting_cages, evaluation
 
     def _partition_dataset(self, dataset, i_th, CV):
         '''
@@ -59,7 +61,7 @@ class CACSegmenter():
         Train = pd.concat([dataset[:a], dataset[b:]])
         return Train, Test
 
-    def _find_best_model(self, dataset, parameters, CV=5):
+    def _find_best_model(self, dataset, CV=5):
         parameters_performance = pd.DataFrame(self.get_parameters())
         performance_df = pd.DataFrame(dtype=float)
         for i in xrange(CV):
@@ -95,7 +97,6 @@ class CACSegmenter():
         self._cross_validation(dataset, CV)
 
     def cac_segmenter(self, image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
-        image = image_obj.gray_image
         if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
             print 'Cage is out of the image! Not converged. Try a smaller cage'
             return None

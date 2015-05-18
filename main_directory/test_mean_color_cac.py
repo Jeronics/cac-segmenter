@@ -113,7 +113,7 @@ class TestPartitionDataset(unittest.TestCase):
         expected['harmonic_mean'] = 0.8
         expected[str(0)] = 0.8
         expected[str(1)] = 0.8
-        predicted = color_cac._find_best_model(dataset, color_cac.parameters, CV=2)
+        predicted = color_cac._find_best_model(dataset, CV=2)
         for column in expected.columns:
             self.assertListEqual(list(predicted[column]), list(expected[column]))
 
