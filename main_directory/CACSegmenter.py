@@ -9,7 +9,7 @@ from ctypes_utils import *
 import time
 from utils import *
 import energies
-
+from cac_segmenter import cac_segmenter
 
 class CACSegmenter():
     def __init__(self):
@@ -40,6 +40,8 @@ class CACSegmenter():
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'], parameters['num_points'], filename='hello_test')
         print cage.cage
         print cage_aux
+        mask.plot_image()
+        print mask.mask
 
         return image, mask, cage
 
@@ -49,7 +51,9 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            image, mask, cage = self._load_model(x, params)
+            image_obj, mask_obj, cage_obj = self._load_model(x, params)
+
+            cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
         return 0
         # return resulting_cages, evaluation
 
