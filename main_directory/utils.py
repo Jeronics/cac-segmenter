@@ -42,9 +42,10 @@ class CageClass:
         cage = []
         for i in xrange(0, num_cage_points):
             angle = 2 * i * np.pi / num_cage_points
-            x, y = radius * ratio * np.cos(angle), radius * ratio * np.sin(angle)
+            x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
             cage.append([x + c[0], y + c[1]])
         self.__init__(cage=np.array(cage), filename='')
+        return cage
 
     def save_cage(self, filename):
         text_file = open(filename, "w")
@@ -106,18 +107,15 @@ class MaskClass:
                     im[x, y] = 255
                     mask_points.append([x, y])
         self.__init__(im, filename='', threshold=125.)
-        printNpArray(im)
         cage = []
-        ratio=1.5
+        ratio = 1.05
         for i in xrange(0, num_cage_points):
             angle = 2 * i * np.pi / num_cage_points
             x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
             cage.append([x + c[0], y + c[1]])
-
         plotContourOnImage(np.array(mask_points), image.image,
-                                 points=cage)
-
-
+                           points=cage)
+        return cage
 
 
     def plot_image(self, show_plot=True):
