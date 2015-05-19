@@ -11,7 +11,6 @@ from utils import *
 import energies
 
 
-
 class CACSegmenter():
     def __init__(self):
         self.band_size = 500
@@ -31,8 +30,15 @@ class CACSegmenter():
     def _energy(self):
         return None
 
-    def _gradient_descent(self, images):
-        return 0
+    def _load_model(self, x, parameters):
+        print x.image_name
+        image = utils.ImageClass()
+        image.read_png(x.image_name)
+        mask = utils.MaskClass()
+        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'], 'hello_test')
+        cage = utils.CageClass()
+        cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'], parameters['num_points'], filename='hello_test')
+        return image, mask, cage
 
     def test_model(self, dataset, params, plot_evolution=False):
         '''
@@ -40,11 +46,7 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            print x.image_name
-            image = utils.ImageClass()
-            image.read_png(x.image_name)
-            mask = utils.MaskClass()
-            mask.
+            image, mask, cage = self._load_model(x, params)
         return 0
         # return resulting_cages, evaluation
 
@@ -149,19 +151,22 @@ class CACSegmenter():
                 print 'Cage is out of the image! Not converged. Try a smaller cage'
                 return None
             omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
-                                                                                               contour_size, mask_obj.width,
+                                                                                               contour_size,
+                                                                                               mask_obj.width,
                                                                                                mask_obj.height)
 
             affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                         omega_2_coord, omega_2_size,
-                                                                                        cage_obj.num_points, cage_obj.cage)
+                                                                                        cage_obj.num_points,
+                                                                                        cage_obj.cage)
 
             # Update gradients
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
             grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                               image_obj.gray_image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
+                                               image_obj.gray_image) + energies.grad_energy_constraint(cage_obj.cage, d,
+                                                                                                       k)
             grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -173,7 +178,8 @@ class CACSegmenter():
             else:
                 energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                               image_obj.gray_image) + energies.energy_constraint(cage_obj.cage, d, k)
-                alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
+                alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
+                                                       affine_contour_coordinates,
                                                        contour_size, energy, image_obj.gray_image, constraint_params)
                 if alpha_new == 0:
                     continue_while = False

@@ -38,18 +38,13 @@ class CageClass:
         This function instantiates a cage.
             The cages are created clockwise from (x,y)=( c_x + r*R, c_y)
         '''
-
-        radius_cage_ratio = ratio
-        folder = '/'.join(in_filename.split("/")[:-1])
-        name_output = folder + '/cage_' + str(num_cage_points) + '_' + str(ratio) + '.txt'
-        text_file = open(name_output, "w")
+        radius = np.linalg.norm(np.array(c) - np.array(p))
         cage = []
         for i in xrange(0, num_cage_points):
-            angle = 2 * i * PI / num_cage_points
+            angle = 2 * i * np.pi / num_cage_points
             x, y = radius * ratio * np.cos(angle), radius * ratio * np.sin(angle)
             cage.append([x + c[0], y + c[1]])
-            text_file.write("%.8e\t%.8e\n" % (x + c[0], y + c[1]))  # OTHER
-        self.__init__(im=np.array(cage), filename='')
+        self.__init__(cage=np.array(cage), filename='')
 
     def save_cage(self, filename):
         text_file = open(filename, "w")
@@ -57,7 +52,6 @@ class CageClass:
         for x, y in self.cage:
             # Un-Rotate to (y,x)
             text_file.write("%.8e\t%.8e\n" % (y, x))
-
 
 
 class MaskClass:
@@ -87,6 +81,43 @@ class MaskClass:
         im = np.array(im)
         im = im.astype(np.float64)
         self.__init__(im, filename, threshold)
+
+    def from_points_and_image(self, c, p, image, num_cage_points, filename):
+        '''
+        This function creates a mask and a sequence of cages.
+        :param c:
+        :param p:
+        :param im_shape:
+        :param num_cage_points:
+        :return:
+        '''
+        print c, p
+        im_shape = image.shape
+        radius = np.linalg.norm(np.array(c) - np.array(p))
+        im = np.zeros(im_shape, dtype='uint8')
+        print 'Shape', im_shape
+        print c
+        mask_points = []
+
+        # careful im_shape is (max(y), max(x))
+        for y in xrange(im_shape[1]):
+            for x in xrange(im_shape[0]):
+                if pow(x - c[1], 2) + pow(y - c[0], 2) <= pow(radius, 2):
+                    im[x, y] = 255
+                    mask_points.append([x, y])
+        self.__init__(im, filename='', threshold=125.)
+        printNpArray(im)
+        cage = []
+        ratio=1.5
+        for i in xrange(0, num_cage_points):
+            angle = 2 * i * np.pi / num_cage_points
+            x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
+            cage.append([x + c[0], y + c[1]])
+
+        plotContourOnImage(np.array(mask_points), image.image,
+                                 points=cage)
+
+
 
 
     def plot_image(self, show_plot=True):
