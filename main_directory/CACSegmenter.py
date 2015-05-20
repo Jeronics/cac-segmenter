@@ -1,7 +1,5 @@
 from ctypes_utils import *
-import time
 import utils as utils
-import energies
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
 from cac_segmenter import cac_segmenter
@@ -10,6 +8,8 @@ import time
 from utils import *
 import energies
 from cac_segmenter import cac_segmenter
+import ctypes_utils as ctypes
+
 
 class CACSegmenter():
     def __init__(self):
@@ -34,12 +34,15 @@ class CACSegmenter():
         image = utils.ImageClass()
         image.read_png(x.image_name)
         mask = utils.MaskClass()
-        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'], 'hello_test')
+        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'],
+                                   'hello_test')
         cage = utils.CageClass()
-        cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'], parameters['num_points'], filename='hello_test')
+        cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'],
+                                parameters['num_points'], filename='hello_test')
         # print cage_aux
         mask.plot_image()
         import pprint
+
         pprint.pprint(mask.mask[170:175, 138:145])
         return image, mask, cage
 
@@ -49,10 +52,12 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            if i==0 or i==1 or i==2:
+            if i == 2:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
-            cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
+            result=cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
+            if result:
+                result.save_cage('Result1')
         return 0
         # return resulting_cages, evaluation
 
@@ -107,6 +112,13 @@ class CACSegmenter():
         dataset = self._load_dataset(input_file)
         parameter_performances = pd.DataFrame(self.get_parameters())
         self._cross_validation(dataset, CV)
+
+    def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+        return None
+
+    def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+        return None
+
 
     def cac_segmenter(self, image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
         if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
@@ -170,9 +182,9 @@ class CACSegmenter():
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
-            grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                               image_obj.gray_image) + energies.grad_energy_constraint(cage_obj.cage, d,
-                                                                                                       k)
+            grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                           image_obj) + energies.grad_energy_constraint(cage_obj.cage, d,
+                                                                                        k)
             grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -182,11 +194,11 @@ class CACSegmenter():
                 alpha = beta
 
             else:
-                energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                              image_obj.gray_image) + energies.energy_constraint(cage_obj.cage, d, k)
-                alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
-                                                       affine_contour_coordinates,
-                                                       contour_size, energy, image_obj.gray_image, constraint_params)
+                energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                          image_obj) + energies.energy_constraint(cage_obj.cage, d, k)
+                alpha_new = self.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
+                                                   affine_contour_coordinates,
+                                                   contour_size, energy, image_obj, constraint_params)
                 if alpha_new == 0:
                     continue_while = False
                     print 'Local minimum reached. no better alpha'
@@ -216,3 +228,37 @@ class CACSegmenter():
             contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
             iter += 1
         return cage_obj
+
+
+    def second_step_alpha(self, alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy,
+                          image_obj, constraint_params):
+
+        d, k = constraint_params
+        step = 0.2
+        next_energy = current_energy + 1
+        alpha += step
+        nrow, ncol = image_obj.shape
+        while current_energy < next_energy:
+            alpha -= step
+
+            # calculate new contour_coord
+            contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k * alpha)
+
+            # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+            omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size,
+                                                                                                      contour_coord,
+                                                                                                      contour_size,
+                                                                                                      ncol, nrow)
+
+            affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord,
+                                                                                               omega_1_size,
+                                                                                               omega_2_coord,
+                                                                                               omega_2_size,
+                                                                                               len(curr_cage),
+                                                                                               curr_cage - grad_k * alpha)
+
+            next_energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                           image_obj) + energies.energy_constraint(curr_cage - grad_k * alpha, d, k)
+        if alpha < 0.1:
+            return 0
+        return 1

@@ -33,13 +33,15 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
         contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k * alpha)
 
         # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-        omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
-                                                                                           contour_size, ncol, nrow)
+        omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size,
+                                                                                                  contour_coord,
+                                                                                                  contour_size, ncol,
+                                                                                                  nrow)
 
         affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
-                                                                                    omega_2_coord, omega_2_size,
-                                                                                    len(curr_cage),
-                                                                                    curr_cage - grad_k * alpha)
+                                                                                           omega_2_coord, omega_2_size,
+                                                                                           len(curr_cage),
+                                                                                           curr_cage - grad_k * alpha)
 
         next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                   image) + energy_constraint(curr_cage - grad_k * alpha, d, k)
@@ -337,12 +339,17 @@ def mean_color_energy_per_region(omega_1_coord, image):
     energy = sum(np.power(distance, 2))
     return energy
 
+def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    grad_energy_1 = grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+    grad_energy_2 = grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+    return grad_energy_1 + grad_energy_2
 
-def grad_mean_color_energy_per_region(omega_1_coord, affine_omega_coord, image):
-    mean = mean_color_in_region(omega_1_coord, image)
-    hue_values = image.hsi_image[omega_1_coord[:, 0], omega_1_coord[:, 1]][:, 0]
+
+def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
+    mean = mean_color_in_region(omega_coord, image)
+    hue_values = image.hsi_image[omega_coord[:, 0], omega_coord[:, 1]][:, 0]
     directed_distances = directed_hue_color_distance(hue_values, mean)
-    hue_gradient = get_hsi_derivatives(omega_1_coord, image)
+    hue_gradient = get_hsi_derivatives(omega_coord, image)
     grad_energy = np.dot(directed_distances, hue_gradient) * affine_omega_coord
     return grad_energy
 
