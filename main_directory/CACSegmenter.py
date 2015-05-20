@@ -18,7 +18,7 @@ class CACSegmenter():
         self.d = 10
         self.other = 10
         self.parameters = {
-            'num_points': [6, 8, 10, 12, 14],
+            'num_points': [12, 14, 16],
             'ratio': [1.05, 1.1, 1.15, 1.2, 1.25],
         }
 
@@ -31,18 +31,16 @@ class CACSegmenter():
         return None
 
     def _load_model(self, x, parameters):
-        print x.image_name
         image = utils.ImageClass()
         image.read_png(x.image_name)
         mask = utils.MaskClass()
-        cage_aux = mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'], 'hello_test')
+        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'], 'hello_test')
         cage = utils.CageClass()
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'], parameters['num_points'], filename='hello_test')
-        print cage.cage
-        print cage_aux
+        # print cage_aux
         mask.plot_image()
-        print mask.mask
-
+        import pprint
+        pprint.pprint(mask.mask[170:175, 138:145])
         return image, mask, cage
 
     def test_model(self, dataset, params, plot_evolution=False):
@@ -51,8 +49,9 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
+            if i==0 or i==1 or i==2:
+                continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
-
             cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
         return 0
         # return resulting_cages, evaluation

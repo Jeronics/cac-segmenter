@@ -5,8 +5,6 @@ import time
 from utils import *
 import energies
 
-
-
 def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
     start = time.time()
     image = image_obj.gray_image
