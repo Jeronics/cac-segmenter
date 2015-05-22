@@ -347,7 +347,7 @@ def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, a
 
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)
-    hue_values = image.hsi_image[omega_coord[:, 0], omega_coord[:, 1]][:, 0]
+    hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
     directed_distances = directed_hue_color_distance(hue_values, mean)
     hue_gradient = get_hsi_derivatives(omega_coord, image)
     grad_energy = np.dot(directed_distances, hue_gradient) * affine_omega_coord
@@ -399,7 +399,8 @@ def mean_color_in_region(omega_coord, image):
     :param image:
     :return:
     '''
-    hsi = image.hsi_image[omega_coord[:, 0], omega_coord[:, 1]]
+
+    hsi = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]
     hue = hsi[:, 0]
     saturation = hsi[:, 1]
     if len(hue[saturation > 0]) == 0:

@@ -55,7 +55,7 @@ class CACSegmenter():
             if i == 2:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
-            result=cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
+            result=self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
             if result:
                 result.save_cage('Result1')
         return 0
