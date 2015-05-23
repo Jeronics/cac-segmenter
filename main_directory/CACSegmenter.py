@@ -52,10 +52,10 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            if i == 2:
+            if i == 1:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
-            result=self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
+            result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
             if result:
                 result.save_cage('Result1')
         return 0
@@ -119,6 +119,9 @@ class CACSegmenter():
     def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None
 
+    def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
+        plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
+                           points2=cage_obj.cage - alpha * 10 * grad_k)
 
     def cac_segmenter(self, image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
         if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
@@ -183,8 +186,7 @@ class CACSegmenter():
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
             grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + energies.grad_energy_constraint(cage_obj.cage, d,
-                                                                                        k)
+                                           image_obj) + energies.grad_energy_constraint(cage_obj.cage, d, k)
             grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -215,8 +217,7 @@ class CACSegmenter():
             # points2=cage_obj.cage - alpha * 10 * grad_k)
 
             if plot_evolution:
-                plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
-                                   points2=cage_obj.cage - alpha * 10 * grad_k)
+                self._plotContourOnImage(contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.])
 
             # Update File current cage
             cage_obj.cage += - alpha * grad_k

@@ -350,7 +350,7 @@ def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
     directed_distances = directed_hue_color_distance(hue_values, mean)
     hue_gradient = get_hsi_derivatives(omega_coord, image)
-    grad_energy = np.dot(directed_distances, hue_gradient) * affine_omega_coord
+    grad_energy = np.dot(np.multiply(affine_omega_coord.T, directed_distances),hue_gradient.T)
     return grad_energy
 
 
@@ -590,6 +590,13 @@ def multiple_normalize(a):
     '''
     return np.array([x / np.linalg.norm(x) for x in a])
 
+def multiple_standardize_(a):
+    '''
+
+    :param a:
+    :return:
+    '''
+    return a,a
 
 def multiple_dot_products(a, b):
     c = a * b
