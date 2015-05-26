@@ -1,7 +1,7 @@
 from CACSegmenter import CACSegmenter
 import numpy as np
 import energies
-
+import utils
 class MeanColorCAC(CACSegmenter):
     def __init__(self):
         CACSegmenter.__init__(self)
@@ -25,6 +25,10 @@ class MeanColorCAC(CACSegmenter):
         omega_2 = energies.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
         energy = omega_1 + omega_2
         return energy
+
+    def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
+        utils.plotContourOnImage(contour_coord, image_obj.gray_image, points=cage_obj.cage, color=color,
+                           points2=cage_obj.cage - alpha * 10 * grad_k)
 
 
 if __name__ == '__main__':
