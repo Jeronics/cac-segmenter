@@ -52,7 +52,7 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            if i < len(dataset) - 1:
+            if False:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
             result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=plot_evolution)
@@ -230,7 +230,7 @@ class CACSegmenter():
             contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
             iter += 1
 
-        self._plotContourOnImage(contour_coord, image_obj, cage_obj, alpha, [])
+        self._plotContourOnImage(contour_coord, image_obj, cage_obj, 0, grad_k)
         return cage_obj
 
 
