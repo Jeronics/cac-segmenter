@@ -52,10 +52,10 @@ class CACSegmenter():
         :return resulting cages:
         '''
         for i, x in dataset.iterrows():
-            if i == 1:
+            if i < len(dataset) - 1:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
-            result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=True)
+            result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=plot_evolution)
             if result:
                 result.save_cage('Result1')
         return 0
@@ -129,7 +129,6 @@ class CACSegmenter():
             return None
 
         contour_coord, contour_size = get_contour(mask_obj)
-
         affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
         if plot_evolution:
@@ -187,11 +186,13 @@ class CACSegmenter():
             grad_k_1 = grad_k.copy()
             grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                            image_obj) + energies.grad_energy_constraint(cage_obj.cage, d, k)
-            grad_k = energies.multiple_normalize(grad_k)
+            grad_k = energies.multiple_standardize(grad_k)
+            # print 'NORMALIZED'
+            # print grad_k
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
                 axis = mid_point - cage_obj.cage
-                axis = energies.multiple_normalize(axis)
+                axis = energies.multiple_standardize(axis)
                 grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
                 alpha = beta
 
@@ -228,6 +229,8 @@ class CACSegmenter():
             # Update contour coordinates
             contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
             iter += 1
+
+        self._plotContourOnImage(contour_coord, image_obj, cage_obj, alpha, [])
         return cage_obj
 
 

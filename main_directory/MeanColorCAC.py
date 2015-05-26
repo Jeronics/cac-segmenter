@@ -15,8 +15,12 @@ class MeanColorCAC(CACSegmenter):
         return energy
 
     def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+        print 'Color 1',
         grad_energy_1 = energies.grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+        print 'Color 2',
         grad_energy_2 = energies.grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+        # print grad_energy_1
+        # print grad_energy_2
         return grad_energy_1 + grad_energy_2
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -28,5 +32,5 @@ if __name__ == '__main__':
     color_cac = MeanColorCAC()
     parameter_list = color_cac.get_parameters()
     dataset = color_cac._load_dataset('BSDS300_input.txt')
-    color_cac.test_model(dataset, parameter_list[0])
+    color_cac.test_model(dataset, parameter_list[0], plot_evolution=False)
     # color_cac.train_model('BSDS300_input.txt')

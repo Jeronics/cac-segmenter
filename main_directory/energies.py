@@ -341,18 +341,19 @@ def mean_color_energy_per_region(omega_1_coord, image):
 
 def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     grad_energy_1 = grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+    print 'Color 2',
     grad_energy_2 = grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
     return grad_energy_1 + grad_energy_2
 
 
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)
+    print mean
     hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
-    directed_distances = directed_hue_color_distance(hue_values, mean)
+    directed_distances = directed_hue_color_distance(mean, hue_values)
     hue_gradient = get_hsi_derivatives(omega_coord, image)
-    grad_energy = np.dot(np.multiply(affine_omega_coord.T, directed_distances),hue_gradient.T)
+    grad_energy = np.dot(np.multiply(affine_omega_coord.T, directed_distances), hue_gradient.T)
     return grad_energy
-
 
 def hue_color_distance(hue1, hue2):
     '''
@@ -590,13 +591,14 @@ def multiple_normalize(a):
     '''
     return np.array([x / np.linalg.norm(x) for x in a])
 
-def multiple_standardize_(a):
+def multiple_standardize(a):
     '''
 
     :param a:
     :return:
     '''
-    return a,a
+    y = np.sqrt(sum(np.multiply(a,a).T))
+    return a/y.mean()
 
 def multiple_dot_products(a, b):
     c = a * b
