@@ -206,6 +206,27 @@ class ImageClass:
         if show_plot:
             plt.show()
 
+    def plot_hsi_image(self, show_plot=True):
+
+        plt.subplot(131)
+        plt.gray()
+        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
+        plt.axis('off')
+
+        plt.subplot(132)
+        plt.gray()
+        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
+        plt.axis('off')
+
+        plt.subplot(133)
+        plt.gray()
+        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
+        plt.axis('off')
+
+        if show_plot:
+            plt.show()
+
+
     def reshape(self, new_width=-1, new_height=-1):
         height, width = self.shape
         im = Image.open(self.path)

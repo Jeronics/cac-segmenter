@@ -26,6 +26,7 @@ class MeanColorCAC(CACSegmenter):
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
         utils.plotContourOnImage(contour_coord, image_obj.hsi_image[:, :, 0]/(2*3.14)*255., points=cage_obj.cage, color=color,
                            points2=cage_obj.cage - alpha * 10 * grad_k)
+        image_obj.plot_hsi_image()
 
 
 if __name__ == '__main__':
