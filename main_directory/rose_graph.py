@@ -8,6 +8,7 @@ import pprint
 
 def main():
     azi = np.random.uniform(0, 360, 100000)
+    print azi.shape
     z = np.cos(np.radians(azi/2.))
 
     plt.figure(figsize=(5, 6))
