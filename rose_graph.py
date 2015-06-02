@@ -1,17 +1,18 @@
 import itertools
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
 import numpy as np
-
+import pprint
 
 def main():
-    azi = np.random.uniform(0, 360, 100)
-    z = np.cos(np.radians(azi-45))
+    azi = np.random.uniform(0, 360, 100000)
+    z = np.cos(np.radians(azi/2.))
 
     plt.figure(figsize=(5, 6))
     plt.subplot(111, projection='polar')
-    coll = rose(azi, z=z)
+    coll = rose(azi, z=z, bidirectional=False)
     plt.xticks(np.radians(range(0, 360, 45)),
                ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
     plt.colorbar(coll, orientation='horizontal')
@@ -55,7 +56,7 @@ def rose(azimuths, z=None, ax=None, bins=30, bidirectional=False,
     if ax is None:
         ax = plt.gca()
     ax.set_theta_direction(-1)
-    ax.set_theta_offset(np.radians(90))
+    ax.set_theta_offset(np.radians(0))
     if bidirectional:
         other = azimuths + 180
         azimuths = np.concatenate([azimuths, other])
@@ -72,6 +73,7 @@ def rose(azimuths, z=None, ax=None, bins=30, bidirectional=False,
     edges = np.radians(edges)
     coll = colored_bar(edges[:-1], counts, z=z, width=np.diff(edges),
                        ax=ax, **kwargs)
+    print coll
     return coll
 
 
@@ -84,7 +86,7 @@ def colored_bar(left, height, z=None, width=0.8, bottom=0, ax=None, **kwargs):
     rects = []
     for x, y, h, w in zip(left, bottom, height, width):
         rects.append(Rectangle((x, y), w, h))
-    coll = PatchCollection(rects, array=z, **kwargs)
+    coll = PatchCollection(rects, cmap=matplotlib.cm.hsv, array=z, **kwargs)
     ax.add_collection(coll)
     ax.autoscale()
     return coll
