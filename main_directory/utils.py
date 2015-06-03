@@ -219,6 +219,9 @@ class ImageClass:
 
         azi = self.hsi_image[:, :, 0] / (2 * 3.14) * 360.
         azi = azi.flatten()
+        azi = list(azi)
+        azi.append(359.)
+        azi = np.array(azi)
         z = np.cos(np.radians(azi / 2.))
         coll = rose_graph.rose(azi, z=z, bidirectional=False, bins=50)
         plt.xticks(np.radians(range(0, 360, 10)),
@@ -235,17 +238,20 @@ class ImageClass:
 
         plt.subplot(224)
         data = self.hsi_image[:, :, 0] / (2 * 3.14) * 255.
-        n, bins, patches = plt.hist(data.flatten(), 25, normed=1, color='green')
+        data = data.flatten()
+        data = list(data)
+        data.append(359.)
+        n, bins, patches = plt.hist(data, 36)
         bin_centers = 0.5 * (bins[:-1] + bins[1:])
 
         # scale values to interval [0,pi]
         col = bin_centers
         col /= 360
         col = col
-
+        print bins
         for c, p in zip(col, patches):
             plt.setp(p, 'facecolor', matplotlib.cm.hsv(c))
-
+        plt.xticks([np.ceil(x) for i, x in enumerate(bins) if i % 3 == 0])
         if show_plot:
             plt.show()
 

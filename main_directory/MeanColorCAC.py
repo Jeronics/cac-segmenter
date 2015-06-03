@@ -34,5 +34,5 @@ if __name__ == '__main__':
     color_cac = MeanColorCAC()
     parameter_list = color_cac.get_parameters()
     dataset = color_cac._load_dataset('BSDS300_input.txt')
-    color_cac.test_model(dataset, parameter_list[0], plot_evolution=True)
+    color_cac.test_model(dataset, parameter_list[0], plot_evolution=False)
     # color_cac.train_model('BSDS300_input.txt')

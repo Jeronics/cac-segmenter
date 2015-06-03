@@ -7,8 +7,12 @@ import numpy as np
 import pprint
 
 def main():
-    azi = np.random.uniform(0, 360, 100000)
-    print azi.shape
+    azi = np.random.uniform(0, 180, 100000)
+    azi=azi.tolist()
+    print azi
+    # import pdb; pdb.set_trace()
+    azi.append(359.)
+    azi=np.array(azi)
     z = np.cos(np.radians(azi/2.))
 
     plt.figure(figsize=(5, 6))
@@ -67,9 +71,10 @@ def rose(azimuths, z=None, ax=None, bins=30, bidirectional=False,
     azimuths[azimuths > 360] -= 360
     azimuths[azimuths < 0] += 360
     counts, edges = np.histogram(azimuths, range=[0, 360], bins=bins)
+
     if z is not None:
         idx = np.digitize(azimuths, edges)
-        z = np.array([color_by(z[idx == i]) for i in range(1, idx.max() + 1)])
+        z = np.array([color_by(z[idx == i]) for i in range(1, bins+1)])
         z = np.ma.masked_invalid(z)
     edges = np.radians(edges)
     coll = colored_bar(edges[:-1], counts, z=z, width=np.diff(edges),
