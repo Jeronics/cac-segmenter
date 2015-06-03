@@ -230,24 +230,21 @@ class ImageClass:
         plt.rgrids(range(5, 20, 5), angle=360)
 
         plt.subplot(223)
-        plt.gray()
         plt.imshow(self.hsi_image[:, :, 0] / (2 * 3.14) * 255., cmap=matplotlib.cm.hsv)
         plt.axis('off')
 
         plt.subplot(224)
-        plt.gray()
-        data= self.hsi_image[:, :, 0] / (2 * 3.14) * 255.
+        data = self.hsi_image[:, :, 0] / (2 * 3.14) * 255.
         n, bins, patches = plt.hist(data.flatten(), 25, normed=1, color='green')
         bin_centers = 0.5 * (bins[:-1] + bins[1:])
 
         # scale values to interval [0,pi]
-        col = bin_centers - min(bin_centers)
-        col /= max(col)
-        col = col * np.pi
+        col = bin_centers
+        col /= 360
+        col = col
 
         for c, p in zip(col, patches):
             plt.setp(p, 'facecolor', matplotlib.cm.hsv(c))
-        plt.axis('off')
 
         if show_plot:
             plt.show()
