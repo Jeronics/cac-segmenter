@@ -44,7 +44,7 @@ class CageClass:
         for i in xrange(0, num_cage_points):
             angle = 2 * i * np.pi / num_cage_points
             x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
-            cage.append([y + c[1],x + c[0]])
+            cage.append([y + c[1], x + c[0]])
         self.__init__(cage=np.array(cage), filename='')
         return cage
 
@@ -117,7 +117,7 @@ class MaskClass:
             x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
             cage.append([y + c[1], x + c[0]])
         # plotContourOnImage(np.array(mask_points), image.image,
-        #                    points=cage)
+        # points=cage)
         return cage
 
 
@@ -209,28 +209,44 @@ class ImageClass:
 
     def plot_hsi_image(self, show_plot=True):
 
-        plt.subplot(131)
+        plt.subplot(221)
         plt.gray()
-        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
+        plt.imshow(self.hsi_image[:, :, 0] / (2 * 3.14) * 255., interpolation='nearest')
         plt.axis('off')
 
-        plt.subplot(132,  projection='polar')
+        plt.subplot(222, projection='polar')
         plt.gray()
 
-        azi = self.hsi_image[:, :, 0]/(2*3.14)*360.
-        azi=azi.flatten()
-        z = np.cos(np.radians(azi/2.))
+        azi = self.hsi_image[:, :, 0] / (2 * 3.14) * 360.
+        azi = azi.flatten()
+        z = np.cos(np.radians(azi / 2.))
         coll = rose_graph.rose(azi, z=z, bidirectional=False, bins=50)
         plt.xticks(np.radians(range(0, 360, 10)),
-                   ['Red', '', '','Red-Magenta', '', '','Magenta', '', '','Magenta-Blue', '', '','Blue', '', '','Blue-Cyan', '', '','Cyan', '', '','Cyan-Green', '', '','Green', '', '','Green-Yellow', '', '','Yellow', '', '','Yellow-Red', '', ''])
+                   ['Red', '', '', 'Red-Magenta', '', '', 'Magenta', '', '', 'Magenta-Blue', '', '', 'Blue', '', '',
+                    'Blue-Cyan', '', '', 'Cyan', '', '', 'Cyan-Green', '', '', 'Green', '', '', 'Green-Yellow', '', '',
+                    'Yellow', '', '', 'Yellow-Red', '', ''])
         plt.colorbar(coll, orientation='horizontal')
         plt.xlabel('A rose diagram colored by a second variable')
         plt.rgrids(range(5, 20, 5), angle=360)
 
-
-        plt.subplot(133)
+        plt.subplot(223)
         plt.gray()
-        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
+        plt.imshow(self.hsi_image[:, :, 0] / (2 * 3.14) * 255., cmap=matplotlib.cm.hsv)
+        plt.axis('off')
+
+        plt.subplot(224)
+        plt.gray()
+        data= self.hsi_image[:, :, 0] / (2 * 3.14) * 255.
+        n, bins, patches = plt.hist(data.flatten(), 25, normed=1, color='green')
+        bin_centers = 0.5 * (bins[:-1] + bins[1:])
+
+        # scale values to interval [0,pi]
+        col = bin_centers - min(bin_centers)
+        col /= max(col)
+        col = col * np.pi
+
+        for c, p in zip(col, patches):
+            plt.setp(p, 'facecolor', matplotlib.cm.hsv(c))
         plt.axis('off')
 
         if show_plot:

@@ -74,11 +74,10 @@ def rose(azimuths, z=None, ax=None, bins=30, bidirectional=False,
     edges = np.radians(edges)
     coll = colored_bar(edges[:-1], counts, z=z, width=np.diff(edges),
                        ax=ax, **kwargs)
-    print coll
     return coll
 
 
-def colored_bar(left, height, z=None, width=0.8, bottom=0, ax=None, **kwargs):
+def colored_bar(left, height, z=None, width=0.9, bottom=0, ax=None, **kwargs):
     """A bar plot colored by a scalar sequence."""
     if ax is None:
         ax = plt.gca()
