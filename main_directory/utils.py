@@ -9,6 +9,7 @@ from scipy import misc
 import os
 import sys
 import energies
+import rose_graph
 
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
@@ -213,10 +214,19 @@ class ImageClass:
         plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
         plt.axis('off')
 
-        plt.subplot(132)
+        plt.subplot(132,  projection='polar')
         plt.gray()
-        plt.imshow(self.hsi_image[:, :, 0]/(2*3.14)*255., interpolation='nearest')
-        plt.axis('off')
+
+        azi = self.hsi_image[:, :, 0]/(2*3.14)*360.
+        azi=azi.flatten()
+        z = np.cos(np.radians(azi/2.))
+        coll = rose_graph.rose(azi, z=z, bidirectional=False, bins=50)
+        plt.xticks(np.radians(range(0, 360, 10)),
+                   ['Red', '', '','Red-Magenta', '', '','Magenta', '', '','Magenta-Blue', '', '','Blue', '', '','Blue-Cyan', '', '','Cyan', '', '','Cyan-Green', '', '','Green', '', '','Green-Yellow', '', '','Yellow', '', '','Yellow-Red', '', ''])
+        plt.colorbar(coll, orientation='horizontal')
+        plt.xlabel('A rose diagram colored by a second variable')
+        plt.rgrids(range(5, 20, 5), angle=360)
+
 
         plt.subplot(133)
         plt.gray()
