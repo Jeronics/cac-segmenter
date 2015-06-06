@@ -41,18 +41,19 @@ class CACSegmenter():
                                 parameters['num_points'], filename='hello_test')
         return image, mask, cage
 
-    def test_model(self, dataset, params, plot_evolution=False):
+    def test_model(self, dataset, params, results_folder, plot_evolution=False):
         '''
         segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
         :return resulting cages:
         '''
+        utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
             if False:
                 continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
             result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=plot_evolution)
             if result:
-                result.save_cage('Result1')
+                result.save_cage(results_folder+'/'+image_obj.spec_name+'.txt')
         return 0
         # return resulting_cages, evaluation
 
@@ -74,13 +75,15 @@ class CACSegmenter():
         return Train, Test
 
     def _find_best_model(self, dataset, CV=5):
+        results_folder= 'results/'
         parameters_performance = pd.DataFrame(self.get_parameters())
         performance_df = pd.DataFrame(dtype=float)
         for i in xrange(CV):
             _, Test = self._partition_dataset(dataset, i, CV)
             performance = []
-            for p in self.get_parameters():
-                performance.append(self.test_model(Test, p))
+            for i, p in enumerate(self.get_parameters()):
+                results_folder_p = results_folder + 'params'+i
+                performance.append(self.test_model(Test, p, results_folder_p))
             # Add a column with the performance of the method on the dataset
             performance_df[str(i)] = performance
         parameters_performance['arithmetic_mean'] = performance_df.mean(axis=1)
