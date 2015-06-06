@@ -39,11 +39,6 @@ class CACSegmenter():
         cage = utils.CageClass()
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'],
                                 parameters['num_points'], filename='hello_test')
-        # print cage_aux
-        mask.plot_image()
-        import pprint
-
-        pprint.pprint(mask.mask[170:175, 138:145])
         return image, mask, cage
 
     def test_model(self, dataset, params, plot_evolution=False):
@@ -230,7 +225,8 @@ class CACSegmenter():
             contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
             iter += 1
 
-        self._plotContourOnImage(contour_coord, image_obj, cage_obj, 0, grad_k)
+        if plot_evolution:
+            self._plotContourOnImage(contour_coord, image_obj, cage_obj, 0, grad_k)
         return cage_obj
 
 
