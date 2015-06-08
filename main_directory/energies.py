@@ -57,15 +57,17 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
 '''
 
 
-def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    image = image_obj.gray_image
     omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
     omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
     energy = (omega_1 + omega_2) / float(2)
     return energy
 
 
-def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
     # Calculate Image gradient
+    image = image_obj.gray_image
     image_gradient = np.array(np.gradient(image))
 
     # Calculate Energy:
@@ -115,9 +117,11 @@ def get_omega_mean(omega_coord, image):
                         Multi Dimensional MEAN ENERGY
 '''
 
+def generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image, type):
+    return None
 
 def mean_energy_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image, type, weight):
-    energy =
+    energy = []
     for t,w in zip(type, weight):
         omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image, )
         omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
@@ -363,14 +367,12 @@ def mean_color_energy_per_region(omega_1_coord, image):
 
 def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     grad_energy_1 = grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-    print 'Color 2',
     grad_energy_2 = grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
     return grad_energy_1 + grad_energy_2
 
 
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)
-    print mean
     hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
     directed_distances = directed_hue_color_distance(mean, hue_values)
     hue_gradient = get_hsi_derivatives(omega_coord, image)

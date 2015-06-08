@@ -48,8 +48,6 @@ class CACSegmenter():
         '''
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if False:
-                continue
             image_obj, mask_obj, cage_obj = self._load_model(x, params)
             result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=plot_evolution)
             if result:
