@@ -3,11 +3,14 @@ import numpy as np
 import energies
 import utils
 
+
 class MeanMultiCAC(CACSegmenter):
-    def __init__(self):
+    def __init__(self, type, weight):
         CACSegmenter.__init__(self)
         self.energy = 1
         self.parameters['other'] = [1, 2, 3, 4]
+        self.type = type
+        self.weight = weight
 
     def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
@@ -28,15 +31,15 @@ class MeanMultiCAC(CACSegmenter):
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, image_obj.gray_image, points=cage_obj.cage, color=color,
-                           points2=cage_obj.cage - alpha * 10 * grad_k)
+        utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
+                                 points2=cage_obj.cage - alpha * 10 * grad_k)
 
 
 if __name__ == '__main__':
-    color_cac = MeanMultiCAC()
-    parameter_list = color_cac.get_parameters()
+    rgb_cac = MeanMultiCAC(['C', 'N', 'N'], [1, 1, 1])
+    parameter_list = rgb_cac.get_parameters()
 
-    dataset = color_cac._load_dataset('BSDS300_input.txt')
+    dataset = rgb_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
     # color_cac.train_model('BSDS300_input.txt')
