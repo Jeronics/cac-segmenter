@@ -12,23 +12,42 @@ class MeanMultiCAC(CACSegmenter):
         self.type = type
         self.weight = weight
 
+
     def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-        image = image_obj.gray_image
-        omega_1 = energies.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-        omega_2 = energies.mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
-        energy = (omega_1 + omega_2) / float(2)
-        return energy
+        total_energy = []
+        for slice, (t, w) in enumerate(zip(self.type, self.weight)):
+            omega_1 = self.generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t, slice)
+            omega_2 = self.generic_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t, slice)
+            energy = (omega_1 + omega_2) / float(2)
+            total_energy.append(w * energy)
+        return sum(total_energy)
 
-    def mean_energy_grad(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-        # Calculate Image gradient
-        image = image_obj.gray_image
-        image_gradient = np.array(np.gradient(image))
+    def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+        total_grad_energy = []
+        for slice, (t, w) in enumerate(zip(self.type, self.weight)):
+            grad_energy_1 = self.generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t, slice)
+            grad_energy_2 = self.generic_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t, slice)
+            grad_energy = grad_energy_1 + grad_energy_2
+            total_grad_energy.append(w * grad_energy)
+        return sum(total_grad_energy)
 
-        # Calculate Energy:
-        omega_1 = energies.mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-        omega_2 = energies.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
-        energy = omega_1 + omega_2
-        return energy
+    def generic_mean_energy_per_region(self, omega_coord, affine_omega_coord, image_obj, type, slice):
+        if type == 'C':
+            omega_energy = energies.mean_color_energy_per_region(omega_coord, image_obj)
+        if type == 'N':
+            image = image_obj.image[:, :, slice]
+            omega_energy = energies.mean_energy_per_region(omega_coord, affine_omega_coord, image)
+        return omega_energy
+
+
+    def generic_grad_mean_energy_per_region(self, omega_coord, affine_omega_coord, image_obj, type, slice):
+        if type == 'C':
+            omega_energy = energies.grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image_obj)
+        if type == 'N':
+            image = image_obj.image[:, :, slice]
+            image_gradient = np.array(np.gradient(image))
+            omega_energy = energies.mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient)
+        return omega_energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
         utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,

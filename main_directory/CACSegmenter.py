@@ -30,6 +30,24 @@ class CACSegmenter():
     def _energy(self):
         return None
 
+
+    def evaluate_results(self, image, cage, mask, resulting_cage, gt_mask, results_file='results_cages'):
+        utils.mkdir(results_file)
+        result_file = results_file + "/" + cage.save_name
+        if not resulting_cage:
+            print 'No convergence reached for the cac-segmenter'
+        else:
+            resulting_cage.save_cage(result_file)
+            res_fold = results_file + "/" + 'result' + cage.spec_name.split("cage_")[-1] + '.png'
+            result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
+            if result_mask:
+                result_mask.save_image(filename=res_fold)
+            print res_fold
+            if gt_mask:
+                sorensen_dice_coeff = utils.sorensen_dice_coefficient(gt_mask, result_mask)
+                print 'Sorensen-Dice coefficient', sorensen_dice_coefficient
+
+
     def _load_model(self, x, parameters):
         image = utils.ImageClass()
         image.read_png(x.image_name)
@@ -39,7 +57,12 @@ class CACSegmenter():
         cage = utils.CageClass()
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'],
                                 parameters['num_points'], filename='hello_test')
-        return image, mask, cage
+        gt_mask = utils.MaskClass()
+        if x.gt_name:
+            gt_mask.read_png(x.gt_name)
+        else:
+            gt_mask = None
+        return image, mask, cage, gt_mask
 
     def test_model(self, dataset, params, results_folder, plot_evolution=False):
         '''
@@ -48,10 +71,13 @@ class CACSegmenter():
         '''
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            image_obj, mask_obj, cage_obj = self._load_model(x, params)
-            result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model', plot_evolution=plot_evolution)
+            image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
+            result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model',
+                                        plot_evolution=plot_evolution)
             if result:
-                result.save_cage(results_folder+'/'+image_obj.spec_name+'.txt')
+                self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
+                result.save_cage(results_folder + '/' + image_obj.spec_name + '.txt')
+
         return 0
         # return resulting_cages, evaluation
 
@@ -73,14 +99,14 @@ class CACSegmenter():
         return Train, Test
 
     def _find_best_model(self, dataset, CV=5):
-        results_folder= 'results/'
+        results_folder = 'results/'
         parameters_performance = pd.DataFrame(self.get_parameters())
         performance_df = pd.DataFrame(dtype=float)
         for i in xrange(CV):
             _, Test = self._partition_dataset(dataset, i, CV)
             performance = []
             for i, p in enumerate(self.get_parameters()):
-                results_folder_p = results_folder + 'params'+i
+                results_folder_p = results_folder + 'params' + i
                 performance.append(self.test_model(Test, p, results_folder_p))
             # Add a column with the performance of the method on the dataset
             performance_df[str(i)] = performance

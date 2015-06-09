@@ -134,7 +134,7 @@ def mean_energy_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine
         omega_2 = generic_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image, t, slice)
         energy = (omega_1 + omega_2) / float(2)
         total_energy.append(w * energy)
-    return total_energy / float(len(total_energy))
+    return sum(total_energy)
 
 
 def generic_grad_mean_energy_per_region(omega_coord, affine_omega_coord, image_obj, type, slice):
@@ -154,7 +154,7 @@ def mean_energy_grad_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, a
         grad_energy_2 = grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image, t, slice)
         grad_energy = grad_energy_1 + grad_energy_2
         total_grad_energy.append(w * grad_energy)
-    return
+    return sum(total_grad_energy)
 
 
 '''
