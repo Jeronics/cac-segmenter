@@ -144,7 +144,7 @@ def generic_grad_mean_energy_per_region(omega_coord, affine_omega_coord, image_o
         image = image_obj.image[:, :, slice]
         image_gradient = np.array(np.gradient(image))
         omega_energy = mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient)
-
+    return omega_energy
 
 def mean_energy_grad_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image, type,
                            weight):
