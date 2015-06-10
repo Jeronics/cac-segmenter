@@ -146,6 +146,7 @@ def generic_grad_mean_energy_per_region(omega_coord, affine_omega_coord, image_o
         omega_energy = mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient)
     return omega_energy
 
+
 def mean_energy_grad_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image, type,
                            weight):
     total_grad_energy = []
@@ -395,6 +396,9 @@ def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, a
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)
     hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
+    print 'HERE'
+    print mean
+    print hue_values
     directed_distances = directed_hue_color_distance(mean, hue_values)
     hue_gradient = get_hsi_derivatives(omega_coord, image)
     grad_energy = np.dot(np.multiply(affine_omega_coord.T, directed_distances), hue_gradient.T)
@@ -431,6 +435,14 @@ def directed_hue_color_distance(hue1, hue2):
     cond3 = (hue2 >= hue1)
     cond4 = cond3 == False
 
+    # if isinstance(dist, float):
+    #     if cond1:
+    #         dist = hue2-hue1
+    #     if cond2:
+    #         dist = (hue2 - hue1)-2*np.pi
+    #     if cond3:
+    #         dist =  2 * np.pi + (hue2 - hue1)
+    # else:
     dist[cond1] = (hue2 - hue1)[cond1]
     dist[cond2 & cond3] = (hue2 - hue1)[cond2 & cond3] - 2 * np.pi
     dist[cond2 & cond4] = 2 * np.pi + (hue2 - hue1)[cond2 & cond4]

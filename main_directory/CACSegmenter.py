@@ -71,6 +71,8 @@ class CACSegmenter():
         '''
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
+            if i <20:
+                continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
