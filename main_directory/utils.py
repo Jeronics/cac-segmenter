@@ -9,6 +9,7 @@ from scipy import misc
 import os
 import sys
 import energies
+import energy_utils_mean_hue as hue_mean
 import rose_graph
 
 matplotlib.use("Qt5Agg")
@@ -286,7 +287,7 @@ class ImageClass:
         hsi = rgb.copy()
         if len(rgb.shape) == 3:
             coordinates = np.array([[i, j] for i in np.arange(rgb.shape[0]) for j in np.arange(rgb.shape[1])])
-            hsi[coordinates[:, 0], coordinates[:, 1]] = energies.rgb_to_hsi(coordinates, rgb)
+            hsi[coordinates[:, 0], coordinates[:, 1]] = hue_mean.rgb_to_hsi(coordinates, rgb)
         else:
             hsi = rgb
         return hsi

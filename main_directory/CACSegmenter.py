@@ -1,12 +1,10 @@
 from ctypes_utils import *
-import utils as utils
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
-from cac_segmenter import cac_segmenter
 from ctypes_utils import *
-import time
 from utils import *
 import energies
+import energy_utils_cage_constraints as cage_constraint
 from cac_segmenter import cac_segmenter
 import ctypes_utils as ctypes
 
@@ -209,7 +207,7 @@ class CACSegmenter():
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
             grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + energies.grad_energy_constraint(cage_obj.cage, d, k)
+                                           image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             grad_k = energies.multiple_standardize(grad_k)
             # print 'NORMALIZED'
             # print grad_k
@@ -222,7 +220,7 @@ class CACSegmenter():
 
             else:
                 energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image_obj) + energies.energy_constraint(cage_obj.cage, d, k)
+                                          image_obj) + cage_constraint.energy_constraint(cage_obj.cage, d, k)
                 alpha_new = self.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates,
                                                    contour_size, energy, image_obj, constraint_params)
@@ -287,7 +285,7 @@ class CACSegmenter():
                                                                                                curr_cage - grad_k * alpha)
 
             next_energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + energies.energy_constraint(curr_cage - grad_k * alpha, d, k)
+                                           image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)
         if alpha < 0.1:
             return 0
         return 1
