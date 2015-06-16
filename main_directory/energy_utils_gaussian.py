@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+
 '''
                         GAUSSIAN ENERGY
 '''
@@ -72,4 +73,3 @@ def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradien
     aux_y = np.dot(aux, np.transpose(aux_y))
     aux_1 = np.transpose([aux_x, aux_y])
     return aux_1
-
