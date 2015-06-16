@@ -1,6 +1,6 @@
 from CACSegmenter import CACSegmenter
 import numpy as np
-import energies
+import energy_utils_mean as mean_energy
 import utils
 class MeanCACSegmenter(CACSegmenter):
     def __init__(self):
@@ -10,8 +10,8 @@ class MeanCACSegmenter(CACSegmenter):
 
     def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
-        omega_1 = energies.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-        omega_2 = energies.mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+        omega_1 = mean_energy.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+        omega_2 = mean_energy.mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
         energy = (omega_1 + omega_2) / float(2)
         return energy
 
@@ -21,8 +21,8 @@ class MeanCACSegmenter(CACSegmenter):
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
-        omega_1 = energies.mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-        omega_2 = energies.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
+        omega_1 = mean_energy.mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
+        omega_2 = mean_energy.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
         energy = omega_1 + omega_2
         return energy
 
