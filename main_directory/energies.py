@@ -2,6 +2,7 @@ __author__ = 'jeroni'
 import utils
 import ctypes_utils as ctypes
 import numpy as np
+import energy_utils_mean as mean_energy
 
 
 '''
@@ -43,11 +44,12 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
                                                                                            len(curr_cage),
                                                                                            curr_cage - grad_k * alpha)
 
-        next_energy = mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                  image) + energy_constraint(curr_cage - grad_k * alpha, d, k)
+        next_energy = mean_energy.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                                              image) + energy_constraint(curr_cage - grad_k * alpha, d, k)
     if alpha < 0.1:
         return 0
     return 1
+
 
 '''
 
@@ -82,7 +84,6 @@ def grad_vertex_constraint(vertices, d):
             aux = 2 * (vi - vj) * (d - dist_vertices) / float(dist_vertices)
             grad_norm[i] += aux
             grad_norm[(j + i + 1) % len(vertices)] += -aux
-
     return grad_norm
 
 
@@ -110,9 +111,7 @@ def length_constraint_energy(vertices, d):
     for i in xrange(len(vertices)):
         # Distance between two neighboring points
         dist_pair = np.linalg.norm(vertices[i] - vertices[(i + 1) % len(vertices)])
-
         energy += np.linalg.norm(dist_pair - d)
-
     return energy
 
 
@@ -122,7 +121,6 @@ def grad_length_constraint_energy(vertices, d):
         # Distance between two neighboring points
         dist_pair = np.linalg.norm(vertices[i] - vertices[(i + 1) % len(vertices)])
         denom1 = np.linalg.norm(dist_pair - d) * dist_pair
-
     return grad_norm
 
 
