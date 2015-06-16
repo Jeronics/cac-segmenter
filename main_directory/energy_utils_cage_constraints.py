@@ -1,5 +1,5 @@
 import numpy as np
-
+import energies
 '''
                         EDGE CONSTRAINT ENERGY
 '''
@@ -7,7 +7,7 @@ import numpy as np
 
 def grad_point_to_edge_energy_1(v, v_1, v_2, d):
     q = v_2 - v_1
-    q_orth = perpendicular_vector(q)
+    q_orth = energies.perpendicular_vector(q)
     r = v - v_1
     grad = q_orth * (np.dot(q_orth, r)) / float(np.linalg.norm(q_orth) * abs(np.dot(q_orth, r)))
     return grad
@@ -23,7 +23,7 @@ def dist_point_to_edge(v, v_1, v_2, d):
     :return: a distance from the point to an edge if it exist.
     '''
     q = v_2 - v_1
-    q_orth = perpendicular_vector(q)
+    q_orth = energies.perpendicular_vector(q)
     r = v - v_1
     # Calculate the range where the band where the distance can be well defined*
     range_ = np.dot(q, r) / np.power(np.linalg.norm(q), 2)
