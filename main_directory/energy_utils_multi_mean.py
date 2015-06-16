@@ -15,7 +15,6 @@ def generic_mean_energy_per_region(omega_coord, affine_omega_coord, image_obj, t
         omega_energy = mean_energies.mean_energy_per_region(omega_coord, affine_omega_coord, image)
     return omega_energy
 
-
 def mean_energy_multi(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image, type, weight):
     total_energy = []
     for slice, (t, w) in enumerate(zip(type, weight)):
