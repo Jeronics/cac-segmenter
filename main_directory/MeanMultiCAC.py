@@ -26,8 +26,10 @@ class MeanMultiCAC(CACSegmenter):
     def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_grad_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
-            grad_energy_1 = self.generic_grad_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t, slice)
-            grad_energy_2 = self.generic_grad_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t, slice)
+            grad_energy_1 = self.generic_grad_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t,
+                                                                     slice)
+            grad_energy_2 = self.generic_grad_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t,
+                                                                     slice)
             grad_energy = grad_energy_1 + grad_energy_2
             total_grad_energy.append(w * grad_energy)
         return sum(total_grad_energy)
@@ -37,7 +39,7 @@ class MeanMultiCAC(CACSegmenter):
             omega_energy = energies.mean_color_energy_per_region(omega_coord, image_obj)
         if type == 'N':
             print image_obj.image.shape, slice
-            print image_obj.image[:,:,slice]
+            print image_obj.image[:, :, slice]
             image = image_obj.image[:, :, slice]
             omega_energy = energies.mean_energy_per_region(omega_coord, affine_omega_coord, image)
         return omega_energy
@@ -58,7 +60,7 @@ class MeanMultiCAC(CACSegmenter):
 
 
 if __name__ == '__main__':
-    rgb_cac = MeanMultiCAC(['N', 'N', 'N'], [1, 1, 1])
+    rgb_cac = MeanMultiCAC(['N', 'N', 'N'], [0, 0, 1])
     parameter_list = rgb_cac.get_parameters()
 
     dataset = rgb_cac._load_dataset('BSDS300_input.txt')

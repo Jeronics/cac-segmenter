@@ -202,17 +202,21 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, image):
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
+
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-    return np.dot(aux, np.transpose(aux))
+    a = len(aux) * np.log(omega_std)
+    b = 1 / (2 * np.pow(omega_std))
+    region_energy = a + np.dot(aux, np.transpose(aux)) * b
+    return region_energy
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
-
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
+    b = 1 / (2 * np.pow(omega_std, 2))
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-    image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
-                               utils.evaluate_image(omega_coord, image_gradient[1], 0)]
+    image_gradient_by_point = b * [utils.evaluate_image(omega_coord, image_gradient[0], 0),
+                                   utils.evaluate_image(omega_coord, image_gradient[1], 0)]
     mean_derivative = np.dot(image_gradient_by_point, affine_omega_coord) / float(len(omega_coord))
     grad = gradient_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point, mean_derivative)
     return grad  # *(1/pow(omega_std, 2)) for GAUSS
@@ -396,9 +400,6 @@ def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, a
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)
     hue_values = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()][:, 0]
-    print 'HERE'
-    print mean
-    print hue_values
     directed_distances = directed_hue_color_distance(mean, hue_values)
     hue_gradient = get_hsi_derivatives(omega_coord, image)
     grad_energy = np.dot(np.multiply(affine_omega_coord.T, directed_distances), hue_gradient.T)
@@ -436,8 +437,8 @@ def directed_hue_color_distance(hue1, hue2):
     cond4 = cond3 == False
 
     # if isinstance(dist, float):
-    #     if cond1:
-    #         dist = hue2-hue1
+    # if cond1:
+    # dist = hue2-hue1
     #     if cond2:
     #         dist = (hue2 - hue1)-2*np.pi
     #     if cond3:
