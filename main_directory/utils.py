@@ -375,11 +375,11 @@ def create_ground_truth(initial_cage, final_cage, initial_mask):
     omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                        contour_size, initial_mask.width,
                                                                                        initial_mask.height)
-    gt_im = np.zeros([initial_mask.width, initial_mask.height])
+    gt_im = np.zeros([initial_mask.height, initial_mask.width])
     # print cc.polygon_comparison(initial_cage.cage, final_cage.cage)
 
     # Flip the coordinate points
-    gt_im[omega_1_coord.transpose().astype(int)[1], omega_1_coord.transpose().astype(int)[0]] = 255.
+    gt_im[omega_1_coord.transpose().astype(int)[0], omega_1_coord.transpose().astype(int)[1]] = 255.
 
     gt_mask = MaskClass(gt_im)
     return gt_mask

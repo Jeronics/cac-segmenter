@@ -3,6 +3,7 @@ from sklearn.grid_search import ParameterGrid
 import pandas as pd
 from ctypes_utils import *
 from utils import *
+import copy
 import energies
 import energy_utils_cage_constraints as cage_constraint
 from cac_segmenter import cac_segmenter
@@ -28,7 +29,6 @@ class CACSegmenter():
     def _energy(self):
         return None
 
-
     def evaluate_results(self, image, cage, mask, resulting_cage, gt_mask, results_file='results_cages'):
         utils.mkdir(results_file)
         result_file = results_file + "/" + cage.save_name
@@ -42,8 +42,12 @@ class CACSegmenter():
                 result_mask.save_image(filename=res_fold)
             print res_fold
             if gt_mask:
+                gt_mask.plot_image()
+                result_mask.plot_image()
+                mask.plot_image()
                 sorensen_dice_coeff = utils.sorensen_dice_coefficient(gt_mask, result_mask)
-                print 'Sorensen-Dice coefficient', sorensen_dice_coefficient
+                print 'Sorensen-Dice coefficient', sorensen_dice_coeff
+                return sorensen_dice_coeff
 
 
     def _load_model(self, x, parameters):
@@ -62,24 +66,29 @@ class CACSegmenter():
             gt_mask = None
         return image, mask, cage, gt_mask
 
+
     def test_model(self, dataset, params, results_folder, plot_evolution=False):
         '''
         segments a group of image given a set of parameters. If the ground_truth exists it returns an evaluation
         :return resulting cages:
         '''
         utils.mkdir(results_folder)
+        results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
+        utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i <20:
-                continue
+            # if i >-1:
+            # continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
             if result:
-                self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
+                sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
+                with open(results_file, 'a') as f:
+                    f.write(image_obj.spec_name + '\t' + str(sorensen_dice_coeff) + '\n')
                 result.save_cage(results_folder + '/' + image_obj.spec_name + '.txt')
-
         return 0
         # return resulting_cages, evaluation
+
 
     def _partition_dataset(self, dataset, i_th, CV):
         '''
@@ -97,6 +106,7 @@ class CACSegmenter():
         Test = dataset[a:b]
         Train = pd.concat([dataset[:a], dataset[b:]])
         return Train, Test
+
 
     def _find_best_model(self, dataset, CV=5):
         results_folder = 'results/'
@@ -145,7 +155,9 @@ class CACSegmenter():
         plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
                            points2=cage_obj.cage - alpha * 10 * grad_k)
 
-    def cac_segmenter(self, image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
+
+    def cac_segmenter(self, image_obj, mask_obj, _cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
+        cage_obj = copy.deepcopy(_cage_obj)
         if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
             print 'Cage is out of the image! Not converged. Try a smaller cage'
             return None
@@ -285,7 +297,8 @@ class CACSegmenter():
                                                                                                curr_cage - grad_k * alpha)
 
             next_energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)
+                                           image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d,
+                                                                                          k)
         if alpha < 0.1:
             return 0
         return 1

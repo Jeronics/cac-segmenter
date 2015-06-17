@@ -25,7 +25,6 @@ class MeanColorCAC(CACSegmenter):
         image_obj.plot_hsi_image()
 
 
-
 if __name__ == '__main__':
     color_cac = MeanColorCAC()
     parameter_list = color_cac.get_parameters()
