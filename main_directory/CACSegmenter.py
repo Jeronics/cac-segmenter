@@ -42,9 +42,6 @@ class CACSegmenter():
                 result_mask.save_image(filename=res_fold)
             print res_fold
             if gt_mask:
-                gt_mask.plot_image()
-                result_mask.plot_image()
-                mask.plot_image()
                 sorensen_dice_coeff = utils.sorensen_dice_coefficient(gt_mask, result_mask)
                 print 'Sorensen-Dice coefficient', sorensen_dice_coeff
                 return sorensen_dice_coeff
