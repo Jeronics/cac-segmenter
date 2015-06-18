@@ -8,13 +8,13 @@ class MeanColorCAC(CACSegmenter):
         self.energy = 1
         self.parameters['other'] = [1, 2, 3, 4]
 
-    def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         energy1 = energy_ut.mean_color_energy_per_region(omega_1_coord, image)
         energy2 = energy_ut.mean_color_energy_per_region(omega_2_coord, image)
         energy = (energy1 + energy2) / 2.
         return energy
 
-    def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    def energy_gradient(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         grad_energy_1 = energy_ut.grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
         grad_energy_2 = energy_ut.grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
         return grad_energy_1 + grad_energy_2

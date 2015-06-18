@@ -145,10 +145,10 @@ class CACSegmenter():
         parameter_performances = pd.DataFrame(self.get_parameters())
         self._cross_validation(dataset, CV)
 
-    def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None
 
-    def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
+    def energy_gradient(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -218,7 +218,7 @@ class CACSegmenter():
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
-            grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+            grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                            image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             grad_k = energies.multiple_standardize(grad_k)
             if first_stage:
@@ -229,7 +229,7 @@ class CACSegmenter():
                 alpha = beta
 
             else:
-                energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+                energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image_obj) + cage_constraint.energy_constraint(cage_obj.cage, d, k)
                 alpha_new = self.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates,
@@ -294,7 +294,7 @@ class CACSegmenter():
                                                                                                len(curr_cage),
                                                                                                curr_cage - grad_k * alpha)
 
-            next_energy = self.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
+            next_energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                            image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d,
                                                                                           k)
         if alpha < 0.1:

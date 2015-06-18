@@ -14,7 +14,7 @@ class MeanMultiCAC(CACSegmenter):
         self.weight = weight
 
 
-    def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
             omega_1 = multi_mean_energy.generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t, slice)
@@ -24,7 +24,7 @@ class MeanMultiCAC(CACSegmenter):
 
         return sum(total_energy)
 
-    def mean_energy_grad(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy_gradient(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_grad_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
             grad_energy_1 = multi_mean_energy.generic_grad_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t,

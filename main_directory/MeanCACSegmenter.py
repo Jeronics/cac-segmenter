@@ -8,14 +8,14 @@ class MeanCACSegmenter(CACSegmenter):
         self.energy = 1
         self.parameters['other'] = [1, 2, 3, 4]
 
-    def mean_energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
         omega_1 = mean_energy.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
         omega_2 = mean_energy.mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
         energy = (omega_1 + omega_2) / float(2)
         return energy
 
-    def mean_energy_grad(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         # Calculate Image gradient
         image = image_obj.gray_image
         image_gradient = np.array(np.gradient(image))
