@@ -2,6 +2,7 @@ from CACSegmenter import CACSegmenter
 import numpy as np
 import energy_utils_mean as mean_energy
 import utils
+
 class MeanCACSegmenter(CACSegmenter):
     def __init__(self):
         CACSegmenter.__init__(self)

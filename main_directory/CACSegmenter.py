@@ -7,6 +7,9 @@ import copy
 import energies
 import energy_utils_cage_constraints as cage_constraint
 from cac_segmenter import cac_segmenter
+from CageClass import CageClass
+from MaskClass import MaskClass
+from ImageClass import ImageClass
 import ctypes_utils as ctypes
 
 
@@ -47,15 +50,15 @@ class CACSegmenter():
 
 
     def _load_model(self, x, parameters):
-        image = utils.ImageClass()
+        image = ImageClass()
         image.read_png(x.image_name)
-        mask = utils.MaskClass()
+        mask = MaskClass()
         mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'],
                                    'hello_test')
-        cage = utils.CageClass()
+        cage = CageClass()
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'],
                                 parameters['num_points'], filename='hello_test')
-        gt_mask = utils.MaskClass()
+        gt_mask = MaskClass()
         if x.gt_name:
             gt_mask.read_png(x.gt_name)
         else:
