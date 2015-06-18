@@ -94,12 +94,10 @@ class MaskClass:
         :param num_cage_points:
         :return:
         '''
-        print c, p
         im_shape = image.shape
         radius = np.linalg.norm(np.array(c) - np.array(p))
         im = np.zeros(im_shape)
         print 'Shape', im_shape
-        print c
         mask_points = []
 
         # careful im_shape is (max(y), max(x))

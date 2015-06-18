@@ -40,7 +40,6 @@ class CACSegmenter():
             result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
             if result_mask:
                 result_mask.save_image(filename=res_fold)
-            print res_fold
             if gt_mask:
                 sorensen_dice_coeff = utils.sorensen_dice_coefficient(gt_mask, result_mask)
                 print 'Sorensen-Dice coefficient', sorensen_dice_coeff
@@ -74,9 +73,11 @@ class CACSegmenter():
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
+            print 'Start Segmentation..'
             try:
                 result = self.cac_segmenter(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
+                print 'End Segmentation'
             except:
                 result = None
                 print 'Exception: Could not segment'
@@ -220,8 +221,6 @@ class CACSegmenter():
             grad_k = self.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                            image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             grad_k = energies.multiple_standardize(grad_k)
-            # print 'NORMALIZED'
-            # print grad_k
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
                 axis = mid_point - cage_obj.cage
