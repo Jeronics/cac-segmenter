@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+import energy_utils_mean as mean_utils
 
 '''
                         GAUSSIAN ENERGY
@@ -44,32 +45,29 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, image):
-    omega_mean, omega_std = get_omega_mean(omega_coord, image)
+    omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
 
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     a = len(aux) * np.log(omega_std)
-    b = 1 / (2 * np.pow(omega_std))
+    b = 1 / (2 * np.power(omega_std))
     region_energy = a + np.dot(aux, np.transpose(aux)) * b
     return region_energy
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
-    omega_mean, omega_std = get_omega_mean(omega_coord, image)
-    b = 1 / (np.pow(omega_std, 2))
+    omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
+    print omega_mean, omega_std
+    b = 1 / (np.power(omega_std, 2))
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-    image_gradient_by_point = b * [utils.evaluate_image(omega_coord, image_gradient[0], 0),
-                                   utils.evaluate_image(omega_coord, image_gradient[1], 0)]
-    mean_derivative = np.dot(image_gradient_by_point, affine_omega_coord) / float(len(omega_coord))
+    image_gradient_by_point = b * np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
+                                   utils.evaluate_image(omega_coord, image_gradient[1], 0)])
     grad = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
     return grad  # *(1/pow(omega_std, 2)) for GAUSS
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
     # image_gradient_by_point = np.transpose(image_gradient_by_point)
-    aux_x = np.multiply(np.transpose(affine_omega_coord), image_gradient_by_point[0])
-    aux_y = np.multiply(np.transpose(affine_omega_coord), image_gradient_by_point[1])
-    aux_x = np.dot(aux, np.transpose(aux_x))
-    aux_y = np.dot(aux, np.transpose(aux_y))
-    aux_1 = np.transpose([aux_x, aux_y])
-    return aux_1
+    first_prod = np.multiply(aux, affine_omega_coord.T)
+    second_prod = np.dot(first_prod, image_gradient_by_point.T)
+    return second_prod

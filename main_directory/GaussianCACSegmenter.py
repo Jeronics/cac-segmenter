@@ -10,10 +10,12 @@ class GaussianCACSegmenter(CACSegmenter):
         self.energy = 1
         self.parameters['other'] = [1, 2, 3, 4]
 
+    def get_seed(self):
+
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
-        omega_1 = g_energies.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-        omega_2 = g_energies.mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
+        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
         energy = (omega_1 + omega_2) / float(2)
         return energy
 
@@ -23,8 +25,8 @@ class GaussianCACSegmenter(CACSegmenter):
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
-        omega_1 = g_energies.mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-        omega_2 = g_energies.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
+        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
+        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
         energy = omega_1 + omega_2
         return energy
 
@@ -39,5 +41,5 @@ if __name__ == '__main__':
 
     dataset = gaussian_gray_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
     # color_cac.train_model('BSDS300_input.txt')

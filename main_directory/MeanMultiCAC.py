@@ -46,5 +46,5 @@ if __name__ == '__main__':
 
     dataset = rgb_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
     # color_cac.train_model('BSDS300_input.txt')

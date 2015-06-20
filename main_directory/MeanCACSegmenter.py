@@ -38,5 +38,5 @@ if __name__ == '__main__':
 
     dataset = mean_gray_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=Tru)
     # color_cac.train_model('BSDS300_input.txt')

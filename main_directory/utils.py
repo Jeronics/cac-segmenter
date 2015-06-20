@@ -2,13 +2,13 @@ import numpy as np
 from scipy import *
 import matplotlib
 from time import sleep
-matplotlib.use("Qt5Agg")
+# matplotlib.use("Qt5Agg")
 import os
 import sys
 from MaskClass import MaskClass
 from ImageClass import ImageClass
 from CageClass import CageClass
-matplotlib.use("Qt5Agg")
+# matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 
 # ########## VISUALITON
