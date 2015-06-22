@@ -1,13 +1,10 @@
 from CACSegmenter import CACSegmenter
+from CAC import CAC
 import numpy as np
 import energy_utils_mean as mean_energy
 import utils
 
-class MeanCACSegmenter(CACSegmenter):
-    def __init__(self):
-        CACSegmenter.__init__(self)
-        self.energy = 1
-        self.parameters['other'] = [1, 2, 3, 4]
+class MeanCACSegmenter(CAC):
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
@@ -33,10 +30,10 @@ class MeanCACSegmenter(CACSegmenter):
 
 
 if __name__ == '__main__':
-    mean_gray_cac = MeanCACSegmenter()
+    mean_gray_cac = CACSegmenter(MeanCACSegmenter)
     parameter_list = mean_gray_cac.get_parameters()
 
     dataset = mean_gray_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=Tru)
+    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
     # color_cac.train_model('BSDS300_input.txt')
