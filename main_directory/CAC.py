@@ -6,7 +6,7 @@ import ctypes_utils as ctypes
 import copy
 
 class CAC():
-    def __init__(self, image_obj, mask_obj, cage_obj):
+    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None):
         self.image_obj = image_obj
         self.mask_obj = mask_obj
         self.cage_obj = cage_obj

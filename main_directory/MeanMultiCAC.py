@@ -5,14 +5,7 @@ import energy_utils_multi_mean as multi_mean_energy
 import utils
 
 
-class MeanMultiCAC(CACSegmenter):
-    def __init__(self, type, weight):
-        CACSegmenter.__init__(self)
-        self.energy = 1
-        self.parameters['other'] = [1, 2, 3, 4]
-        self.type = type
-        self.weight = weight
-
+class MeanMultiCAC(CAC):
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_energy = []

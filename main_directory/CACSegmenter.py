@@ -14,7 +14,7 @@ import ctypes_utils as ctypes
 
 
 class CACSegmenter():
-    def __init__(self, CAC):
+    def __init__(self, CAC, type=None, weight=None):
         self.band_size = 500
         self.k = 50
         self.d = 10
@@ -23,6 +23,8 @@ class CACSegmenter():
             'num_points': [12, 14, 16],
             'ratio': [1.05, 1.1, 1.15, 1.2, 1.25],
         }
+        self.type = type
+        self.weight = weight
         self.CAC = CAC
 
     def _load_dataset(self, dataset_name):
@@ -73,18 +75,18 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i<20:
+            if i < 19:
                 continue
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation..'
             # try:
-            cac_object = self.CAC(image_obj, mask_obj, cage_obj)
+            cac_object = self.CAC(image_obj, mask_obj, cage_obj, type=self.type, weight=self.weight)
             result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
             print 'End Segmentation'
             # except:
-            #     result = None
+            # result = None
             #     print 'Exception: Could not segment'
             if result:
                 sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)

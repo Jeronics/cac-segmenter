@@ -1,12 +1,9 @@
 from CACSegmenter import CACSegmenter
+from CAC import CAC
 import energy_utils_mean_hue as energy_ut
 import utils
 
-class MeanColorCAC(CACSegmenter):
-    def __init__(self):
-        CACSegmenter.__init__(self)
-        self.energy = 1
-        self.parameters['other'] = [1, 2, 3, 4]
+class MeanColorCAC(CAC):
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         energy1 = energy_ut.mean_color_energy_per_region(omega_1_coord, image)
@@ -26,7 +23,7 @@ class MeanColorCAC(CACSegmenter):
 
 
 if __name__ == '__main__':
-    color_cac = MeanColorCAC()
+    color_cac = CACSegmenter(MeanColorCAC)
     parameter_list = color_cac.get_parameters()
     parameter_list = color_cac.get_parameters()
     dataset = color_cac._load_dataset('BSDS300_input.txt')
