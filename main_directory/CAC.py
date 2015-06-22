@@ -10,7 +10,7 @@ class CAC():
         self.image_obj = image_obj
         self.mask_obj = mask_obj
         self.cage_obj = cage_obj
-        self.type=type
+        self.type= type
         self.weight = weight
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):

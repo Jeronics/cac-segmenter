@@ -1,15 +1,11 @@
 from CACSegmenter import CACSegmenter
+from CAC import CAC
 import numpy as np
 import energy_utils_gaussian as g_energies
 import utils
 
 
-class GaussianCACSegmenter(CACSegmenter):
-    def __init__(self):
-        CACSegmenter.__init__(self)
-        self.energy = 1
-        self.parameters['other'] = [1, 2, 3, 4]
-
+class GaussianCACSegmenter(CAC):
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
@@ -35,7 +31,7 @@ class GaussianCACSegmenter(CACSegmenter):
 
 
 if __name__ == '__main__':
-    gaussian_gray_cac = GaussianCACSegmenter()
+    gaussian_gray_cac = CACSegmenter(GaussianCACSegmenter)
     parameter_list = gaussian_gray_cac.get_parameters()
 
     dataset = gaussian_gray_cac._load_dataset('BSDS300_input.txt')
