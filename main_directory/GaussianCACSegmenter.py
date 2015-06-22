@@ -10,7 +10,6 @@ class GaussianCACSegmenter(CACSegmenter):
         self.energy = 1
         self.parameters['other'] = [1, 2, 3, 4]
 
-    def get_seed(self):
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
