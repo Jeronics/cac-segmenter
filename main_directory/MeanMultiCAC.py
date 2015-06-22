@@ -1,4 +1,5 @@
 from CACSegmenter import CACSegmenter
+from CAC import CAC
 import numpy as np
 import energies
 import energy_utils_multi_mean as multi_mean_energy
@@ -6,7 +7,6 @@ import utils
 
 
 class MeanMultiCAC(CAC):
-
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
@@ -34,7 +34,7 @@ class MeanMultiCAC(CAC):
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
 
 if __name__ == '__main__':
-    rgb_cac = MeanMultiCAC(['N', 'N', 'N'], [0, 0, 1])
+    rgb_cac = CACSegmenter(MeanMultiCAC, type=['N', 'N', 'N'], weight=[0, 0, 1])
     parameter_list = rgb_cac.get_parameters()
 
     dataset = rgb_cac._load_dataset('BSDS300_input.txt')

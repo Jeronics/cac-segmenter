@@ -75,7 +75,7 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 19:
+            if i < 20:
                 continue
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
