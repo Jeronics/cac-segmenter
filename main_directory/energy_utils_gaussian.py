@@ -1,10 +1,25 @@
 import numpy as np
 import utils
 import energy_utils_mean as mean_utils
+from ctypes_utils import ctypes
 
 '''
                         GAUSSIAN ENERGY
 '''
+
+
+def initialize_seed(CAC, band_size):
+
+    # Calculate Image gradient
+    image = CAC.image_obj.gray_image
+    contour_coord, contour_size = ctypes.get_contour(CAC.mask_obj)
+    omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
+                                                                                              contour_size,
+                                                                                              CAC.mask_obj.width,
+                                                                                              CAC.mask_obj.height)
+    omega_1_mean, omega_1_std = mean_utils.get_omega_mean(omega_1_coord, image)
+    omega_2_mean, omega_2_std = mean_utils.get_omega_mean(omega_2_coord, image)
+    return omega_1_mean, omega_1_std, omega_2_mean, omega_2_std
 
 
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
@@ -61,7 +76,7 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_g
     b = 1 / (np.power(omega_std, 2))
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     image_gradient_by_point = b * np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
-                                   utils.evaluate_image(omega_coord, image_gradient[1], 0)])
+                                            utils.evaluate_image(omega_coord, image_gradient[1], 0)])
     grad = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
     return grad  # *(1/pow(omega_std, 2)) for GAUSS
 

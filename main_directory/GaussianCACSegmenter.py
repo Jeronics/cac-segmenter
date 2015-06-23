@@ -7,6 +7,10 @@ import utils
 
 class GaussianCACSegmenter(CAC):
 
+    def __init__(self):
+        super(CAC, self).__init__(self.image_obj, self.mask_obj, self.cage_obj, self.type, self.weight)
+        g_energies.initialize_seed(self)
+
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
