@@ -6,10 +6,14 @@ import utils
 
 
 class GaussianCACSegmenter(CAC):
-
-    def __init__(self):
-        super(CAC, self).__init__(self.image_obj, self.mask_obj, self.cage_obj, self.type, self.weight)
-        g_energies.initialize_seed(self)
+    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None, band_size=500):
+        CAC.__init__(self, image_obj, mask_obj, cage_obj, type=type, weight=weight, band_size=band_size)
+        omega_1_mean, omega_1_std, omega_2_mean, omega_2_std = g_energies.initialize_seed(self, self.band_size)
+        self.omega_1_mean = omega_1_mean
+        self.omega_1_std = omega_1_std
+        self.omega_2_mean = omega_2_mean
+        self.omega_2_std = omega_2_std
+        print omega_1_mean, omega_1_std, omega_2_mean, omega_2_std
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
@@ -31,7 +35,7 @@ class GaussianCACSegmenter(CAC):
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
         utils.plotContourOnImage(contour_coord, image_obj.gray_image, points=cage_obj.cage, color=color,
-                           points2=cage_obj.cage - alpha * 10 * grad_k)
+                                 points2=cage_obj.cage - alpha * 10 * grad_k)
 
 
 if __name__ == '__main__':

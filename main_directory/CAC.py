@@ -5,12 +5,14 @@ import energy_utils_cage_constraints as cage_constraint
 import ctypes_utils as ctypes
 import copy
 
+
 class CAC():
-    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None):
+    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None, band_size=500):
         self.image_obj = image_obj
         self.mask_obj = mask_obj
         self.cage_obj = cage_obj
-        self.type= type
+        self.band_size = band_size
+        self.type = type
         self.weight = weight
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
@@ -86,7 +88,7 @@ class CAC():
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
             grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
+                                          image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             grad_k = energies.multiple_standardize(grad_k)
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
@@ -97,7 +99,7 @@ class CAC():
 
             else:
                 energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image_obj) + cage_constraint.energy_constraint(cage_obj.cage, d, k)
+                                     image_obj) + cage_constraint.energy_constraint(cage_obj.cage, d, k)
                 alpha_new = self.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates,
                                                    contour_size, energy, image_obj, constraint_params)
@@ -162,8 +164,8 @@ class CAC():
                                                                                                curr_cage - grad_k * alpha)
 
             next_energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d,
-                                                                                          k)
+                                      image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d,
+                                                                                     k)
         if alpha < 0.1:
             return 0
         return 1

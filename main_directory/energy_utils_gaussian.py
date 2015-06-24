@@ -1,7 +1,7 @@
 import numpy as np
 import utils
 import energy_utils_mean as mean_utils
-from ctypes_utils import ctypes
+import ctypes_utils as ctypes
 
 '''
                         GAUSSIAN ENERGY
