@@ -5,7 +5,7 @@ from scipy import misc
 from matplotlib import pyplot as plt
 
 class MaskClass:
-    def __init__(self, mask=np.array([]), filename='', threshold=125.):
+    def __init__(self, mask=np.array([]), filename='', threshold=125., center=None, radius_point=None):
         self.mask = self.binarize_image(mask, threshold)
         self.height = mask.shape[0]
         self.width = mask.shape[1] if len(mask.shape) > 1 else None
@@ -15,6 +15,8 @@ class MaskClass:
         self.spec_name = self.name.split('.png')[0]
         self.root = "/".join(filename.split("/")[:-1]) + "/"
         self.save_name = self.spec_name + '_out.png'
+        self.center = center
+        self.radius_point = radius_point
 
     def read_png(self, filename, threshold=125.):
         '''
@@ -30,7 +32,7 @@ class MaskClass:
         im = im.convert('RGB').convert('L')
         im = np.array(im)
         im = im.astype(np.float64)
-        self.__init__(im, filename, threshold)
+        self.__init__(im, filename=filename, threshold=threshold)
 
     def from_points_and_image(self, c, p, image, num_cage_points, filename):
         '''
@@ -55,7 +57,7 @@ class MaskClass:
                     mask_points.append([y, x])
         im = np.array(im)
         im = im.astype(np.float64)
-        self.__init__(im, filename='', threshold=125.)
+        self.__init__(im, filename='', threshold=125., center=c, radius_point=p)
         cage = []
         ratio = 1.05
         for i in xrange(0, num_cage_points):
