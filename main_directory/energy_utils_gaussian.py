@@ -2,7 +2,7 @@ import numpy as np
 import utils
 import energy_utils_mean as mean_utils
 import ctypes_utils as ctypes
-
+import opencv_utils as cv_ut
 '''
                         GAUSSIAN ENERGY
 '''
@@ -12,6 +12,10 @@ def initialize_seed(CAC, band_size):
 
     # Calculate Image gradient
     image = CAC.image_obj.gray_image
+    mask=CAC.mask_obj.mask/255.
+    mask=np.array(mask, dtype=np.float32)
+    m= cv_ut.np_to_array(mask)
+    CAC.mask_obj.plot_image()
     contour_coord, contour_size = ctypes.get_contour(CAC.mask_obj)
     omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                               contour_size,
