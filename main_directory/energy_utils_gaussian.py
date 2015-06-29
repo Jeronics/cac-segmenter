@@ -75,9 +75,8 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
     return energy
 
 
-def gauss_energy_per_region(omega_coord, affine_omega_coord, image):
-    omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
-
+def gauss_energy_per_region(omega_coord, omega_mean, omega_std, image):
+    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     a = len(aux) * np.log(omega_std)
     b = 1 / (2 * np.power(omega_std))
@@ -85,9 +84,9 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, image):
     return region_energy
 
 
-def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, image, image_gradient):
+def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, omega_mean, omega_std, image, image_gradient):
     # E_mean
-    omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
+    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     print omega_mean, omega_std
     b = 1 / (np.power(omega_std, 2))
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean

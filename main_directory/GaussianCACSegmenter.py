@@ -8,18 +8,20 @@ import utils
 class GaussianCACSegmenter(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, type=type, weight=weight, band_size=band_size)
-        omega_1_mean, omega_1_std, omega_2_mean, omega_2_std = g_energies.initialize_seed(self, self.band_size)
-        self.omega_1_mean = omega_1_mean
-        self.omega_1_std = omega_1_std
-        self.omega_2_mean = omega_2_mean
-        self.omega_2_std = omega_2_std
-        print omega_1_mean, omega_1_std, omega_2_mean, omega_2_std
-        exit()
+        inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std = g_energies.initialize_seed(self,
+                                                                                                            self.band_size)
+        self.inside_seed_mean = inside_seed_mean
+        self.inside_seed_std = inside_seed_std
+        self.outside_seed_mean = outside_seed_mean
+        self.outside_seed_std = outside_seed_std
+        print inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
-        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
+        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_seed_mean,
+                                                     self.inside_seed_std, image)
+        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_seed_mean,
+                                                     self.outside_seed_std, image)
         energy = (omega_1 + omega_2) / float(2)
         return energy
 
@@ -29,8 +31,10 @@ class GaussianCACSegmenter(CAC):
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
-        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
+        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_seed_mean,
+                                                          self.inside_seed_std, image, image_gradient)
+        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_seed_mean,
+                                                          self.outside_seed_std, image, image_gradient)
         energy = omega_1 + omega_2
         return energy
 
