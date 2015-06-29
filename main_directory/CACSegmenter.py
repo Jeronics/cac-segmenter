@@ -53,8 +53,7 @@ class CACSegmenter():
         image = ImageClass()
         image.read_png(x.image_name)
         mask = MaskClass()
-        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image, parameters['num_points'],
-                                   'hello_test')
+        mask.from_points_and_image([x.center_x, x.center_y], [x.radius_x, x.radius_y], image)
         cage = CageClass()
         cage.create_from_points([x.center_x, x.center_y], [x.radius_x, x.radius_y], parameters['ratio'],
                                 parameters['num_points'], filename='hello_test')

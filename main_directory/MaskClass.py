@@ -34,13 +34,12 @@ class MaskClass:
         im = im.astype(np.float64)
         self.__init__(im, filename=filename, threshold=threshold)
 
-    def from_points_and_image(self, c, p, image, num_cage_points, filename):
+    def from_points_and_image(self, c, p, image):
         '''
         This function creates a mask and a sequence of cages.
         :param c:
         :param p:
         :param im_shape:
-        :param num_cage_points:
         :return:
         '''
         im_shape = image.shape
@@ -58,15 +57,6 @@ class MaskClass:
         im = np.array(im)
         im = im.astype(np.float64)
         self.__init__(im, filename='', threshold=125., center=c, radius_point=p)
-        cage = []
-        ratio = 1.05
-        for i in xrange(0, num_cage_points):
-            angle = 2 * i * np.pi / num_cage_points
-            x, y = radius * ratio * np.sin(angle), radius * ratio * np.cos(angle)
-            cage.append([y + c[1], x + c[0]])
-        # plotContourOnImage(np.array(mask_points), image.image,
-        # points=cage)
-        return cage
 
 
     def plot_image(self, show_plot=True):

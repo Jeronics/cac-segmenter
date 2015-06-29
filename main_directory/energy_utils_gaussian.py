@@ -3,18 +3,35 @@ import utils
 import energy_utils_mean as mean_utils
 import ctypes_utils as ctypes
 import opencv_utils as cv_ut
+from MaskClass import MaskClass
+
 '''
                         GAUSSIAN ENERGY
 '''
 
 
 def initialize_seed(CAC, band_size):
-
     # Calculate Image gradient
     image = CAC.image_obj.gray_image
-    mask=CAC.mask_obj.mask/255.
-    mask=np.array(mask, dtype=np.float32)
-    m= cv_ut.np_to_array(mask)
+    center = CAC.mask_obj.center
+    radius_point = CAC.mask_obj.radius_point
+    print 'CENTER:', center
+    print 'RADIUS POINT:', radius_point
+    print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
+    radius = np.linalg.norm(np.array(radius_point) - np.array(center))
+
+    inside_seed_omega = [center[0] + radius * 0.2, center[1]]
+    outside_seed_omega = [center[0] + radius * 1.5, center[1]]
+    inside_mask_seed = MaskClass()
+    outside_mask_seed = MaskClass()
+    inside_mask_seed.from_points_and_image(center, inside_seed_omega,image)
+    outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+    inside_mask_seed.plot_image()
+    CAC.mask_obj.plot_image()
+    outside_mask_seed.plot_image()
+    mask = CAC.mask_obj.mask / 255.
+    mask = np.array(mask, dtype=np.float32)
+    m = cv_ut.np_to_array(mask)
     CAC.mask_obj.plot_image()
     contour_coord, contour_size = ctypes.get_contour(CAC.mask_obj)
     omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
