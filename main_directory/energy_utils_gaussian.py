@@ -79,7 +79,7 @@ def gauss_energy_per_region(omega_coord, omega_mean, omega_std, image):
     # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     a = len(aux) * np.log(omega_std)
-    b = 1 / (2 * np.power(omega_std))
+    b = 1 / float(2 * np.power(omega_std))
     region_energy = a + np.dot(aux, np.transpose(aux)) * b
     return region_energy
 

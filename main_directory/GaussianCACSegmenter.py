@@ -14,6 +14,7 @@ class GaussianCACSegmenter(CAC):
         self.inside_seed_std = inside_seed_std
         self.outside_seed_mean = outside_seed_mean
         self.outside_seed_std = outside_seed_std
+
         print inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):

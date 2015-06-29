@@ -149,7 +149,6 @@ def binarizePgmImage(image):
 
 def plotContourOnImage(contour_coordinates, image, points=[], color=[255., 255., 255.], points2=[]):
     f = plt.figure()
-
     matriu = contour_coordinates.astype(int)
     image_copy = np.copy(image)
 
