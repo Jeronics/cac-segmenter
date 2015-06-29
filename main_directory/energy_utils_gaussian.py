@@ -21,26 +21,21 @@ def initialize_seed(CAC, band_size):
     radius = np.linalg.norm(np.array(radius_point) - np.array(center))
 
     inside_seed_omega = [center[0] + radius * 0.2, center[1]]
-    outside_seed_omega = [center[0] + radius * 1.5, center[1]]
+    outside_seed_omega = [center[0] + radius * 1.8, center[1]]
     inside_mask_seed = MaskClass()
     outside_mask_seed = MaskClass()
-    inside_mask_seed.from_points_and_image(center, inside_seed_omega,image)
+    inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
     outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+    outside_seed = 255. - outside_mask_seed.mask
     inside_mask_seed.plot_image()
     CAC.mask_obj.plot_image()
-    outside_mask_seed.plot_image()
-    mask = CAC.mask_obj.mask / 255.
-    mask = np.array(mask, dtype=np.float32)
-    m = cv_ut.np_to_array(mask)
-    CAC.mask_obj.plot_image()
-    contour_coord, contour_size = ctypes.get_contour(CAC.mask_obj)
-    omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size, contour_coord,
-                                                                                              contour_size,
-                                                                                              CAC.mask_obj.width,
-                                                                                              CAC.mask_obj.height)
-    omega_1_mean, omega_1_std = mean_utils.get_omega_mean(omega_1_coord, image)
-    omega_2_mean, omega_2_std = mean_utils.get_omega_mean(omega_2_coord, image)
-    return omega_1_mean, omega_1_std, omega_2_mean, omega_2_std
+    utils.printNpArray(outside_seed)
+    outside_coordinates = np.argwhere(outside_seed == 255.)
+    inside_coordinates = np.argwhere(outside_mask_seed.mask == 255.)
+
+    omega_out_mean, omega_out_std = mean_utils.get_omega_mean(outside_coordinates, image)
+    omega_in_mean, omega_in_std = mean_utils.get_omega_mean(inside_coordinates, image)
+    return omega_out_mean, omega_out_std, omega_in_mean, omega_in_std
 
 
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):

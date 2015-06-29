@@ -14,6 +14,7 @@ class GaussianCACSegmenter(CAC):
         self.omega_2_mean = omega_2_mean
         self.omega_2_std = omega_2_std
         print omega_1_mean, omega_1_std, omega_2_mean, omega_2_std
+        exit()
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
