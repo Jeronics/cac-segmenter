@@ -38,6 +38,34 @@ def initialize_seed(CAC, band_size):
     return omega_out_mean, omega_out_std, omega_in_mean, omega_in_std
 
 
+def mixture_initialize_seed(CAC, band_size):
+    # Calculate Image gradient
+    image = CAC.image_obj.gray_image
+    center = CAC.mask_obj.center
+    radius_point = CAC.mask_obj.radius_point
+    print 'CENTER:', center
+    print 'RADIUS POINT:', radius_point
+    print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
+    radius = np.linalg.norm(np.array(radius_point) - np.array(center))
+
+    inside_seed_omega = [center[0] + radius * 0.2, center[1]]
+    outside_seed_omega = [center[0] + radius * 1.8, center[1]]
+    inside_mask_seed = MaskClass()
+    outside_mask_seed = MaskClass()
+    inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
+    outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+    outside_seed = 255. - outside_mask_seed.mask
+    inside_mask_seed.plot_image()
+    CAC.mask_obj.plot_image()
+    utils.printNpArray(outside_seed)
+    outside_coordinates = np.argwhere(outside_seed == 255.)
+    inside_coordinates = np.argwhere(outside_mask_seed.mask == 255.)
+
+    omega_out_mean, omega_out_std = mean_utils.get_omega_mean(outside_coordinates, image)
+    omega_in_mean, omega_in_std = mean_utils.get_omega_mean(inside_coordinates, image)
+    return omega_out_mean, omega_out_std, omega_in_mean, omega_in_std
+
+
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     '''
     Computes the Gaussian Energy of an Image

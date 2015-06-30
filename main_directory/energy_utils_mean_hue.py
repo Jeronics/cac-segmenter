@@ -163,7 +163,7 @@ def get_hsi_derivatives(coordinates, image):
     '''
     x = np.zeros([len(coordinates), 3, 3])
     hsi_im = image.hsi_image[:, :, 0]
-    hsi_im_border = np.pad(hsi_im, ((1, 1), (1, 1)), 'reflect')
+    hsi_im_border = np.pad(hsi_im, (1, 1), 'reflect')
     for i in xrange(-1, 2):
         for j in xrange(-1, 2):
             x[:, i + 1, j + 1] = directed_hue_color_distance(
