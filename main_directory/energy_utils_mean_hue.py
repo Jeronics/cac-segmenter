@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+
 '''
                     MEAN COLOR ENERGY
 '''
@@ -59,6 +60,7 @@ def directed_hue_color_distance(hue1, hue2):
     :param hue2 ():
     :return:
     '''
+    print hue2.shape, hue1.shape
     dist = hue1.copy() if np.array(hue1).size >= np.array(hue2).size else hue2.copy()
     cond1 = (np.abs(hue2 - hue1) <= np.pi)
     cond2 = cond1 == False
@@ -68,7 +70,7 @@ def directed_hue_color_distance(hue1, hue2):
     # if isinstance(dist, float):
     # if cond1:
     # dist = hue2-hue1
-    #     if cond2:
+    # if cond2:
     #         dist = (hue2 - hue1)-2*np.pi
     #     if cond3:
     #         dist =  2 * np.pi + (hue2 - hue1)
@@ -160,11 +162,14 @@ def get_hsi_derivatives(coordinates, image):
     :return returns 8 arrays of coordinate pixels:
     '''
     x = np.zeros([len(coordinates), 3, 3])
+    hsi_im = image.hsi_image[:, :, 0]
+    hsi_im_border = np.pad(hsi_im, ((1, 1), (1, 1)), 'reflect')
     for i in xrange(-1, 2):
         for j in xrange(-1, 2):
             x[:, i + 1, j + 1] = directed_hue_color_distance(
-                utils.evaluate_image(coordinates, image.hsi_image[:, :, 0], outside_value=0.),
-                utils.evaluate_image(coordinates + [i, j], image.hsi_image[:, :, 0], outside_value=0.))
+                utils.evaluate_image(coordinates, hsi_im, outside_value=0.),
+                utils.evaluate_image(coordinates + [i + 1, j + 1], hsi_im_border, outside_value=0.)
+            )
     dx = np.array([
         [-1, -2, -1],
         [0, 0, 0],

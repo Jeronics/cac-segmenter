@@ -245,7 +245,7 @@ def evaluate_image(coordinates, image, outside_value=255.):
     coordinates_booleans = are_inside_image(coordinates, image.shape)
     coordinates_aux = coordinates[coordinates_booleans]
     coordinates_aux = np.transpose(coordinates_aux).tolist()
-    image_evaluations[coordinates_booleans] = image[coordinates_aux]
+    image_evaluations = image[coordinates_aux]
     return image_evaluations
 
 
