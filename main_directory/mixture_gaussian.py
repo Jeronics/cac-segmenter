@@ -7,12 +7,12 @@ import matplotlib as mpl
 
 from sklearn import mixture
 
+
 def get_number_of_components(X):
     lowest_bic = np.infty
     bic = []
     n_components_range = range(1, 7)
     cv_types = ['full']
-    import pdb; pdb.set_trace()
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
@@ -22,7 +22,7 @@ def get_number_of_components(X):
             if bic[-1] < lowest_bic:
                 lowest_bic = bic[-1]
                 best_gmm = gmm
-                print 'THIS ONE', n_components,cv_type
+                print 'THIS ONE', n_components, cv_type
 
     bic = np.array(bic)
     color_iter = itertools.cycle(['k', 'r', 'g', 'b', 'c', 'm', 'y'])
@@ -34,23 +34,25 @@ def get_number_of_components(X):
     for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
         xpos = np.array(n_components_range) + .2 * (i - 2)
         bars.append(plt.bar(xpos, bic[i * len(n_components_range):
-                                      (i + 1) * len(n_components_range)],
+        (i + 1) * len(n_components_range)],
                             width=.2, color=color))
-    plt.xticks(n_components_range)
-    plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
-    plt.title('BIC score per model')
-    xpos = np.mod(bic.argmin(), len(n_components_range)) + .65 +\
-        .2 * np.floor(bic.argmin() / len(n_components_range))
-    plt.text(xpos, bic.min() * 0.97 + .03 * bic.max(), '*', fontsize=14)
-    spl.set_xlabel('Number of components')
-    spl.legend([b[0] for b in bars], cv_types)
-    plt.show()
-
+    # plt.xticks(n_components_range)
+    # plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
+    # plt.title('BIC score per model')
+    # xpos = np.mod(bic.argmin(), len(n_components_range)) + .65 +\
+    # .2 * np.floor(bic.argmin() / len(n_components_range))
+    # plt.text(xpos, bic.min() * 0.97 + .03 * bic.max(), '*', fontsize=14)
+    # spl.set_xlabel('Number of components')
+    # spl.legend([b[0] for b in bars], cv_types)
+    # plt.show()
+    plt.cla()
+    plt.clf()
     print best_gmm.means_
     print best_gmm.covars_
-    return n_components, cv_type, best_gmm
+    return best_gmm
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     # Number of samples per component
     n_samples = 500
 
