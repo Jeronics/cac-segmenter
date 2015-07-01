@@ -11,7 +11,6 @@ import mixture_gaussian
 '''
 
 
-
 def mixture_initialize_seed(CAC):
     # Calculate Image gradient
     image = CAC.image_obj.gray_image
@@ -44,7 +43,8 @@ def get_values_in_region(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
-    return values_in_region
+    gmm = mixture_gaussian.get_number_of_components(values_in_region)
+    return gmm
 
 
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
@@ -57,8 +57,8 @@ def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omeg
     :param image (numpy array): The Image
     :return:
     '''
-    omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.gmm,image)
-    omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.gmm, image)
+    omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, gmm, image)
+    omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, gmm, image)
     energy = -(omega_1 + omega_2) / 2.
     return energy
 
@@ -95,11 +95,16 @@ def gauss_energy_per_region(omega_coord, gmm, image):
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
     # E_mean
+    import pdb;
+
+    pdb.set_trace()
     # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
-    for i,(omega_mean,omega_std)  in enumerate(zip(gmm.means_,gmm.covars_)):
-        omega_std=omega_std[i]
+    for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
+        omega_std = omega_std[i]
         print omega_mean, omega_std
-        import pdb; pdb.set_trace()
+        import pdb;
+
+        pdb.set_trace()
         b = 1 / (np.power(omega_std, 2))
         aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
         image_gradient_by_point = b * np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
