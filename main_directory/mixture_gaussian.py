@@ -12,6 +12,7 @@ def get_number_of_components(X):
     bic = []
     n_components_range = range(1, 7)
     cv_types = ['full']
+    import pdb; pdb.set_trace()
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM

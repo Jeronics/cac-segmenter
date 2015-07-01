@@ -43,6 +43,7 @@ def get_values_in_region(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
+    values_in_region = np.array([values_in_region]).T
     gmm = mixture_gaussian.get_number_of_components(values_in_region)
     return gmm
 
