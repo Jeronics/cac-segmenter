@@ -27,9 +27,9 @@ def initialize_seed(CAC, band_size):
     inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
     outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
     outside_seed = 255. - outside_mask_seed.mask
-    inside_mask_seed.plot_image()
-    CAC.mask_obj.plot_image()
-    utils.printNpArray(outside_seed)
+    # inside_mask_seed.plot_image()
+    # CAC.mask_obj.plot_image()
+    # utils.printNpArray(outside_seed)
     outside_coordinates = np.argwhere(outside_seed == 255.)
     inside_coordinates = np.argwhere(outside_mask_seed.mask == 255.)
 
@@ -78,7 +78,7 @@ def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omeg
     '''
     omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
     omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
-    energy = (omega_1 + omega_2) / float(2)
+    energy = -(omega_1 + omega_2) / float(2)
     return energy
 
 
@@ -99,7 +99,7 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
     omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
     omega_2 = grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
 
-    energy = omega_1 + omega_2
+    energy = -(omega_1 + omega_2)
     return energy
 
 
