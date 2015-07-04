@@ -86,7 +86,7 @@ class CACSegmenter():
             print 'End Segmentation'
             # except:
             # result = None
-            #     print 'Exception: Could not segment'
+            # print 'Exception: Could not segment'
             if result:
                 sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
                 with open(results_file, 'a') as f:

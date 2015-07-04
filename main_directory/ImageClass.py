@@ -3,8 +3,10 @@ from PIL import Image
 import energy_utils_mean_hue as hue_mean
 import rose_graph
 import matplotlib
+
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
+
 
 class ImageClass:
     def __init__(self, im=np.array([]), filename=''):

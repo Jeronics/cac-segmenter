@@ -610,10 +610,10 @@ class TestColorDerivative(unittest.TestCase):
 
 
 class TestGradMeanEnergyInRegion(unittest.TestCase):
-
     def test_mean_energy_in_region(self):
         energies.grad_mean_color_energy_per_region(omega_1_coord, affine_omega_coord, image)
         self.assertEqual()
+
 
 if __name__ == '__main__':
     unittest.main()

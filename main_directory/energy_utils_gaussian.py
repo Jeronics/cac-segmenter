@@ -62,15 +62,17 @@ def mixture_initialize_seed(CAC):
     outside_coordinates = np.argwhere(outside_seed == 255.)
     inside_coordinates = np.argwhere(outside_mask_seed.mask == 255.)
 
-    inside_gmm = get_values_in_region(inside_coordinates,image)
+    inside_gmm = get_values_in_region(inside_coordinates, image)
     outside_gmm = get_values_in_region(outside_coordinates, image)
     return inside_gmm, outside_gmm
+
 
 def get_values_in_region(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
     omega_coord_aux = omega_coord[omega_boolean]
-    values_in_region=image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
+    values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     return values_in_region
+
 
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     '''

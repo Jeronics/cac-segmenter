@@ -1,5 +1,6 @@
 import numpy as np
 import energies
+
 '''
                         EDGE CONSTRAINT ENERGY
 '''
@@ -70,7 +71,6 @@ def grad_edge_constraint(vertices, d):
             aux = grad_point_to_edge_energy_1(v, v_1, v_2, d)
             grad_energy[i] += 2 * (d - dist_point_to_edge(v, v_1, v_2, d)) * aux
     return grad_energy
-
 
 
 '''

@@ -3,8 +3,8 @@ from CAC import CAC
 import energy_utils_mean_hue as energy_ut
 import utils
 
-class MeanColorCAC(CAC):
 
+class MeanColorCAC(CAC):
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         energy1 = energy_ut.mean_color_energy_per_region(omega_1_coord, image)
         energy2 = energy_ut.mean_color_energy_per_region(omega_2_coord, image)
@@ -17,8 +17,9 @@ class MeanColorCAC(CAC):
         return grad_energy_1 + grad_energy_2
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, image_obj.hsi_image[:, :, 0]/(2*3.14)*255., points=cage_obj.cage, color=color,
-                           points2=cage_obj.cage - alpha * 10 * grad_k)
+        utils.plotContourOnImage(contour_coord, image_obj.hsi_image[:, :, 0] / (2 * 3.14) * 255., points=cage_obj.cage,
+                                 color=color,
+                                 points2=cage_obj.cage - alpha * 10 * grad_k)
         image_obj.plot_hsi_image()
 
 

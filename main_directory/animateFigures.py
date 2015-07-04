@@ -1,6 +1,7 @@
 __author__ = 'jeronicarandellsaladich'
 import numpy as np
 import matplotlib
+
 matplotlib.use('TKAgg')
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -8,7 +9,7 @@ import matplotlib.animation as animation
 
 #
 # def update_line(num, data, line):
-#     line.set_data(data[...,:num])
+# line.set_data(data[...,:num])
 #     return line,
 #
 # fig1 = plt.figure()
@@ -33,7 +34,7 @@ for add in np.arange(15):
     ims.append((plt.pcolor(x, y, base + add, norm=plt.Normalize(0, 30)),))
 
 im_ani = animation.ArtistAnimation(fig2, ims, interval=100, repeat=False,
-    blit=True)
+                                   blit=True)
 #im_ani.save('im.mp4', metadata={'artist':'Guido'})
 
 plt.show()

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class CageClass:
     def __init__(self, cage=np.array([]), filename=''):
         self.cage = cage

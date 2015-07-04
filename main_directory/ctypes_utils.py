@@ -17,6 +17,7 @@ LP_c_int = POINTER(c_int)
 LP_c_double = POINTER(c_double)
 LP_LP_c_double = POINTER(LP_c_double)
 
+
 def get_contour(mask_obj):
     mask = mask_obj.mask
     mask_t = mask.transpose()

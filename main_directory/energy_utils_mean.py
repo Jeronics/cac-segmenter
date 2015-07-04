@@ -1,5 +1,6 @@
 import numpy as np
 import utils
+
 '''
 
                         MEAN ENERGY
@@ -52,6 +53,7 @@ def gradient_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_p
     aux_y = np.dot(aux, np.transpose(aux_y) - mean_derivative[1])
     aux_1 = np.transpose([aux_x, aux_y])
     return aux_1
+
 
 def get_omega_mean(omega_coord, image):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)

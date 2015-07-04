@@ -6,14 +6,15 @@ from matplotlib.collections import PatchCollection
 import numpy as np
 import pprint
 
+
 def main():
     azi = np.random.uniform(0, 180, 100000)
-    azi=azi.tolist()
+    azi = azi.tolist()
     print azi
     # import pdb; pdb.set_trace()
     azi.append(359.)
-    azi=np.array(azi)
-    z = np.cos(np.radians(azi/2.))
+    azi = np.array(azi)
+    z = np.cos(np.radians(azi / 2.))
 
     plt.figure(figsize=(5, 6))
     plt.subplot(111, projection='polar')
@@ -74,7 +75,7 @@ def rose(azimuths, z=None, ax=None, bins=30, bidirectional=False,
 
     if z is not None:
         idx = np.digitize(azimuths, edges)
-        z = np.array([color_by(z[idx == i]) for i in range(1, bins+1)])
+        z = np.array([color_by(z[idx == i]) for i in range(1, bins + 1)])
         z = np.ma.masked_invalid(z)
     edges = np.radians(edges)
     coll = colored_bar(edges[:-1], counts, z=z, width=np.diff(edges),

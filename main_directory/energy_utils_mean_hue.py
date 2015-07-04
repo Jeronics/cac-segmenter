@@ -71,7 +71,7 @@ def directed_hue_color_distance(hue1, hue2):
     # if cond1:
     # dist = hue2-hue1
     # if cond2:
-    #         dist = (hue2 - hue1)-2*np.pi
+    # dist = (hue2 - hue1)-2*np.pi
     #     if cond3:
     #         dist =  2 * np.pi + (hue2 - hue1)
     # else:

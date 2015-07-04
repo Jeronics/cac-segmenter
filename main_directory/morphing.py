@@ -27,7 +27,7 @@ def morphing(origin_image, origin_cage, destination_mask, destination_cage):
 
 #
 # def morphing_by_points(origin_image, origin_cage, origin_points, destination_points, destination_image, destination_points):
-#     end_image = utils.ImageClass()
+# end_image = utils.ImageClass()
 #     return end_image
 
 if __name__ == '__main__':
@@ -44,7 +44,6 @@ if __name__ == '__main__':
     pear_image.read_png('../dataset/pear/pear1/pear1.png')
 
     morphed_image = morphing(pear_image, pear_cage, eagle_mask, eagle_cage)
-
 
     eagle_mask = utils.MaskClass()
     eagle_mask.read_png('../dataset/apple/apple1/results/result16_1.05.png')

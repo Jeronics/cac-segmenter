@@ -84,6 +84,5 @@ class TestImageClass(unittest.TestCase):
         self.assertEqual(np.linalg.norm(predicted[:, :, 0] - expected_hsi[:, :, 0]) < 0.0001, True)
 
 
-
 if __name__ == '__main__':
     unittest.main()

@@ -36,12 +36,12 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
     id = 0
     f.write(
-            'image_name' + '\t'
-            + 'center_x' + '\t'
-            + 'center_y' + '\t'
-            + 'radius_x' + '\t'
-            + 'radius_y' + '\t'
-            + 'gt_name' + '\n'
+        'image_name' + '\t'
+        + 'center_x' + '\t'
+        + 'center_y' + '\t'
+        + 'radius_x' + '\t'
+        + 'radius_y' + '\t'
+        + 'gt_name' + '\n'
     )
     for image_name in input_images:
         gt = check_for_ground_truth(image_name, gt_file_name)

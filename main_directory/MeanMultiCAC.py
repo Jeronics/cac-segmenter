@@ -10,8 +10,10 @@ class MeanMultiCAC(CAC):
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
-            omega_1 = multi_mean_energy.generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t, slice)
-            omega_2 = multi_mean_energy.generic_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t, slice)
+            omega_1 = multi_mean_energy.generic_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj,
+                                                                       t, slice)
+            omega_2 = multi_mean_energy.generic_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj,
+                                                                       t, slice)
             energy = (omega_1 + omega_2) / float(2)
             total_energy.append(w * energy)
 
@@ -20,10 +22,12 @@ class MeanMultiCAC(CAC):
     def energy_gradient(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         total_grad_energy = []
         for slice, (t, w) in enumerate(zip(self.type, self.weight)):
-            grad_energy_1 = multi_mean_energy.generic_grad_mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image_obj, t,
-                                                                     slice)
-            grad_energy_2 = multi_mean_energy.generic_grad_mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image_obj, t,
-                                                                     slice)
+            grad_energy_1 = multi_mean_energy.generic_grad_mean_energy_per_region(omega_1_coord, affine_omega_1_coord,
+                                                                                  image_obj, t,
+                                                                                  slice)
+            grad_energy_2 = multi_mean_energy.generic_grad_mean_energy_per_region(omega_2_coord, affine_omega_2_coord,
+                                                                                  image_obj, t,
+                                                                                  slice)
             grad_energy = grad_energy_1 + grad_energy_2
             total_grad_energy.append(w * grad_energy)
         return sum(total_grad_energy)
@@ -32,6 +36,7 @@ class MeanMultiCAC(CAC):
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
         utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
+
 
 if __name__ == '__main__':
     rgb_cac = CACSegmenter(MeanMultiCAC, type=['N', 'N', 'N'], weight=[0, 0, 1])

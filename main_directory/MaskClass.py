@@ -4,6 +4,7 @@ import scipy
 from scipy import misc
 from matplotlib import pyplot as plt
 
+
 class MaskClass:
     def __init__(self, mask=np.array([]), filename='', threshold=125., center=None, radius_point=None):
         self.mask = self.binarize_image(mask, threshold)

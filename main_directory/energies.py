@@ -51,7 +51,6 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
     return 1
 
 
-
 '''
 
                     STOP CRITERIA

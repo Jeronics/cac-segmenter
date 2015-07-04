@@ -26,8 +26,10 @@ class MixtureGaussianCACSegmenter(CAC):
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
-        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image, image_gradient)
-        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image, image_gradient)
+        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
+                                                          image_gradient)
+        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
+                                                          image_gradient)
         energy = omega_1 + omega_2
         return energy
 
