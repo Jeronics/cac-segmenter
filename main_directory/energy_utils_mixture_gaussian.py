@@ -23,16 +23,20 @@ def mixture_initialize_seed(CAC):
 
     inside_seed_omega = [center[0] + radius * 0.2, center[1]]
     outside_seed_omega = [center[0] + radius * 1.8, center[1]]
+
     inside_mask_seed = MaskClass()
     outside_mask_seed = MaskClass()
+
     inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
     outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+
+    inside_seed = inside_mask_seed.mask
     outside_seed = 255. - outside_mask_seed.mask
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
     # utils.printNpArray(outside_seed)
+    inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
-    inside_coordinates = np.argwhere(outside_mask_seed.mask == 255.)
 
     inside_gmm = get_values_in_region(inside_coordinates, image)
     outside_gmm = get_values_in_region(outside_coordinates, image)
@@ -45,6 +49,7 @@ def get_values_in_region(omega_coord, image):
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     values_in_region = np.array([values_in_region]).T
     gmm = mixture_gaussian.get_number_of_components(values_in_region)
+    import pdb; pdb.set_trace()
     return gmm
 
 
@@ -85,7 +90,7 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
     return energy
 
 
-def gauss_energy_per_region(omega_coord, gmm, image):
+def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     region_energy = 0
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
