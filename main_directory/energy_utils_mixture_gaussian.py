@@ -49,7 +49,6 @@ def get_values_in_region(omega_coord, image):
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     values_in_region = np.array([values_in_region]).T
     gmm = mixture_gaussian.get_number_of_components(values_in_region)
-    import pdb; pdb.set_trace()
     return gmm
 
 
@@ -96,7 +95,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
         aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
         a = len(aux) * np.log(omega_std)
-        b = 1 / float(2 * np.power(omega_std))
+        b = 1 / float(2 * np.power(omega_std, 2))
         region_energy += a + np.dot(aux, np.transpose(aux)) * b
     return region_energy
 

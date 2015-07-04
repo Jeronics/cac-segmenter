@@ -44,4 +44,4 @@ if __name__ == '__main__':
 
     dataset = mixture_gaussian_gray_cac._load_dataset('BSDS300_input.txt')
     results_folder = 'segment_results'
-    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
