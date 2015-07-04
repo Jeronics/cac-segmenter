@@ -8,6 +8,12 @@ import matplotlib as mpl
 from sklearn import mixture
 
 
+def get_mixture_gaussian(X, n_components, cv_type):
+    gmm = mixture.GMM(n_components=n_components, covariance_type=cv_type)
+    gmm.fit(X)
+    return gmm
+
+
 def get_number_of_components(X):
     lowest_bic = np.infty
     bic = []
@@ -16,8 +22,7 @@ def get_number_of_components(X):
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
-            gmm = mixture.GMM(n_components=n_components, covariance_type=cv_type)
-            gmm.fit(X)
+            gmm = get_mixture_gaussian(X, n_components, cv_type)
             bic.append(gmm.bic(X))
             if bic[-1] < lowest_bic:
                 lowest_bic = bic[-1]
@@ -73,6 +78,6 @@ if __name__ == '__main__':
     # # Fit a Dirichlet process mixture of Gaussians using five components
     # dpgmm = mixture.DPGMM(n_components=5, covariance_type='full')
     # dpgmm.fit(X)
-    n_components, cv_type, best_gmm = get_number_of_components(X)
+    best_gmm = get_number_of_components(X)
 
 
