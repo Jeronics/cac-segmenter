@@ -14,6 +14,7 @@ class CAC():
         self.band_size = band_size
         self.type = type
         self.weight = weight
+        self.standardize = False
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None
@@ -89,11 +90,17 @@ class CAC():
             grad_k_1 = grad_k.copy()
             grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
                                           image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
-            grad_k = energies.multiple_standardize(grad_k)
+            if self.standardize:
+                grad_k = energies.multiple_standardize(grad_k)
+            else:
+                grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
                 mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
                 axis = mid_point - cage_obj.cage
-                axis = energies.multiple_standardize(axis)
+                if self.standardize:
+                    axis = energies.multiple_standardize(axis)
+                else:
+                    axis = energies.multiple_normalize(axis)
                 grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
                 alpha = beta
 

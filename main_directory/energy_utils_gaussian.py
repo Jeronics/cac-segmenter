@@ -50,9 +50,6 @@ def get_values_in_region(omega_coord, image):
     values_in_region = np.array([values_in_region]).T
     omega_mean = np.mean(values_in_region)
     omega_std = np.std(values_in_region)
-    import pdb;
-
-    pdb.set_trace()
     return omega_mean, omega_std
 
 
