@@ -240,8 +240,6 @@ def evaluate_image(coordinates, image, outside_value=255.):
     :return:
         Result of image, when indexes are not inside the image return maximum 255
     '''
-    image_evaluations = np.ones([1, len(coordinates)]) * outside_value
-    image_evaluations = image_evaluations[0]
     coordinates_booleans = are_inside_image(coordinates, image.shape)
     coordinates_aux = coordinates[coordinates_booleans]
     coordinates_aux = np.transpose(coordinates_aux).tolist()

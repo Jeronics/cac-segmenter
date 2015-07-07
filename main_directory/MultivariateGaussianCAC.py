@@ -11,11 +11,10 @@ class MultivariateGaussianCAC(CAC):
         inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
-        import pdb; pdb.set_trace()
         print inside_gmm, outside_gmm
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-        image = image_obj.gray_image
+        image = image_obj.image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
         energy = (omega_1 + omega_2) / float(2)
@@ -23,7 +22,7 @@ class MultivariateGaussianCAC(CAC):
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         # Calculate Image gradient
-        image = image_obj.gray_image
+        image = image_obj.image
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
