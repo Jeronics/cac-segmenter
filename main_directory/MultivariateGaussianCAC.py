@@ -11,14 +11,13 @@ class MultivariateGaussianCAC(CAC):
         inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
+        self.weight = [1, 1, 1]
         print inside_gmm, outside_gmm
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.image
-        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image,
-                                                     weight=[1, 1, 1])
-        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image,
-                                                     weight=[1, 1, 1])
+        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image, )
+        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image, )
         energy = (omega_1 + omega_2) / float(2)
         return energy
 
@@ -28,10 +27,10 @@ class MultivariateGaussianCAC(CAC):
         image_gradient = np.array(np.gradient(image))
         # Calculate Energy:
         omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
-                                                          image_gradient, weight=[1, 1, 1])
+                                                          image_gradient)
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
-                                                          image_gradient, weight=[1, 1, 1])
-        energy = omega_1 + omega_2
+                                                          image_gradient)
+        energy = np.sum((omega_1 + omega_2) * self.weight, axis=2)
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
