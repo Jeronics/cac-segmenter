@@ -3,7 +3,7 @@ from PIL import Image
 import energy_utils_mean_hue as hue_mean
 import rose_graph
 import matplotlib
-
+import scipy
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 
@@ -35,9 +35,6 @@ class ImageClass:
         :param name: a directory path to the png image.
         :return: An image matrix in the type (y,x)
         '''
-        # im = scipy.misc.imread(filename)
-        # im = im.astype(np.float64)
-        # self.__init__(im, filename)
         im = Image.open(filename)
         im = im.convert('RGB')
         im = np.array(im)
@@ -89,10 +86,10 @@ class ImageClass:
         n, bins, patches = plt.hist(data, 36)
         bin_centers = 0.5 * (bins[:-1] + bins[1:])
 
-        # scale values to interval [0,pi]
         col = bin_centers
         col /= 360
         col = col
+        print bins
         for c, p in zip(col, patches):
             plt.setp(p, 'facecolor', matplotlib.cm.hsv(c))
         plt.xticks([np.ceil(x) for i, x in enumerate(bins) if i % 3 == 0])

@@ -1,5 +1,6 @@
+import ImageClass
 import MaskClass
-from ImageClass import ImageClass
+
 if __name__ == '__main__':
     folder_name = '../../1obj/100_0109/human_seg/'
     mask_file = '100_0109_7.png'
