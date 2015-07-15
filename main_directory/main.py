@@ -18,7 +18,6 @@ def evaluate_results(image, cage, mask, resulting_cage, files, root):
         result_mask = utils.create_ground_truth(cage, resulting_cage, mask)
         if result_mask:
             result_mask.save_imsage(filename=res_fold)
-        print res_fold
         if gt_mask:
             sorensen_dice_coefficient = utils.sorensen_dice_coefficient(gt_mask, result_mask)
             print 'Sorensen-Dice coefficient', sorensen_dice_coefficient
@@ -26,15 +25,11 @@ def evaluate_results(image, cage, mask, resulting_cage, files, root):
 
 def walk_through_dataset(root_folder, depth, start_from=False, plot_evolution=False):
     generator = utils.walk_level(root_folder, depth)
-    model = 1
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(root_folder.split("/")) + depth]
-    print gens
-
 
     # This boolean controls whether the algorithm will be used on a specific image or not
     if start_from:
         go = False
-        print 'Yes'
     else:
         go = True
 

@@ -10,8 +10,6 @@ import pprint
 def main():
     azi = np.random.uniform(0, 180, 100000)
     azi = azi.tolist()
-    print azi
-    # import pdb; pdb.set_trace()
     azi.append(359.)
     azi = np.array(azi)
     z = np.cos(np.radians(azi / 2.))

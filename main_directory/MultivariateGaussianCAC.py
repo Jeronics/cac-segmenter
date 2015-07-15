@@ -12,7 +12,6 @@ class MultivariateGaussianCAC(CAC):
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
         self.weight = [1, 1, 1]
-        print inside_gmm, outside_gmm
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.image

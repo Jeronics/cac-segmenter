@@ -29,4 +29,3 @@ if __name__ == '__main__':
     filename = '../../gt_images'
     gt_images = get_names_of_files_in_folder(filename)
     images_with_gt = list_intersection(input_images, gt_images)
-    print images_with_gt

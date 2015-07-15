@@ -60,7 +60,6 @@ def directed_hue_color_distance(hue1, hue2):
     :param hue2 ():
     :return:
     '''
-    print hue2.shape, hue1.shape
     dist = hue1.copy() if np.array(hue1).size >= np.array(hue2).size else hue2.copy()
     cond1 = (np.abs(hue2 - hue1) <= np.pi)
     cond2 = cond1 == False

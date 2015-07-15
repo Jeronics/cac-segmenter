@@ -120,7 +120,6 @@ def create_ground_truth(image):
 def resize_mask(mask):
     print mask.name
     if mask.height > 500:
-        print 'DO'
         mask.reshape(new_width=400)
         mask.save_image(filename=mask.path)
 

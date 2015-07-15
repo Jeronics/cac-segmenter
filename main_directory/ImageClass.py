@@ -93,7 +93,6 @@ class ImageClass:
         col = bin_centers
         col /= 360
         col = col
-        print bins
         for c, p in zip(col, patches):
             plt.setp(p, 'facecolor', matplotlib.cm.hsv(c))
         plt.xticks([np.ceil(x) for i, x in enumerate(bins) if i % 3 == 0])

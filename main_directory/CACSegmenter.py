@@ -74,19 +74,15 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 20:
+            if i < 2:
                 continue
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation..'
-            # try:
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, type=self.type, weight=self.weight)
             result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
             print 'End Segmentation'
-            # except:
-            # result = None
-            # print 'Exception: Could not segment'
             if result:
                 sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
                 with open(results_file, 'a') as f:

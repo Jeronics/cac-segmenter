@@ -46,7 +46,6 @@ class MaskClass:
         im_shape = image.shape
         radius = np.linalg.norm(np.array(c) - np.array(p))
         im = np.zeros(im_shape)
-        print 'Shape', im_shape
         mask_points = []
 
         # careful im_shape is (max(y), max(x))

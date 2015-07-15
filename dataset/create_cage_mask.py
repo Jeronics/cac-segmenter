@@ -22,7 +22,6 @@ def create_mask_and_cage_points(c, p, image, num_cage_points):
     radius_cage_ratio = [1.3, 1.5, 1.7]
     im = np.zeros(im_shape, dtype='uint8')
     print 'Shape', im_shape
-    print c
     mask_points = []
 
     # careful im_shape is (max(y), max(x))
@@ -35,7 +34,6 @@ def create_mask_and_cage_points(c, p, image, num_cage_points):
     ima = Image.fromarray(im)
     folder = '/'.join(IN_FILENAME.split("/")[:-1])
     ima.save(folder + "/mask_00.png")
-    print type(num_cage_points) is list
     if type(num_cage_points) is not list:
         num_cage_points = [num_cage_points]
     cages = {}
@@ -43,7 +41,6 @@ def create_mask_and_cage_points(c, p, image, num_cage_points):
         for n in num_cage_points:
             name_output = folder + '/cage_' + str(n) + '_' + str(ratio) + '.txt'
             text_file = open(name_output, "w")
-            print n
             cage = []
             for i in xrange(0, n):
                 angle = 2 * i * PI / n
@@ -51,7 +48,6 @@ def create_mask_and_cage_points(c, p, image, num_cage_points):
                 cage.append([y + c[0], x + c[1]])
                 text_file.write("%.8e\t%.8e\n" % (y, x))
             cages[str(n) + '_' + str(ratio)] = np.array(cage)
-    print cages.keys()
     utils.plotContourOnImage(np.array(mask_points), image,
                              points=cages[str(num_cage_points[0]) + '_' + str(radius_cage_ratio[0])],
                              points2=cages[str(num_cage_points[1]) + '_' + str(radius_cage_ratio[1])])
@@ -123,7 +119,6 @@ if __name__ == '__main__':
     generator = utils.walk_level(RootFolder, depth)
 
     gens = [[r, f] for r, d, f in generator if len(r.split("/")) == len(RootFolder.split("/")) + depth][1:]
-    print gens
     for r, f in gens:
         COUNTER = 0
         # function to be called when mouse is clicked
@@ -131,9 +126,7 @@ if __name__ == '__main__':
         RADIUS_POINT = []
         for files in f:
             if files.split('.')[-1] == 'png':
-                print files
                 IN_FILENAME = r + "/" + files
-                print IN_FILENAME
                 open_canvas(IN_FILENAME)
 
 

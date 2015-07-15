@@ -28,18 +28,18 @@ def get_number_of_components(X):
                 lowest_bic = bic[-1]
                 best_gmm = gmm
 
-    bic = np.array(bic)
-    color_iter = itertools.cycle(['k', 'r', 'g', 'b', 'c', 'm', 'y'])
-    clf = best_gmm
-    bars = []
-
+    # bic = np.array(bic)
+    # color_iter = itertools.cycle(['k', 'r', 'g', 'b', 'c', 'm', 'y'])
+    # clf = best_gmm
+    # bars = []
+    #
     # Plot the BIC scores
-    spl = plt.subplot(2, 1, 1)
-    for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
-        xpos = np.array(n_components_range) + .2 * (i - 2)
-        bars.append(plt.bar(xpos, bic[i * len(n_components_range):
-        (i + 1) * len(n_components_range)],
-                            width=.2, color=color))
+    # spl = plt.subplot(2, 1, 1)
+    # for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
+    #     xpos = np.array(n_components_range) + .2 * (i - 2)
+    #     bars.append(plt.bar(xpos, bic[i * len(n_components_range):
+    #     (i + 1) * len(n_components_range)],
+    #                         width=.2, color=color))
     # plt.xticks(n_components_range)
     # plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
     # plt.title('BIC score per model')
@@ -49,8 +49,8 @@ def get_number_of_components(X):
     # spl.set_xlabel('Number of components')
     # spl.legend([b[0] for b in bars], cv_types)
     # plt.show()
-    plt.cla()
-    plt.clf()
+    # plt.cla()
+    # plt.clf()
 
     return best_gmm
 

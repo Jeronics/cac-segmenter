@@ -15,8 +15,6 @@ class GaussianCACSegmenter(CAC):
         self.outside_seed_mean = outside_seed_mean
         self.outside_seed_std = outside_seed_std
 
-        print inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std
-
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_seed_mean,
@@ -24,7 +22,6 @@ class GaussianCACSegmenter(CAC):
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_seed_mean,
                                                      self.outside_seed_std, image)
         energy = - (omega_1 + omega_2) / 2.
-        print omega_1
         return energy
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
