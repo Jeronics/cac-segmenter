@@ -27,7 +27,6 @@ def get_number_of_components(X):
             if bic[-1] < lowest_bic:
                 lowest_bic = bic[-1]
                 best_gmm = gmm
-                print 'THIS ONE', n_components, cv_type
 
     bic = np.array(bic)
     color_iter = itertools.cycle(['k', 'r', 'g', 'b', 'c', 'm', 'y'])
@@ -52,8 +51,7 @@ def get_number_of_components(X):
     # plt.show()
     plt.cla()
     plt.clf()
-    print best_gmm.means_
-    print best_gmm.covars_
+
     return best_gmm
 
 

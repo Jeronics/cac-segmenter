@@ -38,8 +38,11 @@ def multivariate_initialize_seed(CAC):
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
+    print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image)
+    print 'Interior:\t', inside_gmm.n_components
     outside_gmm = get_values_in_region(outside_coordinates, image)
+    print 'Exterior:\t', outside_gmm.n_components
     return inside_gmm, outside_gmm
 
 
@@ -49,6 +52,7 @@ def get_values_in_region(omega_coord, image):
     values_in_region = image[omega_coord_aux[:, 0], omega_coord_aux[:, 1]]
     gmm = mixture_gaussian.get_number_of_components(values_in_region)
     return gmm
+
 
 def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     '''
@@ -88,7 +92,7 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    region_energy=0
+    region_energy = 0
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
         aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
         k = len(omega_std)
@@ -103,18 +107,16 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
-    print 'Gradient', image.shape
-    grad = np.zeros([image.shape[1], affine_omega_coord.shape[1], omega_coord.shape[1]])
+    grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1], image.shape[2]])
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
                                         utils.evaluate_image(omega_coord, image_gradient[1], 0)])
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
-
         sigma = np.linalg.inv(omega_std)
         aux = utils.evaluate_image(omega_coord, image, omega_mean)
         aux -= omega_mean
         sigma_aux = np.dot(sigma, aux.T)
-        grad = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord, image_gradient_by_point)
-        grad += np.transpose(grad, (2, 0, 1))
+        grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord, image_gradient_by_point)
+        grad += np.transpose(grad_, (2, 0, 1))
     return grad
 
 
