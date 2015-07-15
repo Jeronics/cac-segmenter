@@ -97,7 +97,7 @@ class MaskClass:
         if filename == '':
             filename = self.save_path
         # Transpose the image before returning it to be saved
-        mask = np.transpose(self.mask)
+        mask = self.mask
         scipy.misc.imsave(filename, mask)
 
 
