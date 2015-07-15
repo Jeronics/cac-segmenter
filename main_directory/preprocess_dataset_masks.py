@@ -16,7 +16,7 @@ if __name__ == '__main__':
         gens_1 = [[r_, f_] for r_, d_, f_ in generator if len(r_.split("/")) == len(folder_name_.split("/")) + depth]
         # print gens_1
         for r_, f_ in gens_1:
-            filename=  folder_name_ +'/'+ f_[0]
+            filename = folder_name_ + '/' + f_[0]
             # print filename
             image = ImageClass()
             image.read_png(filename)
