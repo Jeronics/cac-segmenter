@@ -1,24 +1,12 @@
 import numpy as np
 from scipy import *
-import matplotlib
-from time import sleep
-# matplotlib.use("Qt5Agg")
 import os
 import sys
 from MaskClass import MaskClass
 from ImageClass import ImageClass
 from CageClass import CageClass
-# matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 
-# ########## VISUALITON
-def rgb2gray(rgb):
-    if len(rgb.shape) == 3:
-        r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-        gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    else:
-        gray = rgb
-    return gray
 
 
 def is_png(filename):

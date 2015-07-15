@@ -1,16 +1,10 @@
-from ctypes_utils import *
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
-from ctypes_utils import *
-from utils import *
-import copy
-import energies
-import energy_utils_cage_constraints as cage_constraint
-from cac_segmenter import cac_segmenter
+import utils
+import os
 from CageClass import CageClass
 from MaskClass import MaskClass
 from ImageClass import ImageClass
-import ctypes_utils as ctypes
 
 
 class CACSegmenter():

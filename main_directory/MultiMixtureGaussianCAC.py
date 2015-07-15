@@ -1,6 +1,7 @@
+import numpy as np
+
 from CACSegmenter import CACSegmenter
 from CAC import CAC
-import numpy as np
 import energy_utils_multimixture_gaussian as g_energies
 import utils
 
