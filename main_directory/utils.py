@@ -8,7 +8,6 @@ from CageClass import CageClass
 import matplotlib.pyplot as plt
 
 
-
 def is_png(filename):
     return filename.split('.')[-1] == 'png'
 

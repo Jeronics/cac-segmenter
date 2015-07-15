@@ -1,5 +1,4 @@
 import numpy as np
-import utils
 
 '''
                     MEAN COLOR ENERGY
@@ -160,6 +159,8 @@ def get_hsi_derivatives(coordinates, image):
     :param coordinates (numpy array):
     :return returns 8 arrays of coordinate pixels:
     '''
+    import utils
+
     x = np.zeros([len(coordinates), 3, 3])
     hsi_im = image.hsi_image[:, :, 0]
     hsi_im_border = np.pad(hsi_im, (1, 1), 'reflect')
