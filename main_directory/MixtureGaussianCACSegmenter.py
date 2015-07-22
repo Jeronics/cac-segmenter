@@ -41,6 +41,6 @@ if __name__ == '__main__':
     mixture_gaussian_gray_cac = CACSegmenter(MixtureGaussianCACSegmenter)
     parameter_list = mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = mixture_gaussian_gray_cac._load_dataset('BSDS300_input.txt')
-    results_folder = 'segment_results'
+    dataset = mixture_gaussian_gray_cac._load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert'
     mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

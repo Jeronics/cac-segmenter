@@ -16,6 +16,7 @@ if __name__ == '__main__':
         for r_, f_ in gens_1:
             for _f_ in f_:
                 filename = folder_name_ + '/' + _f_
+                print filename
                 image = ImageClass()
                 image.read_png(filename)
                 # image.plot_image()

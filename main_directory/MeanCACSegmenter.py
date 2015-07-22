@@ -33,7 +33,7 @@ if __name__ == '__main__':
     mean_gray_cac = CACSegmenter(MeanCACSegmenter)
     parameter_list = mean_gray_cac.get_parameters()
 
-    dataset = mean_gray_cac._load_dataset('BSDS300_input.txt')
-    results_folder = 'segment_results'
-    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    dataset = mean_gray_cac._load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_meanCAC'
+    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
     # color_cac.train_model('BSDS300_input.txt')

@@ -1,5 +1,4 @@
 import numpy as np
-
 from CACSegmenter import CACSegmenter
 from CAC import CAC
 import energy_utils_multimixture_gaussian as g_energies
@@ -42,6 +41,6 @@ if __name__ == '__main__':
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = multi_mixture_gaussian_gray_cac._load_dataset('BSDS300_input.txt')
-    results_folder = 'segment_results'
-    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    dataset = multi_mixture_gaussian_gray_cac._load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert'
+    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

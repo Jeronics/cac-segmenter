@@ -8,7 +8,7 @@ def check_for_ground_truth(image_path, gt_file_name):
         with open(gt_file_name, 'r') as f:
             gt_images = f.read().split('\n')
         for path in gt_images:
-            if image_path.split("/")[-1] == path.split("/")[-1]:
+            if image_path.split("/")[-1].split('.')[0] in path.split("/")[-1].split('.')[0]:
                 return path
     return False
 
@@ -30,7 +30,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
     # Read Images in the images_file_name
     with open(images_file_name, 'r') as f:
         input_images = f.read().split('\n')
-
+    input_images = [im for im in input_images if im!=''][1:]
     # Open Input file to write in
     f = open(output_file_name, 'w')
 
@@ -64,7 +64,11 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    file_name = '../../BSDS300_images.txt'
-    gt_file_name = '../../BSDS300_gt.txt'
-    output_file_name = 'BSDS300_input.txt'
+    # file_name = '../../BSDS300_images.txt'
+    # gt_file_name = '../../BSDS300_gt.txt'
+    # output_file_name = 'BSDS300_input.txt'
+    # create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    file_name = '../../AlpertGBB07_images.txt'
+    gt_file_name = '../../AlpertGBB07_gt.txt'
+    output_file_name = 'AlpertGBB07_input.txt'
     create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
