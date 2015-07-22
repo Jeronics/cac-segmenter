@@ -11,24 +11,30 @@ import mixture_gaussian
 '''
 
 
-def multivariate_initialize_seed(CAC):
+def multivariate_initialize_seed(CAC, from_gt=True):
     # Calculate Image gradient
     image = CAC.image_obj.image
-    center = CAC.mask_obj.center
-    radius_point = CAC.mask_obj.radius_point
-    print 'CENTER:', center
-    print 'RADIUS POINT:', radius_point
-    print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
-    radius = np.linalg.norm(np.array(radius_point) - np.array(center))
+    if from_gt:
+        print 'Seed from ground truth...'
+        inside_mask_seed = CAC.ground_truth_obj
+        outside_mask_seed = CAC.ground_truth_obj
 
-    inside_seed_omega = [center[0] + radius * 0.2, center[1]]
-    outside_seed_omega = [center[0] + radius * 1.8, center[1]]
+    else:
+        center = CAC.mask_obj.center
+        radius_point = CAC.mask_obj.radius_point
+        print 'CENTER:', center
+        print 'RADIUS POINT:', radius_point
+        print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
+        radius = np.linalg.norm(np.array(radius_point) - np.array(center))
 
-    inside_mask_seed = MaskClass()
-    outside_mask_seed = MaskClass()
+        inside_seed_omega = [center[0] + radius * 0.2, center[1]]
+        outside_seed_omega = [center[0] + radius * 1.8, center[1]]
 
-    inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
-    outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+        inside_mask_seed = MaskClass()
+        outside_mask_seed = MaskClass()
+
+        inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
+        outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
 
     inside_seed = inside_mask_seed.mask
     outside_seed = 255. - outside_mask_seed.mask

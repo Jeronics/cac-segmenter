@@ -5,7 +5,7 @@ import energy_utils_mixture_gaussian as g_energies
 import utils
 
 
-class MixtureGaussianCACSegmenter(CAC):
+class MixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
@@ -39,7 +39,7 @@ class MixtureGaussianCACSegmenter(CAC):
 
 
 if __name__ == '__main__':
-    mixture_gaussian_gray_cac = CACSegmenter(MixtureGaussianCACSegmenter)
+    mixture_gaussian_gray_cac = CACSegmenter(MixtureGaussianCAC)
     parameter_list = mixture_gaussian_gray_cac.get_parameters()
 
     dataset = mixture_gaussian_gray_cac._load_dataset('AlpertGBB07_input.txt')

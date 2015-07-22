@@ -17,10 +17,6 @@ def mixture_initialize_seed(CAC, from_gt=True):
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
         outside_mask_seed = CAC.ground_truth_obj
-
-        # Reverse the outide mask
-        inside_seed = inside_mask_seed.mask
-        outside_seed = 255. - outside_mask_seed.mask
     else:
         print 'Seed from mask...'
         center = CAC.mask_obj.center
@@ -39,8 +35,8 @@ def mixture_initialize_seed(CAC, from_gt=True):
         inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
         outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
 
-        inside_seed = inside_mask_seed.mask
-        outside_seed = 255. - outside_mask_seed.mask
+    inside_seed = inside_mask_seed.mask
+    outside_seed = 255. - outside_mask_seed.mask
 
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
@@ -49,8 +45,11 @@ def mixture_initialize_seed(CAC, from_gt=True):
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
+    print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image)
+    print 'Interior:\t', inside_gmm.n_components
     outside_gmm = get_values_in_region(outside_coordinates, image)
+    print 'Exterior:\t', outside_gmm.n_components
     return inside_gmm, outside_gmm
 
 
