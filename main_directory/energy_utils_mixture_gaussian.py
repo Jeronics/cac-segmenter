@@ -11,30 +11,41 @@ import mixture_gaussian
 '''
 
 
-def mixture_initialize_seed(CAC):
-    # Calculate Image gradient
+def mixture_initialize_seed(CAC, from_gt=True):
     image = CAC.image_obj.gray_image
-    center = CAC.mask_obj.center
-    radius_point = CAC.mask_obj.radius_point
-    print 'CENTER:', center
-    print 'RADIUS POINT:', radius_point
-    print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
-    radius = np.linalg.norm(np.array(radius_point) - np.array(center))
+    if from_gt:
+        print 'Seed from ground truth...'
+        inside_mask_seed = CAC.ground_truth_obj
+        outside_mask_seed = CAC.ground_truth_obj
 
-    inside_seed_omega = [center[0] + radius * 0.2, center[1]]
-    outside_seed_omega = [center[0] + radius * 1.8, center[1]]
+        # Reverse the outide mask
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+    else:
+        print 'Seed from mask...'
+        center = CAC.mask_obj.center
+        radius_point = CAC.mask_obj.radius_point
+        print 'CENTER:', center
+        print 'RADIUS POINT:', radius_point
+        print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
+        radius = np.linalg.norm(np.array(radius_point) - np.array(center))
 
-    inside_mask_seed = MaskClass()
-    outside_mask_seed = MaskClass()
+        inside_seed_omega = [center[0] + radius * 0.2, center[1]]
+        outside_seed_omega = [center[0] + radius * 1.8, center[1]]
 
-    inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
-    outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+        inside_mask_seed = MaskClass()
+        outside_mask_seed = MaskClass()
 
-    inside_seed = inside_mask_seed.mask
-    outside_seed = 255. - outside_mask_seed.mask
+        inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
+        outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
+
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
     # utils.printNpArray(outside_seed)
+
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
