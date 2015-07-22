@@ -1,18 +1,10 @@
 import sys
-
 from PyQt5 import Qt
-from PyQt5 import uic
-from PyQt5.QtGui import *
-
 a = Qt.QApplication(sys.argv)
-
 from untitled import UiForm
-
 import numpy as np
 from main_directory import utils
 from PIL import Image
-
-from polygon_tools import turning_function
 
 PI = 3.14159265358979323846264338327950288419716939937510
 
@@ -20,8 +12,9 @@ PI = 3.14159265358979323846264338327950288419716939937510
 def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
     '''
     This function creates a mask and a sequence of cages.
+        The cages are created clockwise from (x,y)=( c_x + r*R, c_y)
     :param c:
-    :param p:
+    :param p: is the radius point chosen
     :param im_shape:
     :param num_cage_points:
     :return:
@@ -42,7 +35,7 @@ def create_mask_and_cage_points(c, p, in_filename, display_mask=False):
                 im[y,x] = 255
                 mask_points.append([x, y])
 
-    ima = Image.fromarray(im[:, :, 0], mode='L')
+    ima = Image.fromarray(im[:, :], mode='L')
     folder = '/'.join(in_filename.split("/")[:-1])
     ima.save(folder + "/mask_00.png")
     if type(num_cage_points) is not list:
@@ -128,7 +121,6 @@ def create_ground_truth(image):
 def resize_mask(mask):
     print mask.name
     if mask.height > 500:
-        print 'DO'
         mask.reshape(new_width=400)
         mask.save_image(filename=mask.path)
 
@@ -149,17 +141,17 @@ if __name__ == '__main__':
         # All images in each file are found
         images = utils.get_images(files, root)
         for image in images:
-            if image.spec_name == 'apple5':
-                print image.spec_name
-                resize_image(image)
-                open_canvas(image.path)
-                # gt=create_ground_truth(image)
-                # open_canvas(image.path)
+            # if image.spec_name == 'apple58':
+            print image.spec_name
+            resize_image(image)
+            open_canvas(image.path)
+            # gt=create_ground_truth(image)
+            # open_canvas(image.path)
 
-                # # All masks in each file are found
-                # images = utils.get_images(files,root)
-                # for image in images:
+            # # All masks in each file are found
+            # images = utils.get_images(files,root)
+            # for image in images:
 
-                #     gt_im=utils.get_ground_truth(image,files)
-                #     if gt_im:
-                #         resize_mask(gt_im)
+            #     gt_im=utils.get_ground_truth(image,files)
+            #     if gt_im:
+            #         resize_mask(gt_im)

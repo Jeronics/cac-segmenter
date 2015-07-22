@@ -1,167 +1,11 @@
 import numpy as np
 from scipy import *
-import matplotlib
-
-matplotlib.use("Qt5Agg")
-import scipy
-from scipy import misc
 import os
 import sys
-
-matplotlib.use("Qt5Agg")
+from MaskClass import MaskClass
+from ImageClass import ImageClass
+from CageClass import CageClass
 import matplotlib.pyplot as plt
-from PIL import Image
-
-
-class CageClass:
-    def __init__(self, cage=np.array([]), filename=''):
-        self.cage = cage
-        self.shape = cage.shape
-        self.num_points = len(cage)
-        self.path = filename
-        self.name = filename.split("/")[-1]
-        self.spec_name = self.name.split('.txt')[0]
-        self.root = "/".join(filename.split("/")[:-1]) + "/"
-        self.save_name = self.spec_name + '_out.txt'
-
-    def read_txt(self, filename):
-        cage = np.loadtxt(filename, float)
-        self.__init__(cage, filename)
-
-
-class MaskClass:
-    def __init__(self, mask=np.array([]), filename='', threshold=125.):
-        self.mask = self.binarize_image(mask, threshold)
-        self.height = mask.shape[0]
-        self.width = mask.shape[1] if len(mask.shape) > 1 else None
-        self.shape = mask.shape
-        self.path = filename
-        self.name = filename.split("/")[-1]
-        self.spec_name = self.name.split('.png')[0]
-        self.root = "/".join(filename.split("/")[:-1]) + "/"
-        self.save_name = self.spec_name + '_out.png'
-
-    def read_png(self, filename, threshold=125.):
-        '''
-        Return mask data from a raw PNG file as numpy array.
-        :param name: a directory path to the png image.
-        :return: An image matrix in the type (y,x)
-        '''
-        mask = scipy.misc.imread(filename)
-        mask = mask.astype(np.float64)
-        self.__init__(mask, filename, threshold)
-
-
-    def plot_image(self, show_plot=True):
-        im_aux = self.mask.astype('uint8')
-        plt.gray()
-        plt.imshow(im_aux, interpolation='nearest')
-        plt.axis('off')
-        if show_plot:
-            plt.show()
-
-    def binarize_image(self, image, threshold):
-        im = image.copy()
-        if len(im.shape) == 3:
-            im = im[:, :, 0]
-        for i in xrange(0, im.shape[0]):
-            for j in xrange(0, im.shape[1]):
-                if im[i, j] >= threshold:
-                    im[i, j] = 255.
-                else:
-                    im[i, j] = 0.
-        return im
-
-    def reshape(self, new_width=-1, new_height=-1):
-        height, width = self.shape
-        im = Image.open(self.path)
-
-        if not (new_width == -1 and new_height == -1):
-            if new_width == -1:
-                new_width = int(width * new_height / float(height))
-            elif new_height == -1:
-                new_height = int(height * new_width / float(width))
-
-            reshaped_image = im.resize((new_width, new_height), Image.ANTIALIAS)
-            self.__init__(np.array(reshaped_image), self.path)
-
-
-    def save_image(self, filename=''):
-        if filename == '':
-            filename = self.save_path
-        scipy.misc.imsave(filename, self.mask)
-
-
-class ImageClass:
-    def __init__(self, im=np.array([]), filename=''):
-        # FROM RGBA to RGB if necessary
-        if im.shape == 2 and im.shape[2] == 4:
-            self.image = im[:, :, 0:3]
-        else:
-            self.image = im
-        self.gray_image = self.rgb2gray(self.image)
-        self.shape = im.shape[:2]
-        self.height = im.shape[0]
-        self.width = im.shape[1] if len(im.shape) > 1 else None
-        self.path = filename
-        self.name = filename.split("/")[-1]
-        self.spec_name = self.name.split('.png')[0]
-        self.root = "/".join(filename.split("/")[:-1]) + "/"
-        self.save_name = self.spec_name + '_out.png'
-
-    def read_png(self, filename):
-        '''
-        Return image data from a raw PNG file as numpy array.
-        :param name: a directory path to the png image.
-        :return: An image matrix in the type (y,x)
-        '''
-        im = scipy.misc.imread(filename)
-        im = im.astype(np.float64)
-        self.__init__(im, filename)
-
-    def plot_image(self, show_plot=True):
-        im_aux = self.image.astype('uint8')
-        plt.gray()
-        plt.imshow(im_aux, interpolation='nearest')
-        plt.axis('off')
-        if show_plot:
-            plt.show()
-
-    def reshape(self, new_width=-1, new_height=-1):
-        height, width = self.shape
-        im = Image.open(self.path)
-
-        if not (new_width == -1 and new_height == -1):
-            if new_width == -1:
-                new_width = int(width * new_height / float(height))
-            elif new_height == -1:
-                new_height = int(height * new_width / float(width))
-
-            reshaped_image = im.resize((new_width, new_height), Image.ANTIALIAS)
-            self.__init__(np.array(reshaped_image), self.path)
-
-    def save_image(self, filename=''):
-        if filename == '':
-            filename = self.save_path
-        scipy.misc.imsave(filename, self.image)
-
-    def rgb2gray(self, rgb):
-        if len(rgb.shape) == 3:
-            r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-            gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-        else:
-            gray = rgb
-        return gray
-
-
-# ########## VISUALITON
-def rgb2gray(rgb):
-    if len(rgb.shape) == 3:
-        r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
-        gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-    else:
-        gray = rgb
-    return gray
 
 
 def is_png(filename):
@@ -236,8 +80,10 @@ def create_ground_truth(initial_cage, final_cage, initial_mask):
     omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                        contour_size, initial_mask.width,
                                                                                        initial_mask.height)
-    gt_im = np.zeros([initial_mask.width, initial_mask.height])
+    gt_im = np.zeros([initial_mask.height, initial_mask.width])
     # print cc.polygon_comparison(initial_cage.cage, final_cage.cage)
+
+    # Flip the coordinate points
     gt_im[omega_1_coord.transpose().astype(int)[0], omega_1_coord.transpose().astype(int)[1]] = 255.
 
     gt_mask = MaskClass(gt_im)
@@ -259,7 +105,9 @@ def read_png(name):
     :param name: a directory path to the png image.
     :return: An image matrix in the type (y,x)
     '''
-    im = scipy.misc.imread(name)
+    im = Image.open(name)  # scipy.misc.imread(name)
+    im = im.convert('RGB').convert('L')
+    im = np.array(im)
     im = im.astype(np.float64)
     return im
 
@@ -337,8 +185,7 @@ def get_inputs(arguments):
     """Return imagage, cage/s and mask from input as numpy array.
         Specification:  ./cac model imatge mascara caixa_init [caixa_curr]
     """
-
-    if (len(arguments) != 6 and len(arguments) != 5 ):
+    if len(arguments) != 6 and len(arguments) != 5:
         print 'Wrong Use!!!! Expected Input ' + sys.argv[0] + \
               ' model(int) image(int) mask(int) init_cage(int) [curr_cage(int)]'
         sys.exit(1)
@@ -380,12 +227,10 @@ def evaluate_image(coordinates, image, outside_value=255.):
     :return:
         Result of image, when indexes are not inside the image return maximum 255
     '''
-    image_evaluations = np.ones([1, len(coordinates)]) * outside_value
-    image_evaluations = image_evaluations[0]
     coordinates_booleans = are_inside_image(coordinates, image.shape)
     coordinates_aux = coordinates[coordinates_booleans]
     coordinates_aux = np.transpose(coordinates_aux).tolist()
-    image_evaluations[coordinates_booleans] = image[coordinates_aux]
+    image_evaluations = image[coordinates_aux]
     return image_evaluations
 
 
@@ -504,4 +349,3 @@ def mkdir(str_path):
         raise IOError("Could not create path '%s'" % str_path)
 
     return True
-

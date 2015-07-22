@@ -1,0 +1,5 @@
+../dataset/apple/apple1/apple1.png
+../dataset/apple/apple2/apple2.png
+../dataset/apple/apple3/apple3.png
+../dataset/pear/pear1/pear1.png
+../dataset/pear/pear2/pear2.png

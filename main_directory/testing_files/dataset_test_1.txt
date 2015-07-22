@@ -1,0 +1,1 @@
+../images_tester/Image1.png 10  12  14  15 ../images_tester/ground_truth/Image1.png

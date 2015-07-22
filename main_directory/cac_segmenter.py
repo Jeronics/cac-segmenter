@@ -1,32 +1,28 @@
 __author__ = 'jeroni'
 
 from ctypes_utils import *
-# from ctypes import *
 import time
-import sys
-
-import numpy as np
 from utils import *
-import energyutils
 import energies
 
-from scipy import interpolate
 
-
-def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=False):
+def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
     start = time.time()
     image = image_obj.gray_image
-    # if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
-    #     print 'Cage is out of the image! Not converged. Try a smaller cage'
-    #     return None
+    if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
+        print 'Cage is out of the image! Not converged. Try a smaller cage'
+        return None
+
     contour_coord, contour_size = get_contour(mask_obj)
 
     affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, cage_obj.cage)
 
-    plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.])
+    if plot_evolution:
+        plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=[0., 0., 255.])
 
     # Update Step of contour coordinates
     contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
+
     # copy of cage_obj
     iter = 0
     max_iter = 50
@@ -37,17 +33,16 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         [cage_obj.num_points, 2]), np.zeros([cage_obj.num_points, 2])
     mid_point = sum(cage_obj.cage, 0) / cage_obj.num_points
 
-
     # PARAMETERS #
     # pixel steps
     beta = 5
 
     # Omega1 band size
-    band_size = 500
+    band_size = 80
 
     # Constraint Energy parameters
     # constraint energy. k=0 is none.
-    k = 2
+    k = 50
 
     # Algorithm requires k>=2*beta to work.
     d = 2 * beta
@@ -74,12 +69,8 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         grad_k_2 = grad_k_1.copy()
         grad_k_1 = grad_k.copy()
         grad_k = energies.mean_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                           image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
-        print 'Before:'
-        print grad_k[0:3]
+                                           image_obj.gray_image) + energies.grad_energy_constraint(cage_obj.cage, d, k)
         grad_k = energies.multiple_normalize(grad_k)
-        print 'After: '
-        print grad_k[0:3]
         if first_stage:
             mid_point = sum(cage_obj.cage, 0) / float(cage_obj.num_points)
             axis = mid_point - cage_obj.cage
@@ -89,9 +80,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
 
         else:
             energy = energies.mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                          image) + energies.energy_constraint(cage_obj.cage, d, k)
+                                          image_obj.gray_image) + energies.energy_constraint(cage_obj.cage, d, k)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
-                                                   contour_size, energy, image, constraint_params)
+                                                   contour_size, energy, image_obj.gray_image, constraint_params)
             if alpha_new == 0:
                 continue_while = False
                 print 'Local minimum reached. no better alpha'
@@ -120,7 +111,6 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=
         # Update contour coordinates
         contour_coord = np.dot(affine_contour_coordinates, cage_obj.cage)
         iter += 1
-
     return cage_obj
 
     # TODO
@@ -133,7 +123,7 @@ if __name__ == '__main__':
     #
     # # rgb_image, mask_file, init_cage_file, curr_cage_file = get_inputs(sys.argv)
 
-
+    #
     # image_obj = ImageClass()
     # image_obj.read_png('../dataset/pear/pear2/pear2.png')
     # mask_obj = MaskClass()
@@ -141,17 +131,17 @@ if __name__ == '__main__':
     # cage_obj = CageClass()
     # cage_obj.read_txt('../dataset/pear/pear2/cage_16_1.05.txt')
     # curr_cage_file = None
-    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
-
-    # image_obj = ImageClass()
-    # image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
-    # mask_obj = MaskClass()
-    # mask_obj.read_png('../dataset/eagle/eagle3/mask_00.png')
-    # cage_obj = CageClass()
-    # cage_obj.read_txt('../dataset/eagle/eagle3/cage_16_1.05.txt')
-    # curr_cage_file = None
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
-
+    #
+    # # image_obj = ImageClass()
+    # # image_obj.read_png('../dataset/eagle/eagle3/eagle3.png')
+    # # mask_obj = MaskClass()
+    # # mask_obj.read_png('../dataset/eagle/eagle3/mask_00.png')
+    # # cage_obj = CageClass()
+    # # cage_obj.read_txt('../dataset/eagle/eagle3/cage_16_1.05.txt')
+    # # curr_cage_file = None
+    # # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
+    #
     # image_obj = ImageClass()
     # image_obj.read_png('../dataset/apple/apple4/apple4.png')
     # mask_obj = MaskClass()
@@ -160,22 +150,24 @@ if __name__ == '__main__':
     # cage_obj.read_txt('../dataset/apple/apple4/cage_16_1.05.txt')
     # curr_cage_file = None
     # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
-
-    image_obj = ImageClass()
-    image_obj.read_png('../dataset/apple/apple5/apple5.png')
-    mask_obj = MaskClass()
-    mask_obj.read_png('../dataset/apple/apple5/mask_00.png')
-    cage_obj = CageClass()
-    cage_obj.read_txt('../dataset/apple/apple5/cage_16_1.05.txt')
-    curr_cage_file = None
-    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
-
     #
     # image_obj = ImageClass()
-    # image_obj.read_png('../dataset/banana/banana2/banana2.png')
+    # image_obj.read_png('../dataset/apple/apple5/apple5.png')
     # mask_obj = MaskClass()
-    # mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
+    # mask_obj.read_png('../dataset/apple/apple5/mask_00.png')
     # cage_obj = CageClass()
-    # cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
+    # cage_obj.read_txt('../dataset/apple/apple5/cage_16_1.05.txt')
     # curr_cage_file = None
-    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file)
+    # resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, plot_evolution=True)
+    #
+    # #
+    image_obj = ImageClass()
+    image_obj.read_png('../dataset/banana/banana2/banana2.png')
+    mask_obj = MaskClass()
+    mask_obj.read_png('../dataset/banana/banana2/mask_00.png')
+    cage_obj = CageClass()
+    cage_obj.read_txt('../dataset/banana/banana2/cage_16_1.05.txt')
+    curr_cage_file = None
+    resulting_cage = cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_model',
+                                   plot_evolution=False)
+
