@@ -15,10 +15,7 @@ tmp/
 **/.idea/workspace.xml
 **/.idea/tasks.xml
 .project
-.vagrant
-.ipynb_checkpoints/
-data_api/
-databases/
+
 
 # Do not ignore
 !.gitignore
