@@ -11,13 +11,13 @@ import mixture_gaussian
 '''
 
 
-def initialize_seed(CAC):
+def initialize_seed(CAC, from_gt=True):
+    image = CAC.image_obj.gray_image
     if from_gt:
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
         outside_mask_seed = CAC.ground_truth_obj
     else:
-        image = CAC.image_obj.gray_image
         center = CAC.mask_obj.center
         radius_point = CAC.mask_obj.radius_point
         print 'CENTER:', center

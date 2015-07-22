@@ -5,7 +5,7 @@ import energy_utils_gaussian as g_energies
 import utils
 
 
-class GaussianCACSegmenter(CAC):
+class GaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj,  ground_truth_obj, type=type, weight=weight, band_size=band_size)
         inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std = g_energies.initialize_seed(self)
@@ -43,7 +43,7 @@ class GaussianCACSegmenter(CAC):
 
 
 if __name__ == '__main__':
-    gaussian_gray_cac = CACSegmenter(GaussianCACSegmenter)
+    gaussian_gray_cac = CACSegmenter(GaussianCAC)
     parameter_list = gaussian_gray_cac.get_parameters()
 
     dataset = gaussian_gray_cac._load_dataset('BSDS300_input.txt')
