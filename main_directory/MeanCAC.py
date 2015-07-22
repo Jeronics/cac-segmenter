@@ -5,7 +5,7 @@ import energy_utils_mean as mean_energy
 import utils
 
 
-class MeanCACSegmenter(CAC):
+class MeanCAC(CAC):
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
         omega_1 = mean_energy.mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
@@ -30,7 +30,7 @@ class MeanCACSegmenter(CAC):
 
 
 if __name__ == '__main__':
-    mean_gray_cac = CACSegmenter(MeanCACSegmenter)
+    mean_gray_cac = CACSegmenter(MeanCAC)
     parameter_list = mean_gray_cac.get_parameters()
 
     dataset = mean_gray_cac._load_dataset('AlpertGBB07_input.txt')
