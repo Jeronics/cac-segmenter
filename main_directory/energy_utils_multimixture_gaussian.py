@@ -12,13 +12,11 @@ import mixture_gaussian
 
 
 def multivariate_initialize_seed(CAC, from_gt=True):
-    # Calculate Image gradient
     image = CAC.image_obj.image
     if from_gt:
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
         outside_mask_seed = CAC.ground_truth_obj
-
     else:
         center = CAC.mask_obj.center
         radius_point = CAC.mask_obj.radius_point
