@@ -6,8 +6,9 @@ import utils
 
 
 class MultiMixtureGaussianCAC(CAC):
-    def __init__(self, image_obj, mask_obj, cage_obj,ground_truth_obj, type=None, weight=None, band_size=500):
-        CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight, band_size=band_size)
+    def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
+        CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
+                     band_size=band_size)
         inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
@@ -38,9 +39,10 @@ class MultiMixtureGaussianCAC(CAC):
 
 
 if __name__ == '__main__':
+
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = multi_mixture_gaussian_gray_cac._load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert'
+    dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert/' + multi_mixture_gaussian_gray_cac.CAC.__name__
     multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

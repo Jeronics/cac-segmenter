@@ -37,7 +37,6 @@ class MeanMultiCAC(CAC):
 if __name__ == '__main__':
     rgb_cac = CACSegmenter(MeanMultiCAC, type=['N', 'N', 'N'], weight=[0, 0, 1])
     parameter_list = rgb_cac.get_parameters()
-    dataset = rgb_cac._load_dataset('BSDS300_input.txt')
-    results_folder = 'segment_results'
-    rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
-    # color_cac.train_model('BSDS300_input.txt')
+    dataset = rgb_cac.load_dataset('BSDS300_input.txt')
+    results_folder = 'segment_results/' + rgb_cac.CAC.__name__
+    rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

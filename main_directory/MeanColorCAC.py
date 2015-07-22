@@ -27,7 +27,6 @@ if __name__ == '__main__':
     color_cac = CACSegmenter(MeanColorCAC)
     parameter_list = color_cac.get_parameters()
     parameter_list = color_cac.get_parameters()
-    dataset = color_cac._load_dataset('BSDS300_input.txt')
-    results_folder = 'segment_results'
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
-    # color_cac.train_model('BSDS300_input.txt')
+    dataset = color_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert/' + color_cac.CAC.__name__
+    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

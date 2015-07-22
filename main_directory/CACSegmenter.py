@@ -21,7 +21,7 @@ class CACSegmenter():
         self.weight = weight
         self.CAC = CAC
 
-    def _load_dataset(self, dataset_name):
+    def load_dataset(self, dataset_name):
         assert os.path.isfile(dataset_name), 'The input dataset file name is not valid!'
         dataset = pd.read_csv(dataset_name, sep='\t')
         return dataset
@@ -68,14 +68,14 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 19:
-                continue
-
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation..'
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight)
-            result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
+            try:
+                result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
+            except:
+                result = None
             print 'End Segmentation'
             if result:
                 sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
@@ -137,6 +137,6 @@ class CACSegmenter():
         This function uses cross validation to lean the optimal parameters
         :return:
         '''
-        dataset = self._load_dataset(input_file)
+        dataset = self.load_dataset(input_file)
         parameter_performances = pd.DataFrame(self.get_parameters())
         self._cross_validation(dataset, CV)
