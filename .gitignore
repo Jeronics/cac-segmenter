@@ -1,5 +1,5 @@
-#      Ignore     #
-###################
+# IGNORE THE FOLLOWING #
+*.txt
 *.DS_Store
 *.pyc
 *.png
@@ -20,3 +20,5 @@ tmp/
 data_api/
 databases/
 
+# Do not ignore
+!.gitignore
