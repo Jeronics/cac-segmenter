@@ -7,11 +7,12 @@ import copy
 
 
 class CAC():
-    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None, band_size=500):
-        self.name= 'General'
+    def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
+        self.name = 'General'
         self.image_obj = image_obj
         self.mask_obj = mask_obj
         self.cage_obj = cage_obj
+        self.ground_truth_obj = ground_truth_obj
         self.band_size = band_size
         self.type = type
         self.weight = weight

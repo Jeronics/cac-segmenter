@@ -6,8 +6,9 @@ import utils
 
 
 class MixtureGaussianCACSegmenter(CAC):
-    def __init__(self, image_obj, mask_obj, cage_obj, type=None, weight=None, band_size=500):
-        CAC.__init__(self, image_obj, mask_obj, cage_obj, type=type, weight=weight, band_size=band_size)
+    def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
+        CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
+                     band_size=band_size)
         inside_gmm, outside_gmm = g_energies.mixture_initialize_seed(self)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm

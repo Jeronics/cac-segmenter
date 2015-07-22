@@ -33,6 +33,7 @@ class MeanMultiCAC(CAC):
         utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
 
+
 if __name__ == '__main__':
     rgb_cac = CACSegmenter(MeanMultiCAC, type=['N', 'N', 'N'], weight=[0, 0, 1])
     parameter_list = rgb_cac.get_parameters()

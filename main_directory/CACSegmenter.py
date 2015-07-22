@@ -73,7 +73,7 @@ class CACSegmenter():
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation..'
-            cac_object = self.CAC(image_obj, mask_obj, cage_obj, type=self.type, weight=self.weight)
+            cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight)
             result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
             print 'End Segmentation'
