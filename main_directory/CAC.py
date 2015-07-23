@@ -79,7 +79,6 @@ class CAC():
                                                                                                contour_size,
                                                                                                mask_obj.width,
                                                                                                mask_obj.height)
-
             affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                         omega_2_coord, omega_2_size,
                                                                                         cage_obj.num_points,
@@ -163,7 +162,6 @@ class CAC():
                                                                                                       contour_coord,
                                                                                                       contour_size,
                                                                                                       ncol, nrow)
-
             affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord,
                                                                                                omega_1_size,
                                                                                                omega_2_coord,
