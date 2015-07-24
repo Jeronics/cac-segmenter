@@ -75,10 +75,14 @@ class CAC():
             if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
                 print 'Cage is out of the image! Not converged. Try a smaller cage'
                 return None
+
             omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                                contour_size,
                                                                                                mask_obj.width,
                                                                                                mask_obj.height)
+            if not omega_1_size:
+                print 'Contour has closed in or expanded.'
+                return None
             affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                         omega_2_coord, omega_2_size,
                                                                                         cage_obj.num_points,
@@ -110,9 +114,15 @@ class CAC():
                 alpha_new = self.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates,
                                                    contour_size, energy, image_obj, constraint_params)
+                if not alpha_new:
+                    print 'Contour has closed in or expanded.'
+                    return None
                 if alpha_new == 0:
                     continue_while = False
                     print 'Local minimum reached. no better alpha'
+                if not alpha_new:
+                    continue_while = False
+                    print 'Contour closed in or expanded.'
                     # return curr_cage_file
 
             # Calculate alpha
@@ -162,6 +172,8 @@ class CAC():
                                                                                                       contour_coord,
                                                                                                       contour_size,
                                                                                                       ncol, nrow)
+            if not omega_1_coord:
+                return None
             affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord,
                                                                                                omega_1_size,
                                                                                                omega_2_coord,

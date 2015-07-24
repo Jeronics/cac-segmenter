@@ -44,15 +44,20 @@ def get_affine_contour_coordinates(contour_coord, init_cage_file):
 
 def get_omega_1_and_2_coord(band_size, contour_coord, contour_size, ncol, nrow):
     # Allocate memory
+    rc = c_int()
     omega_1_size = c_int()
     omega_1_coord = LP_c_double()
     omega_2_size = c_int()
     omega_2_coord = LP_c_double()
 
     # Get contour OMEGA 1 and OMEGA 2
-    cac_get_omega1_omega2(byref(omega_1_size), byref(omega_1_coord), byref(omega_2_size), byref(omega_2_coord),
+    cac_get_omega1_omega2(byref(rc), byref(omega_1_size), byref(omega_1_coord), byref(omega_2_size),
+                          byref(omega_2_coord),
                           contour_size, np.ctypeslib.as_ctypes(contour_coord), c_int(nrow), c_int(ncol),
                           c_int(band_size))
+
+    if rc == 0:
+        return None, None, None, None
 
     omega_1_size = np.ctypeslib.as_array(omega_1_size)
     omega_2_size = np.ctypeslib.as_array(omega_2_size)

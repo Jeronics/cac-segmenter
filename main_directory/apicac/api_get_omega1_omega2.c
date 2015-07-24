@@ -1,6 +1,7 @@
 #include "api_cac.h"
 
 void cac_get_omega1_omega2(
+     int *return_code,          /* output */
      int *omega1_size,          /* output */
      double **omega1_coord,     /* output */
      int *omega2_size,          /* output */
@@ -14,7 +15,7 @@ void cac_get_omega1_omega2(
   struct image *mask;
   struct image *dist_int, *dist_ext;
 
-  int k, tmp1, tmp2;
+  int k, tmp1, tmp2, aux_int;
 
   /* Draw contour on an image and fill is interior */
 
@@ -42,20 +43,33 @@ void cac_get_omega1_omega2(
 
   dist_ext = cac_image_alloc(ncol, nrow);
   cac_fdistance(dist_ext, mask, band_size);
-  cac_get_pixels_omega(omega2_size, omega2_coord, mask, dist_ext);
+
+  aux_int = cac_get_pixels_omega(omega2_size, omega2_coord, mask, dist_ext);
 
   /* Create an inverted copy of the mask we have obtained previously */
+  if (aux_int==0){
 
+      cac_image_delete(mask);
+      cac_image_delete(dist_ext);
+      *return_code = 0;
+  }
   cac_mask_invert(mask);
 
   dist_int = cac_image_alloc(ncol, nrow);
   cac_fdistance(dist_int, mask, band_size);
-  cac_get_pixels_omega(omega1_size, omega1_coord, mask, dist_int);
+  aux_int = cac_get_pixels_omega(omega1_size, omega1_coord, mask, dist_int);
 
+  if (aux_int==0){
+      cac_image_delete(mask);
+      cac_image_delete(dist_ext);
+      cac_image_delete(dist_int);
+      *return_code = 0;
+  }
   /* Done. We may delete non  necessary memory */
   cac_image_delete(mask);
   cac_image_delete(dist_ext);
   cac_image_delete(dist_int);
+  *return_code = 1;
 }
 
 /**
@@ -341,8 +355,9 @@ int cac_get_number_pixels_omega(struct image *mask, struct image *dist)
     if ((*p_mask == 0) && (*p_dist != 0)) 
       count++; 
 
-  if (count == 0)
-    cac_error("cac_get_number_pixels_omega: count == 0, this should not happen\n"); 
+  // Removed to avoid exit()
+  //if (count == 0)
+  //  cac_error("cac_get_number_pixels_omega: count == 0, this should not happen\n");
 
   return count;
 }
@@ -355,14 +370,16 @@ int cac_get_number_pixels_omega(struct image *mask, struct image *dist)
  *
  */
 
-void cac_get_pixels_omega(int *omega_size, double **omega_coord, struct image *mask, struct image *dist)
+int cac_get_pixels_omega(int *omega_size, double **omega_coord, struct image *mask, struct image *dist)
 {
   float *p_mask, *p_dist;
   double *coord;
   int n;
 
   n = cac_get_number_pixels_omega(mask, dist);
-
+  if (n==0){
+    return 0;
+  }
   coord = cac_xmalloc(sizeof(double) * n * 2);
 
   p_mask = mask->gray;
@@ -389,6 +406,7 @@ void cac_get_pixels_omega(int *omega_size, double **omega_coord, struct image *m
 
   *omega_size = n;
   *omega_coord = coord;
+  return 1;
 }
 
 /*

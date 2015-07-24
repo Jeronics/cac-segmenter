@@ -39,6 +39,9 @@ def second_step_alpha(alpha, curr_cage, grad_k, band_size, affine_contour_coord,
                                                                                                   contour_size, ncol,
                                                                                                   nrow)
 
+        if not omega_1_size:
+            print 'Contour has closed in or expanded.'
+            return None
         affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                            omega_2_coord, omega_2_size,
                                                                                            len(curr_cage),

@@ -59,6 +59,9 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_mod
         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
                                                                                            contour_size, mask_obj.width,
                                                                                            mask_obj.height)
+        if not omega_1_coord:
+            print 'Contour has closed in or expanded.'
+            return None
 
         affine_omega_1_coord, affine_omega_2_coord = get_omega_1_and_2_affine_coord(omega_1_coord, omega_1_size,
                                                                                     omega_2_coord, omega_2_size,
@@ -83,10 +86,13 @@ def cac_segmenter(image_obj, mask_obj, cage_obj, curr_cage_file, model='mean_mod
                                           image_obj.gray_image) + energies.energy_constraint(cage_obj.cage, d, k)
             alpha_new = energies.second_step_alpha(alpha, cage_obj.cage, grad_k, band_size, affine_contour_coordinates,
                                                    contour_size, energy, image_obj.gray_image, constraint_params)
+            if not alpha_new:
+                print 'Contour has closed in or expanded.'
+                return None
+
             if alpha_new == 0:
                 continue_while = False
                 print 'Local minimum reached. no better alpha'
-                # return curr_cage_file
 
         # Calculate alpha
         # grad_k = normalize_vectors(grad_k)
