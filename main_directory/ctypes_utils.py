@@ -49,7 +49,6 @@ def get_omega_1_and_2_coord(band_size, contour_coord, contour_size, ncol, nrow):
     omega_1_coord = LP_c_double()
     omega_2_size = c_int()
     omega_2_coord = LP_c_double()
-
     # Get contour OMEGA 1 and OMEGA 2
     cac_get_omega1_omega2(byref(rc), byref(omega_1_size), byref(omega_1_coord), byref(omega_2_size),
                           byref(omega_2_coord),
