@@ -22,7 +22,7 @@ class GaussianCAC(CAC):
                                                      self.inside_seed_std, image)
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_seed_mean,
                                                      self.outside_seed_std, image)
-        energy = - (omega_1 + omega_2) / 2.
+        energy = (omega_1 + omega_2) / 2.
         return energy
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
@@ -35,7 +35,7 @@ class GaussianCAC(CAC):
                                                           self.inside_seed_std, image, image_gradient)
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_seed_mean,
                                                           self.outside_seed_std, image, image_gradient)
-        energy = -(omega_1 + omega_2)
+        energy = (omega_1 + omega_2)
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -49,4 +49,4 @@ if __name__ == '__main__':
 
     dataset = gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
     results_folder = 'segment_results/' + gaussian_gray_cac.CAC.__name__
-    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
