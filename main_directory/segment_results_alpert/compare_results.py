@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
 import pprint
 
 if __name__ == '__main__':
@@ -18,10 +19,24 @@ if __name__ == '__main__':
                 sorensen_dice.columns = [sub]
                 if not first:
                     df = sorensen_dice
+                    first=True
                 else:
                     df = df.join(sorensen_dice, how='inner')
                 print 'Num inst.', len(sorensen_dice)
                 print 'Mean', sorensen_dice.mean().values[0]
                 print 'STD', sorensen_dice.std().values[0]
                 print '\n'
+
+        df=df.fillna(-1)
+        plt.figure()
+        for sub in s:
+            sorensen_dice_file = folder_name + sub + '/' + 'sorensen_dice_coeff.txt'
+            print df.columns
+            print df[sub].values
+            if os.path.exists(sorensen_dice_file):
+                plt.plot(df[sub].values)
+                plt.legend(s, loc='lower center')
+        plt.show()
+
+
 
