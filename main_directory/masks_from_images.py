@@ -1,6 +1,7 @@
 import utils
 import os
-from pylab import ginput, close
+# from pylab import close
+from matplotlib.pyplot import ginput, close
 
 
 def check_for_ground_truth(image_path, gt_file_name):
@@ -30,7 +31,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
     # Read Images in the images_file_name
     with open(images_file_name, 'r') as f:
         input_images = f.read().split('\n')
-    input_images = [im for im in input_images if im!=''][1:]
+    input_images = [im for im in input_images if im != ''][1:]
     # Open Input file to write in
     f = open(output_file_name, 'w')
 
@@ -64,11 +65,19 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    # file_name = '../../BSDS300_images.txt'
-    # gt_file_name = '../../BSDS300_gt.txt'
-    # output_file_name = 'BSDS300_input.txt'
-    # create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
-    file_name = '../../AlpertGBB07_images.txt'
-    gt_file_name = '../../AlpertGBB07_gt.txt'
-    output_file_name = 'AlpertGBB07_input.txt'
-    create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    dataset_name = 'synthetic'
+    if dataset_name == 'bsds300':
+        file_name = '../../BSDS300_images.txt'
+        gt_file_name = '../../BSDS300_gt.txt'
+        output_file_name = 'BSDS300_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    if dataset_name == 'alpert':
+        file_name = '../../AlpertGBB07_images.txt'
+        gt_file_name = '../../AlpertGBB07_gt.txt'
+        output_file_name = 'AlpertGBB07_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    if dataset_name == 'synthetic':
+        file_name = '../../synthetic_images.txt'
+        gt_file_name = '../../synthetic_gt.txt'
+        output_file_name = 'synthetic_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
