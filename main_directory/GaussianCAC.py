@@ -1,6 +1,7 @@
+import numpy as np
+
 from CACSegmenter import CACSegmenter
 from CAC import CAC
-import numpy as np
 import energy_utils_gaussian as g_energies
 import utils
 
@@ -15,6 +16,7 @@ class GaussianCAC(CAC):
         self.inside_seed_std = inside_seed_std
         self.outside_seed_mean = outside_seed_mean
         self.outside_seed_std = outside_seed_std
+        print self.inside_seed_mean, self.inside_seed_std, self.outside_seed_mean, self.outside_seed_std
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         image = image_obj.gray_image
@@ -47,6 +49,6 @@ if __name__ == '__main__':
     gaussian_gray_cac = CACSegmenter(GaussianCAC)
     parameter_list = gaussian_gray_cac.get_parameters()
 
-    dataset = gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results/' + gaussian_gray_cac.CAC.__name__
-    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = gaussian_gray_cac.load_dataset('synthetic_input.txt')
+    results_folder = 'segment_synthetic/' + gaussian_gray_cac.CAC.__name__
+    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
