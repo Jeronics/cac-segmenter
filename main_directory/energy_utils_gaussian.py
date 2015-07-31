@@ -95,7 +95,6 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, omega_mean, omega_std, image):
-    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     aux = utils.evaluate_image(omega_coord, image) - omega_mean
     a = len(aux) * np.log(omega_std)
     b = 1 / float(2 * np.power(omega_std, 2))
@@ -104,18 +103,15 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, omega_mean, omega_s
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, omega_mean, omega_std, image, image_gradient):
-    # E_mean
-    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     b = 1 / (np.power(omega_std, 2))
     aux = utils.evaluate_image(omega_coord, image) - omega_mean
     image_gradient_by_point = b * np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                             utils.evaluate_image(omega_coord, image_gradient[1])])
     grad = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
-    return grad  # *(1/pow(omega_std, 2)) for GAUSS
+    return grad
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
-    # image_gradient_by_point = np.transpose(image_gradient_by_point)
     first_prod = np.multiply(aux, affine_omega_coord.T)
     second_prod = np.dot(first_prod, image_gradient_by_point.T)
     return second_prod

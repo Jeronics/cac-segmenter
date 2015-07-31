@@ -31,8 +31,9 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
     # Read Images in the images_file_name
     with open(images_file_name, 'r') as f:
         input_images = f.read().split('\n')
-    input_images = [im for im in input_images if im != ''][1:]
+    input_images = [im for im in input_images if im != ''][0:]
     # Open Input file to write in
+    print input_images
     f = open(output_file_name, 'w')
 
     id = 0

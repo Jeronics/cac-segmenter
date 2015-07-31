@@ -10,6 +10,8 @@ class MixtureGaussianCAC(CAC):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
         inside_gmm, outside_gmm = g_energies.mixture_initialize_seed(self)
+        print inside_gmm.means_
+        print outside_gmm.means_
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
 
@@ -42,6 +44,6 @@ if __name__ == '__main__':
     mixture_gaussian_gray_cac = CACSegmenter(MixtureGaussianCAC)
     parameter_list = mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert/' + mixture_gaussian_gray_cac.CAC.__name__
-    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = mixture_gaussian_gray_cac.load_dataset('synthetic_input.txt')
+    results_folder = 'segment_results_synthetic/' + mixture_gaussian_gray_cac.CAC.__name__
+    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

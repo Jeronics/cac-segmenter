@@ -1,9 +1,4 @@
-import itertools
-
 import numpy as np
-from scipy import linalg
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 from sklearn import mixture
 
@@ -14,17 +9,19 @@ def get_mixture_gaussian(X, n_components, cv_type):
     return gmm
 
 
-def get_number_of_components(X):
-    lowest_bic = np.infty
+def get_number_of_components(X, maximum_n_components=7):
+    lowest_bic = -np.infty
     bic = []
-    n_components_range = range(1, 7)
-    cv_types = ['full']
+    n_components_range = range(1, maximum_n_components + 1)
+    cv_types = ['full'] #, 'diag', 'spherical', 'tied']
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
             gmm = get_mixture_gaussian(X, n_components, cv_type)
-            bic.append(gmm.bic(X))
-            if bic[-1] < lowest_bic:
+            aux_score = gmm.aic(X)
+            bic.append(aux_score)
+            print bic[-1], lowest_bic
+            if bic[-1] > lowest_bic:
                 lowest_bic = bic[-1]
                 best_gmm = gmm
 
@@ -36,7 +33,7 @@ def get_number_of_components(X):
     # Plot the BIC scores
     # spl = plt.subplot(2, 1, 1)
     # for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
-    #     xpos = np.array(n_components_range) + .2 * (i - 2)
+    # xpos = np.array(n_components_range) + .2 * (i - 2)
     #     bars.append(plt.bar(xpos, bic[i * len(n_components_range):
     #     (i + 1) * len(n_components_range)],
     #                         width=.2, color=color))

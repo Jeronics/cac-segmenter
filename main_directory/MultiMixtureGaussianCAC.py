@@ -43,6 +43,6 @@ if __name__ == '__main__':
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert/' + multi_mixture_gaussian_gray_cac.CAC.__name__
-    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = multi_mixture_gaussian_gray_cac.load_dataset('synthetic_input.txt')
+    results_folder = 'segment_results_synthetic/' + multi_mixture_gaussian_gray_cac.CAC.__name__
+    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

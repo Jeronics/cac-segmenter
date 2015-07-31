@@ -35,5 +35,5 @@ if __name__ == '__main__':
 
     dataset = mean_gray_cac.load_dataset('AlpertGBB07_input.txt')
     results_folder = 'segment_results_alpert/' + mean_gray_cac.CAC.__name__
-    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
     # color_cac.train_model('BSDS300_input.txt')

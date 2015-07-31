@@ -58,7 +58,7 @@ def get_values_in_region(omega_coord, image):
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     values_in_region = np.array([values_in_region]).T
-    gmm = mixture_gaussian.get_number_of_components(values_in_region)
+    gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=6)
     return gmm
 
 
@@ -74,7 +74,7 @@ def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omeg
     '''
     omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
     omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
-    energy = -(omega_1 + omega_2) / 2.
+    energy = (omega_1 + omega_2) / 2.
     return energy
 
 
@@ -95,15 +95,14 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
     omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.gmm, image, image_gradient)
     omega_2 = grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.gmm, image, image_gradient)
 
-    energy = -(omega_1 + omega_2)
+    energy = (omega_1 + omega_2)
     return energy
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     region_energy = 0
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
-        aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
+        aux = utils.evaluate_image(omega_coord, image) - omega_mean
         a = len(aux) * np.log(omega_std)
         b = 1 / float(2 * np.power(omega_std, 2))
         region_energy += a + np.dot(aux, np.transpose(aux)) * b
@@ -111,22 +110,19 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
-    # E_mean
-    # omega_mean, omega_std = mean_utils.get_omega_mean(omega_coord, image)
     grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1]])
-    image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
-                                        utils.evaluate_image(omega_coord, image_gradient[1], 0)])
+    image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
+                                        utils.evaluate_image(omega_coord, image_gradient[1])])
     for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
         omega_std = omega_std[0]
-        b = 1 / (np.power(omega_std, 2))
-        aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point * b)
-        grad += grad_
+        b = 1 / float(np.power(omega_std, 2))
+        aux = utils.evaluate_image(omega_coord, image) - omega_mean
+        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
+        grad += b*grad_
     return grad
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
-    # image_gradient_by_point = np.transpose(image_gradient_by_point)
     first_prod = np.multiply(aux, affine_omega_coord.T)
     second_prod = np.dot(first_prod, image_gradient_by_point.T)
     return second_prod

@@ -12,6 +12,8 @@ class GaussianCAC(CAC):
                      band_size=band_size)
         inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std = g_energies.initialize_seed(self)
         print 'STANDARDIZE:', self.standardize
+        print inside_seed_mean, inside_seed_std
+        print outside_seed_mean, outside_seed_std
         self.inside_seed_mean = inside_seed_mean
         self.inside_seed_std = inside_seed_std
         self.outside_seed_mean = outside_seed_mean
