@@ -1,10 +1,10 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 import utils
-import energy_utils_mean as mean_utils
-import ctypes_utils as ctypes
-import opencv_utils as cv_ut
 from MaskClass import MaskClass
 import mixture_gaussian
+
 
 '''
                         MIXTURE GAUSSIAN ENERGY
@@ -58,6 +58,9 @@ def get_values_in_region(omega_coord, image):
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     values_in_region = np.array([values_in_region]).T
+    plt.figure()
+    p, bins, hist = plt.hist(values_in_region, 255)
+    plt.show()
     gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=6)
     return gmm
 
@@ -101,11 +104,12 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     region_energy = 0
-    for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
+
+    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         aux = utils.evaluate_image(omega_coord, image) - omega_mean
         a = len(aux) * np.log(omega_std)
         b = 1 / float(2 * np.power(omega_std, 2))
-        region_energy += a + np.dot(aux, np.transpose(aux)) * b
+        region_energy += omega_weight * (a + np.dot(aux, np.transpose(aux)) * b)
     return region_energy
 
 
@@ -113,12 +117,13 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1]])
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
-    for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
+    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         omega_std = omega_std[0]
         b = 1 / float(np.power(omega_std, 2))
         aux = utils.evaluate_image(omega_coord, image) - omega_mean
         grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
-        grad += b*grad_
+        # print 'mean', omega_mean,'b', b, np.linalg.norm(grad_*omega_weight),   np.linalg.norm(b*grad_*omega_weight)
+        grad += omega_weight * grad_* (1/float(omega_std))
     return grad
 
 

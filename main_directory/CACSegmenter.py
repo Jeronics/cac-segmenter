@@ -72,6 +72,7 @@ class CACSegmenter():
                 continue
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
+            gt_mask.plot_image()
             print 'Start Segmentation  of ' + str(i) + '..'
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight)
             try:

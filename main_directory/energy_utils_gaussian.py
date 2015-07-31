@@ -44,7 +44,7 @@ def initialize_seed(CAC, from_gt=True):
 
     omega_in_mean, omega_in_std = get_values_in_region(inside_coordinates, image)
     omega_out_mean, omega_out_std = get_values_in_region(outside_coordinates, image)
-    return omega_in_mean, omega_in_std, omega_out_mean, omega_out_std,
+    return omega_in_mean, omega_in_std, omega_out_mean, omega_out_std
 
 
 def get_values_in_region(omega_coord, image):

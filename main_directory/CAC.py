@@ -15,7 +15,7 @@ class CAC():
         self.band_size = band_size
         self.type = type
         self.weight = weight
-        self.standardize = False
+        self.standardize = True
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None

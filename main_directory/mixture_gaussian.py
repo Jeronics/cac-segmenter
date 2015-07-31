@@ -10,19 +10,19 @@ def get_mixture_gaussian(X, n_components, cv_type):
 
 
 def get_number_of_components(X, maximum_n_components=7):
-    lowest_bic = -np.infty
+    lowest_bic = np.infty
     bic = []
     n_components_range = range(1, maximum_n_components + 1)
-    cv_types = ['full'] #, 'diag', 'spherical', 'tied']
+    cv_types = ['full'] #,'full', 'diag', 'spherical', 'tied']
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a mixture of Gaussians with EM
             gmm = get_mixture_gaussian(X, n_components, cv_type)
-            aux_score = gmm.aic(X)
+            aux_score = gmm.bic(X)
             bic.append(aux_score)
             print bic[-1], lowest_bic
-            if bic[-1] > lowest_bic:
-                lowest_bic = bic[-1]
+            if bic[-1] < lowest_bic:
+                lowest_bic = bic[-1]-bic[-1]*0.0
                 best_gmm = gmm
 
     # bic = np.array(bic)

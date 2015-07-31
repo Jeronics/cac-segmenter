@@ -97,7 +97,7 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     region_energy = 0
-    for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
+    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
         k = len(omega_std)
         term_1 = len(aux) * k * np.log(2 * np.pi)
@@ -106,7 +106,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
         x_sigma = np.dot(aux, sigma)
         term_3 = np.multiply(x_sigma, aux)
         term_3 = np.sum(term_3, axis=1)
-        region_energy += term_1 + term_2 + sum(term_3)
+        region_energy += omega_weight*(term_1 + term_2 + sum(term_3))
     return region_energy
 
 
@@ -114,12 +114,12 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1], image.shape[2]])
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
                                         utils.evaluate_image(omega_coord, image_gradient[1], 0)])
-    for i, (omega_mean, omega_std) in enumerate(zip(gmm.means_, gmm.covars_)):
+    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         sigma = np.linalg.inv(omega_std)
-        aux = utils.evaluate_image(omega_coord, image, omega_mean)
+        aux = utils.evaluate_image(omega_coord, image)
         aux -= omega_mean
         sigma_aux = np.dot(sigma, aux.T)
-        grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord, image_gradient_by_point)
+        grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord, image_gradient_by_point)*omega_weight
         grad += np.transpose(grad_, (2, 0, 1))
     return grad
 
