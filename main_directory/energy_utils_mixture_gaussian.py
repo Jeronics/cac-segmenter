@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import utils
+import opencv_utils as opencv_ut
 from MaskClass import MaskClass
 import mixture_gaussian
 
@@ -17,6 +18,13 @@ def mixture_initialize_seed(CAC, from_gt=True):
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
         outside_mask_seed = CAC.ground_truth_obj
+
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+
+        inside_seed = opencv_ut.erode(inside_seed, width=10)
+        outside_seed = opencv_ut.erode(outside_seed, width=10)
+
     else:
         print 'Seed from mask...'
         center = CAC.mask_obj.center
@@ -35,12 +43,14 @@ def mixture_initialize_seed(CAC, from_gt=True):
         inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
         outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
 
-    inside_seed = inside_mask_seed.mask
-    outside_seed = 255. - outside_mask_seed.mask
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+
 
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
-    # utils.printNpArray(outside_seed)
+    utils.printNpArray(inside_seed)
+    utils.printNpArray(outside_seed)
 
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
@@ -61,7 +71,7 @@ def get_values_in_region(omega_coord, image):
     plt.figure()
     p, bins, hist = plt.hist(values_in_region, 255)
     plt.show()
-    gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=6)
+    gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=7)
     return gmm
 
 
@@ -117,13 +127,14 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1]])
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
+    print 'Here'
     for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         omega_std = omega_std[0]
         b = 1 / float(np.power(omega_std, 2))
         aux = utils.evaluate_image(omega_coord, image) - omega_mean
-        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
-        # print 'mean', omega_mean,'b', b, np.linalg.norm(grad_*omega_weight),   np.linalg.norm(b*grad_*omega_weight)
-        grad += omega_weight * grad_* (1/float(omega_std))
+        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, b*image_gradient_by_point)
+        # print 'mean', omega_mean, 'std', omega_std, 'b', b, np.linalg.norm(grad_*omega_weight), np.linalg.norm(b*grad_*omega_weight)
+        grad += omega_weight * grad_
     return grad
 
 

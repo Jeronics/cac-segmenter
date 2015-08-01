@@ -54,7 +54,7 @@ class CAC():
 
         # PARAMETERS #
         # pixel steps
-        beta = 5
+        beta = 3
 
         # Omega1 band size
         band_size = 80

@@ -1,34 +1,14 @@
-import cv2
 import numpy as np
-import cv
+import cv2
 
 
-def erode_mask(mask_obj):
-    return None
+def erode(mask, width=5):
+    kernel = np.ones((width, width), np.uint8)
+    erosion = cv2.erode(mask, kernel, iterations=1)
+    return erosion
 
 
-def dilate_mask(mask_obj):
-    return None
-
-
-def numpy_array_to_open_cv(np_array):
-    im = np.array(np_array * 255, dtype=np.uint8)
-    threshed = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 3, 0)
-    return threshed
-
-
-def np_to_array(vis):
-    h, w = vis.shape
-    vis2 = cv.CreateMat(h, w, cv.CV_32FC3)
-    vis0 = cv.fromarray(vis)
-    cv.CvtColor(vis0, vis2, cv.CV_GRAY2BGR)
-    return vis0
-
-
-if __name__ == '__main__':
-    ImageClass
-    np_array = np.ones((384, 836), np.float32)
-    x = np_to_array(np_array)
-    import pdb;
-
-    pdb.set_trace()
+def dilate(mask,  width=5):
+    kernel = np.ones((width, width), np.uint8)
+    dilation = cv2.dilate(mask, kernel, iterations=1)
+    return dilation
