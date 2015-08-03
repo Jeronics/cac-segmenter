@@ -12,7 +12,7 @@ def get_mixture_gaussian(X, n_components, cv_type):
 def get_number_of_components(X, maximum_n_components=7):
     lowest_bic = np.infty
     bic = []
-    n_components_range = range(1, maximum_n_components + 1)
+    n_components_range = range(1, 1 + 1)
     cv_types = ['full']  # ,'full', 'diag', 'spherical', 'tied']
     for cv_type in cv_types:
         for n_components in n_components_range:
@@ -38,7 +38,7 @@ def get_number_of_components(X, maximum_n_components=7):
     # for i, (cv_type, color) in enumerate(zip(cv_types, color_iter)):
     # xpos = np.array(n_components_range) + .2 * (i - 2)
     # bars.append(plt.bar(xpos, bic[i * len(n_components_range):
-    #     (i + 1) * len(n_components_range)],
+    # (i + 1) * len(n_components_range)],
     #                         width=.2, color=color))
     # plt.xticks(n_components_range)
     # plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
