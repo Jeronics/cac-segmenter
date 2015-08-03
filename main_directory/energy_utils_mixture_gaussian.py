@@ -49,8 +49,8 @@ def mixture_initialize_seed(CAC, from_gt=True):
 
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
-    utils.printNpArray(inside_seed)
-    utils.printNpArray(outside_seed)
+    # utils.printNpArray(inside_seed)
+    # utils.printNpArray(outside_seed)
 
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
@@ -115,26 +115,34 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     region_energy = 0
 
-    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
+    for i, (omega_mean, omega_var, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
         aux = utils.evaluate_image(omega_coord, image) - omega_mean
-        a = len(aux) * np.log(omega_std)
-        b = 1 / float(2 * np.power(omega_std, 2))
+        a = len(aux) * np.log(np.sqrt(omega_var))
+        b = 1 / float(2 * omega_var)
         region_energy += omega_weight * (a + np.dot(aux, np.transpose(aux)) * b)
     return region_energy
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
-    grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1]])
+    # grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1]])
+    grad = []
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
     print 'Here'
-    for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
-        omega_std = omega_std[0]
-        b = 1 / float(np.power(omega_std, 2))
+    print gmm.covars_
+    for i, (omega_mean, omega_var, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
+        print omega_mean, omega_var, omega_weight
+        b = 1 / float(omega_var)
         aux = utils.evaluate_image(omega_coord, image) - omega_mean
-        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, b*image_gradient_by_point)
+        grad_ = gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point)
+        print grad_
+        print grad_
+        grad_ = grad_ * b + np.log(omega_weight)
+        grad.append(grad_)
+        # grad += omega_weight * grad_
         # print 'mean', omega_mean, 'std', omega_std, 'b', b, np.linalg.norm(grad_*omega_weight), np.linalg.norm(b*grad_*omega_weight)
-        grad += omega_weight * grad_
+
+    grad = sum(grad)
     return grad
 
 

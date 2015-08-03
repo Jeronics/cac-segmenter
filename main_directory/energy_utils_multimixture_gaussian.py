@@ -1,10 +1,10 @@
 import numpy as np
+
 import utils
-import energy_utils_mean as mean_utils
-import ctypes_utils as ctypes
-import opencv_utils as cv_ut
+import opencv_utils as opencv_ut
 from MaskClass import MaskClass
 import mixture_gaussian
+
 
 '''
                         MIXTURE GAUSSIAN ENERGY
@@ -17,6 +17,12 @@ def multivariate_initialize_seed(CAC, from_gt=True):
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
         outside_mask_seed = CAC.ground_truth_obj
+
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+
+        inside_seed = opencv_ut.erode(inside_seed, width=10)
+        outside_seed = opencv_ut.erode(outside_seed, width=10)
     else:
         center = CAC.mask_obj.center
         radius_point = CAC.mask_obj.radius_point
@@ -34,8 +40,9 @@ def multivariate_initialize_seed(CAC, from_gt=True):
         inside_mask_seed.from_points_and_image(center, inside_seed_omega, image)
         outside_mask_seed.from_points_and_image(center, outside_seed_omega, image)
 
-    inside_seed = inside_mask_seed.mask
-    outside_seed = 255. - outside_mask_seed.mask
+        inside_seed = inside_mask_seed.mask
+        outside_seed = 255. - outside_mask_seed.mask
+
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
     # utils.printNpArray(outside_seed)
@@ -106,7 +113,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
         x_sigma = np.dot(aux, sigma)
         term_3 = np.multiply(x_sigma, aux)
         term_3 = np.sum(term_3, axis=1)
-        region_energy += omega_weight*(term_1 + term_2 + sum(term_3))
+        region_energy += omega_weight * (term_1 + term_2 + sum(term_3))
     return region_energy
 
 
@@ -119,7 +126,8 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
         aux = utils.evaluate_image(omega_coord, image)
         aux -= omega_mean
         sigma_aux = np.dot(sigma, aux.T)
-        grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord, image_gradient_by_point)*omega_weight
+        grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord,
+                                                      image_gradient_by_point) * omega_weight
         grad += np.transpose(grad_, (2, 0, 1))
     return grad
 
