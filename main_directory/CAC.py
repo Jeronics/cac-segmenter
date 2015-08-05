@@ -1,9 +1,9 @@
+from copy import copy, deepcopy
 import energies
 from ctypes_utils import *
 from utils import *
 import energy_utils_cage_constraints as cage_constraint
 import ctypes_utils as ctypes
-import copy
 
 
 class CAC():
@@ -28,7 +28,8 @@ class CAC():
                            points2=cage_obj.cage - alpha * 10 * grad_k)
 
     def segment(self, image_obj, mask_obj, _cage_obj, curr_cage_file, model='mean_model', plot_evolution=False):
-        cage_obj = copy.deepcopy(_cage_obj)
+
+        cage_obj = deepcopy(_cage_obj)
         if cage_out_of_the_picture(cage_obj.cage, image_obj.shape):
             print 'Cage is out of the image! Not converged. Try a smaller cage'
             return None
@@ -172,7 +173,7 @@ class CAC():
                                                                                                       contour_coord,
                                                                                                       contour_size,
                                                                                                       ncol, nrow)
-            if not omega_1_coord:
+            if not omega_1_size:
                 return None
             affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord,
                                                                                                omega_1_size,
@@ -182,8 +183,11 @@ class CAC():
                                                                                                curr_cage - grad_k * alpha)
 
             next_energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-                                      image_obj) + cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d,
-                                                                                     k)
+                                      image_obj)
+            print 'alpha', alpha
+            aux = cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)
+            next_energy += aux
+            print 'alpha', alpha
         if alpha < 0.1:
             return 0
         return 1

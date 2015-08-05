@@ -1,7 +1,9 @@
+import os
+
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
+
 import utils
-import os
 from CageClass import CageClass
 from MaskClass import MaskClass
 from ImageClass import ImageClass
@@ -74,11 +76,13 @@ class CACSegmenter():
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ' + str(i) + '..'
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight)
-            try:
-                result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
-                                            plot_evolution=plot_evolution)
-            except:
-                result = None
+            result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
+                                        plot_evolution=plot_evolution)
+            # try:
+            # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
+            #                                 plot_evolution=plot_evolution)
+            # except:
+            #     result = None
             print 'End Segmentation'
             if result:
                 sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
