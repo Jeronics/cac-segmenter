@@ -112,11 +112,10 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    print 'Step 2'
+    print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
-    weights = np.array([w for w in gmm.weights_])
-    print 'Step 2'
+    weights = np.array([1 for w in gmm.weights_])
     x_m = utils.evaluate_image(omega_coord, image) - means
     x_m = x_m.T
     x_m_squared = x_m * x_m
@@ -150,26 +149,20 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     else:
         mixture_prob = unsummed_mixture_prob
 
-    print mixture_prob.shape
-    # print mixture_prob.shape, 'hi'
-    # print np.sum(mixture_prob)
-
-
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
+    print 'energy', np.sum(np.log(mixture_prob))
     # calculate the derivative of the mixture
     unsumed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
     if len(means) > 1:
         mixture_derivative = np.array([np.sum(unsumed_mixture_derivative, axis=1)]).T
     else:
         mixture_derivative = unsumed_mixture_derivative
-    print mixture_derivative.shape
 
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
     prod_2 = coeff_ * mixture_derivative
-    print prod_2.shape
     grad = gradient_gauss_energy_for_each_vertex(prod_2, affine_omega_coord, image_gradient_by_point)
     return grad
 

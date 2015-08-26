@@ -27,6 +27,6 @@ if __name__ == '__main__':
     color_cac = CACSegmenter(MeanColorCAC)
     parameter_list = color_cac.get_parameters()
     parameter_list = color_cac.get_parameters()
-    dataset = color_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert/' + color_cac.CAC.__name__
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = color_cac.load_dataset('synthetic_input.txt')
+    results_folder = 'segment_results_synthetic/' + color_cac.CAC.__name__
+    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

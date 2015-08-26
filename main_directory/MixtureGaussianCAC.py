@@ -1,6 +1,7 @@
+import numpy as np
+
 from CACSegmenter import CACSegmenter
 from CAC import CAC
-import numpy as np
 import energy_utils_mixture_gaussian as g_energies
 import utils
 
@@ -35,7 +36,14 @@ class MixtureGaussianCAC(CAC):
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
                                                           image_gradient)
         print '\n'
-        energy = omega_1 + omega_2
+
+        import energies
+        # omega_1=omega_1/len(omega1_coord)
+        # omega_2=omega_2/len(omega2_coord)
+        omega_1 = energies.multiple_standardize(omega_1)
+        # omega_2 = energies.multiple_standardize(omega_2)
+
+        energy = omega_1# + omega_2
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
