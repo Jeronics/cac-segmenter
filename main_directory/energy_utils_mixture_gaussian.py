@@ -115,7 +115,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
-    weights = np.array([1 for w in gmm.weights_])
+    weights = np.array([w for w in gmm.weights_])
     x_m = utils.evaluate_image(omega_coord, image) - means
     x_m = x_m.T
     x_m_squared = x_m * x_m

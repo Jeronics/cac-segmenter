@@ -8,11 +8,17 @@ import utils
 
 class MixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
-        CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
+        ground_truth_obj.plot_image()
+        CAC.__init__(self, image_obj, ground_truth_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
         inside_gmm, outside_gmm = g_energies.mixture_initialize_seed(self)
-        print inside_gmm.means_
-        print outside_gmm.means_
+        print 'Inside Mean', inside_gmm.means_
+        print 'Inside covars', inside_gmm.covars_
+        print 'Inside weights', inside_gmm.weights_
+
+        print 'outside Mean', outside_gmm.means_
+        print 'outside Covars', outside_gmm.covars_
+        print 'outside weight', outside_gmm.weights_
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
 
@@ -40,10 +46,10 @@ class MixtureGaussianCAC(CAC):
         import energies
         # omega_1=omega_1/len(omega1_coord)
         # omega_2=omega_2/len(omega2_coord)
-        omega_1 = energies.multiple_standardize(omega_1)
+        # omega_1 = energies.multiple_standardize(omega_1)
         # omega_2 = energies.multiple_standardize(omega_2)
 
-        energy = omega_1# + omega_2
+        energy = omega_1 + omega_2
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
