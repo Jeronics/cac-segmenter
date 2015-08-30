@@ -143,20 +143,34 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars.T))
     mixt = coeff * exp_aux
     unsummed_mixture_prob = weights * mixt
-
-    if len(means) > 1:
+    number_of_components = len(means)
+    if number_of_components > 1:
         mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=1)]).T
+        mixture_prob_ind = np.argmax(mixture_prob, axis=1)
+        means = np.array(means)[mixture_prob_ind]
+        covars = np.array(covars)[mixture_prob_ind].T
+        weights = np.array(weights)[mixture_prob_ind]
+
     else:
         mixture_prob = unsummed_mixture_prob
+
+
+    # Avoid logarithm of zero
+    k = mixture_prob
+    k[k == 0] = min(k[k > 0])  # careful with when k[k>0] is empty
+    print 'energy', np.sum(np.log(k))
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
-    print 'energy', np.sum(np.log(mixture_prob))
     # calculate the derivative of the mixture
     unsumed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
-    if len(means) > 1:
+    if number_of_components > 1:
         mixture_derivative = np.array([np.sum(unsumed_mixture_derivative, axis=1)]).T
+        mixture_prob_ind = np.argmax(mixture_prob, axis=1)
+        means = np.array(means)[mixture_prob_ind]
+        covars = np.array(covars)[mixture_prob_ind].T
+        weights = np.array(weights)[mixture_prob_ind]
     else:
         mixture_derivative = unsumed_mixture_derivative
 

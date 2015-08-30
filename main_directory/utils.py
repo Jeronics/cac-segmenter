@@ -259,7 +259,8 @@ def cage_out_of_the_picture(coordinates, size):
     :return:
     '''
     are_inside = are_inside_image(coordinates, size)
-    return not bool(sum(are_inside))
+    return_bool= not bool(sum(are_inside))
+    return return_bool
 
 
 # Check if list of points are inside an image given only the shape.
