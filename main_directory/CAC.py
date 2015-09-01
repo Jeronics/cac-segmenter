@@ -15,7 +15,7 @@ class CAC():
         self.band_size = band_size
         self.type = type
         self.weight = weight
-        self.standardize = False
+        self.standardize = True
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
         return None
@@ -58,7 +58,7 @@ class CAC():
         beta = 3
 
         # Omega1 band size
-        band_size = 80
+        band_size = 500
 
         # Constraint Energy parameters
         # constraint energy. k=0 is none.
@@ -97,6 +97,7 @@ class CAC():
                                           image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             if self.standardize:
                 grad_k = energies.multiple_standardize(grad_k)
+                grad_k[abs(grad_k)>1]=grad_k[abs(grad_k)>1]/abs(grad_k[abs(grad_k)>1])
             else:
                 grad_k = energies.multiple_normalize(grad_k)
             if first_stage:

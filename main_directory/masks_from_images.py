@@ -17,7 +17,7 @@ def check_for_ground_truth(image_path, gt_file_name):
 def read_clicked_points(image_name):
     image = utils.ImageClass()
     image.read_png(image_name)
-    print("Please click")
+    print "Please click:", image_name
     image.plot_image(show_plot=False)
     input_points = ginput(2)
     print("clicked", input_points)

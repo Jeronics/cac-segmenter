@@ -8,7 +8,6 @@ import utils
 
 class MixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
-        ground_truth_obj.plot_image()
         CAC.__init__(self, image_obj, ground_truth_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
         inside_gmm, outside_gmm = g_energies.mixture_initialize_seed(self)
@@ -36,18 +35,20 @@ class MixtureGaussianCAC(CAC):
 
         # Calculate Energy:
         print 'inside'
-        omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
-                                                          image_gradient)
+        omega_1, energy_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm,
+                                                                    image,
+                                                                    image_gradient)
         print 'outside'
-        omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
-                                                          image_gradient)
+        omega_2, energy_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord,
+                                                                    self.outside_gmm, image,
+                                                                    image_gradient)
         print '\n'
-
-        import energies
-        # omega_1=omega_1/len(omega1_coord)
-        # omega_2=omega_2/len(omega2_coord)
+        # import energies
         # omega_1 = energies.multiple_standardize(omega_1)
         # omega_2 = energies.multiple_standardize(omega_2)
+
+        # omega_1 = omega_1*len(omega1_coord)
+        # omega_2 = omega_2*len(omega2_coord)
 
         energy = omega_1 + omega_2
         return energy

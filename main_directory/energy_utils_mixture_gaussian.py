@@ -115,7 +115,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
-    weights = np.array([w for w in gmm.weights_])
+    weights = np.array([np.round(w) for w in gmm.weights_])
     x_m = utils.evaluate_image(omega_coord, image) - means
     x_m = x_m.T
     x_m_squared = x_m * x_m
@@ -124,6 +124,12 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars))
     mixt = coeff * exp_aux
     mixture_prob = weights * mixt
+
+    # Avoid logarithm of zero
+    k = mixture_prob
+    k[k == 0] = min(k[k > 0])  # careful with when k[k>0] is empty
+    mixture_prob = k
+
     energy = np.sum(np.log(mixture_prob))
     print 'Step 2'
     return energy
@@ -140,16 +146,23 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     x_m_squared = x_m * x_m
     denom = 2 * covars.T
     exp_aux = np.exp(-x_m_squared / denom)
+
     coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars.T))
+    # k = exp_aux
+    # k[k == 0] = np.min(np.exp(-744))
+    # exp_aux = k
     mixt = coeff * exp_aux
+
     unsummed_mixture_prob = weights * mixt
+
     number_of_components = len(means)
     if number_of_components > 1:
         mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=1)]).T
-        mixture_prob_ind = np.argmax(mixture_prob, axis=1)
-        means = np.array(means)[mixture_prob_ind]
-        covars = np.array(covars)[mixture_prob_ind].T
-        weights = np.array(weights)[mixture_prob_ind]
+        # mixture_prob_ind = np.argmax(mixture_prob, axis=1)
+        # mixture_prob = mixture_prob[mixture_prob_ind]
+        # means = np.array(means)[mixture_prob_ind]
+        # covars = np.array(covars)[mixture_prob_ind].T
+        # weights = np.array(weights)[mixture_prob_ind]
 
     else:
         mixture_prob = unsummed_mixture_prob
@@ -157,28 +170,27 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
     # Avoid logarithm of zero
     k = mixture_prob
-    k[k == 0] = min(k[k > 0])  # careful with when k[k>0] is empty
-    print 'energy', np.sum(np.log(k))
+    k[k == 0] = np.exp(-744) #min(k[k > 0])  # careful with when k[k>0] is empty
+    mixture_prob = k
+    energy = np.sum(np.log(k))
+    print 'energy', energy
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
     # calculate the derivative of the mixture
-    unsumed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
+    unsummed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
     if number_of_components > 1:
-        mixture_derivative = np.array([np.sum(unsumed_mixture_derivative, axis=1)]).T
-        mixture_prob_ind = np.argmax(mixture_prob, axis=1)
-        means = np.array(means)[mixture_prob_ind]
-        covars = np.array(covars)[mixture_prob_ind].T
-        weights = np.array(weights)[mixture_prob_ind]
+        mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=1)]).T
+        # mixture_prob_ind = np.argmax(mixture_prob, axis=1)
     else:
-        mixture_derivative = unsumed_mixture_derivative
+        mixture_derivative = unsummed_mixture_derivative
 
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
     prod_2 = coeff_ * mixture_derivative
     grad = gradient_gauss_energy_for_each_vertex(prod_2, affine_omega_coord, image_gradient_by_point)
-    return grad
+    return grad, energy
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
