@@ -1,6 +1,8 @@
 import numpy as np
 import energy_utils_mean as mean_energies
 import energy_utils_mean_hue as hue_energies
+from scipy.ndimage.filters import gaussian_filter
+
 
 '''
                         Multi Dimensional MEAN ENERGY
@@ -32,6 +34,7 @@ def generic_grad_mean_energy_per_region(omega_coord, affine_omega_coord, image_o
     if type == 'N':
         image = image_obj.image[:, :, slice]
         image_gradient = np.array(np.gradient(image))
+        image = gaussian_filter(image, sigma=0.5, order=0)
         omega_energy = mean_energies.mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient)
     return omega_energy
 

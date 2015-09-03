@@ -3,6 +3,7 @@ from CAC import CAC
 import numpy as np
 import energy_utils_multivariate_gaussian as g_energies
 import utils
+from scipy.ndimage.filters import gaussian_filter
 
 
 class MultivariateGaussianCAC(CAC):
@@ -18,12 +19,13 @@ class MultivariateGaussianCAC(CAC):
         image = image_obj.image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image, )
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image, )
-        energy = (omega_1 + omega_2) / float(2)
+        energy = (omega_1 + omega_2) / 2.
         return energy
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         # Calculate Image gradient
         image = image_obj.image
+        image = gaussian_filter(image, sigma=0.5, order=0)
         image_gradient = np.array(np.gradient(image))
         # Calculate Energy:
         omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,

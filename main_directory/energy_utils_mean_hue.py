@@ -5,26 +5,12 @@ import numpy as np
 '''
 
 
-def mean_color_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    energy1 = mean_color_energy_per_region(omega_1_coord, image)
-    energy2 = mean_color_energy_per_region(omega_2_coord, image)
-    energy = (energy1 + energy2) / 2.
-    return energy
-
-
 def mean_color_energy_per_region(omega_1_coord, image):
     mean = mean_color_in_region(omega_1_coord, image)
     hue_comp = image.hsi_image[omega_1_coord[:, 0].tolist(), omega_1_coord[:, 1].tolist()][:, 0]
     distance = hue_color_distance(hue_comp, mean)
     energy = sum(np.power(distance, 2))
     return energy
-
-
-def mean_color_energy_grad(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    grad_energy_1 = grad_mean_color_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-    grad_energy_2 = grad_mean_color_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
-    return grad_energy_1 + grad_energy_2
-
 
 def grad_mean_color_energy_per_region(omega_coord, affine_omega_coord, image):
     mean = mean_color_in_region(omega_coord, image)

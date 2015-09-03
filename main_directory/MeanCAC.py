@@ -3,6 +3,7 @@ from CAC import CAC
 import numpy as np
 import energy_utils_mean as mean_energy
 import utils
+from scipy.ndimage.filters import gaussian_filter
 
 
 class MeanCAC(CAC):
@@ -16,6 +17,7 @@ class MeanCAC(CAC):
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         # Calculate Image gradient
         image = image_obj.gray_image
+        image = gaussian_filter(image, sigma=0.5, order=0)
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:

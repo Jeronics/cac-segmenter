@@ -1,6 +1,8 @@
 from CACSegmenter import CACSegmenter
 from CAC import CAC
 import energy_utils_mean_hue as energy_ut
+from scipy.ndimage.filters import gaussian_filter
+
 import utils
 
 

@@ -54,44 +54,6 @@ def get_values_in_region(omega_coord, image):
     gmm = mixture_gaussian.get_mixture_gaussian(values_in_region, 1, 'full')
     return gmm
 
-
-def gauss_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    '''
-    Computes the Gaussian Energy of an Image
-    :param omega_1_coord (numpy array): Omega coordinates for region Omega 1
-    :param omega_2_coord (numpy array): Omega coordinates for region Omega 2
-    :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
-    :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
-    :param image (numpy array): The Image
-    :return:
-    '''
-    omega_1 = gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
-    omega_2 = gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
-    energy = -(omega_1 + omega_2) / 2.
-    return energy
-
-
-def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    '''
-    Computes the derivative of the Gaussian Energy of an Image with respect to the control points
-    :param omega1_coord (numpy array): Omega coordinates for region Omega 1
-    :param omega2_coord (numpy array): Omega coordinates for region Omega 2
-    :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
-    :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
-    :param image (numpy array): The Image
-    :return:
-    '''
-    # Calculate Image gradient
-    image_gradient = np.array(np.gradient(image))
-
-    # Calculate Energy Per region:
-    omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.gmm, image, image_gradient)
-    omega_2 = grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.gmm, image, image_gradient)
-
-    energy = -(omega_1 + omega_2)
-    return energy
-
-
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     omega_mean, omega_std = gmm.means_, gmm.covars_
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean

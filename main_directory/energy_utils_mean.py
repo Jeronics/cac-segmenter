@@ -3,29 +3,9 @@ import utils
 
 '''
 
-                        MEAN ENERGY
+                        MEAN ENERGY UTILS
 
 '''
-
-
-def mean_energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-    image = image_obj.gray_image
-    omega_1 = mean_energy_per_region(omega_1_coord, affine_omega_1_coord, image)
-    omega_2 = mean_energy_per_region(omega_2_coord, affine_omega_2_coord, image)
-    energy = (omega_1 + omega_2) / float(2)
-    return energy
-
-
-def mean_energy_grad(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-    # Calculate Image gradient
-    image = image_obj.gray_image
-    image_gradient = np.array(np.gradient(image))
-
-    # Calculate Energy:
-    omega_1 = mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-    omega_2 = mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
-    energy = omega_1 + omega_2
-    return energy
 
 
 def mean_energy_per_region(omega_coord, affine_omega_coord, image):
