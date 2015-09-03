@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter
 
 from CACSegmenter import CACSegmenter
 from CAC import CAC
@@ -31,6 +32,7 @@ class MixtureGaussianCAC(CAC):
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
         # Calculate Image gradient
         image = image_obj.gray_image
+        image = gaussian_filter(image, sigma=1.5, order=0)
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
@@ -47,9 +49,9 @@ class MixtureGaussianCAC(CAC):
         # omega_1 = energies.multiple_standardize(omega_1)
         # omega_2 = energies.multiple_standardize(omega_2)
 
-        # omega_1 = omega_1*len(omega1_coord)
-        # omega_2 = omega_2*len(omega2_coord)
-
+        # omega_1 = omega_1/float(len(omega1_coord))
+        # omega_2 = omega_2/float(len(omega2_coord))
+        print omega_2
         energy = omega_1 + omega_2
         return energy
 

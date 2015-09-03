@@ -1,4 +1,5 @@
-from copy import copy, deepcopy
+from copy import deepcopy
+
 import energies
 from ctypes_utils import *
 from utils import *
@@ -62,7 +63,7 @@ class CAC():
 
         # Constraint Energy parameters
         # constraint energy. k=0 is none.
-        k = 50
+        k = np.power(10,50)
 
         # Algorithm requires k>=2*beta to work.
         d = 2 * beta
@@ -97,7 +98,7 @@ class CAC():
                                           image_obj) + cage_constraint.grad_energy_constraint(cage_obj.cage, d, k)
             if self.standardize:
                 grad_k = energies.multiple_standardize(grad_k)
-                grad_k[abs(grad_k)>1]=grad_k[abs(grad_k)>1]/abs(grad_k[abs(grad_k)>1])
+                grad_k[abs(grad_k) > 1] /= abs(grad_k[abs(grad_k) > 1])
             else:
                 grad_k = energies.multiple_normalize(grad_k)
             if first_stage:

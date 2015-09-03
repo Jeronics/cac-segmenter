@@ -78,7 +78,7 @@ class CACSegmenter():
             result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
                                         plot_evolution=plot_evolution)
             # try:
-            # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
+            #     result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
             #                                 plot_evolution=plot_evolution)
             # except:
             #     result = None

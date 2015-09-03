@@ -1,5 +1,4 @@
 import numpy as np
-
 import utils
 import opencv_utils as opencv_ut
 from MaskClass import MaskClass
@@ -101,7 +100,8 @@ def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_o
     :return:
     '''
     # Calculate Image gradient
-    image_gradient = np.array(np.gradient(image))
+    # image_gradient = np.array(np.gradient(image))
+    image_gradient= scipy.ndimage.filters.gaussian_gradient_magnitude(image)
 
     # Calculate Energy Per region:
     omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.gmm, image, image_gradient)
@@ -127,7 +127,8 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
 
     # Avoid logarithm of zero
     k = mixture_prob
-    k[k == 0] = min(k[k > 0])  # careful with when k[k>0] is empty
+    smallest_num = np.exp(-100)
+    k[k < smallest_num] = np.max(np.min(k[k > smallest_num]), smallest_num) # careful with when k[k>0] is empty
     mixture_prob = k
 
     energy = np.sum(np.log(mixture_prob))
@@ -170,10 +171,13 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
     # Avoid logarithm of zero
     k = mixture_prob
-    k[k == 0] = np.exp(-744) #min(k[k > 0])  # careful with when k[k>0] is empty
+    smallest_num = np.exp(-100)
+    k[k < smallest_num] = np.max(np.min(k[k > smallest_num]), smallest_num)  # careful with when k[k>0] is empty
     mixture_prob = k
     energy = np.sum(np.log(k))
     print 'energy', energy
+
+    # import pdb;pdb.set_trace()
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
