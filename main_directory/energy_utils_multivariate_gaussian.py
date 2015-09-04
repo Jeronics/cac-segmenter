@@ -85,7 +85,7 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     return grad
 
 
-def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point, ):
+def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
     # image_gradient_by_point = np.transpose(image_gradient_by_point)
     aux = np.tile(aux, (2, 1, 1))
     first_prod = np.multiply(aux, np.transpose(image_gradient_by_point, (0, 2, 1)))

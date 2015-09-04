@@ -69,15 +69,30 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
-    weights = np.array([1 for w in gmm.weights_])
-    x_m = utils.evaluate_image(omega_coord, image) - means
-    x_m = x_m.T
-    x_m_squared = x_m * x_m
-    denom = 2 * covars
-    exp_aux = np.exp(x_m_squared / denom)
-    coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars))
-    mixt = coeff * exp_aux
-    mixture_prob = weights * mixt
+    weights = np.array([w for w in gmm.weights_])
+
+    x_ = utils.evaluate_image(omega_coord, image)
+    x_m = np.transpose(np.tile(x_, (1, 1, 1)), (1, 0, 2)) - means
+    # print x_m.shape
+    denom = np.linalg.inv(2 * covars)
+    x_m_denom = np.dot(x_m, denom)
+    x_m_denom = np.array([x_m_denom[:, i, i, :] for i in xrange(len(weights))])
+
+    exp_x_m_denom_x_m = np.exp(-np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m))
+
+    k = means.shape[1]
+    coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
+    mixt = np.transpose(exp_x_m_denom_x_m, (0, 2, 1)) * coeff
+    unsummed_mixture_prob = mixt * weights
+
+    if len(means) > 1:
+        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)]).T
+    else:
+        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
+
+    # caluculate 1/P(x)
+    coeff_ = 1 / mixture_prob
+
     energy = np.sum(np.log(mixture_prob))
     print 'Step 2'
     return energy
@@ -85,41 +100,41 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
     means = np.array([m for m in gmm.means_])
-    covars = np.array([v for v in gmm.covars_]).T
+    covars = np.array([v for v in gmm.covars_])
     weights = np.array([w for w in gmm.weights_]).T
 
     x_ = utils.evaluate_image(omega_coord, image)
-    x_m = np.tile(x_, (2, 1, 1)) - np.transpose(np.tile(means, (len(x_), 1, 1)), (1, 0, 2))
+    x_m = np.transpose(np.tile(x_, (1, 1, 1)), (1, 0, 2)) - means
     # print x_m.shape
-    x_m_squared = x_m * x_m
-    denom = np.linalg.inv(2*covars)
+    denom = np.linalg.inv(2 * covars)
+    x_m_denom = np.dot(x_m, denom)
+    x_m_denom = np.array([x_m_denom[:, i, i, :] for i in xrange(len(weights))])
 
-    aux = -np.dot(x_m_squared, denom)
-    exp_aux = np.exp(aux)
+    exp_x_m_denom_x_m = np.exp(-np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m))
 
-
-    import pdb;
-
-    pdb.set_trace()
-    coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars.T))
-    mixt = coeff * exp_aux
-    unsummed_mixture_prob = weights * mixt
+    k = means.shape[1]
+    coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
+    mixt = np.transpose(exp_x_m_denom_x_m, (0, 2, 1)) * coeff
+    unsummed_mixture_prob = mixt * weights
 
     if len(means) > 1:
-        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=1)]).T
+        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)]).T
     else:
-        mixture_prob = unsummed_mixture_prob
+        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
     print 'energy', np.sum(np.log(mixture_prob))
+
     # calculate the derivative of the mixture
-    unsumed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
+    denom_x_m = np.dot(denom, np.transpose(x_m, (0, 2, 1)))
+    denom_x_m = np.array([denom_x_m[i, :, :, i] for i in xrange(len(weights))])
+    unsummed_mixture_derivative = unsummed_mixture_prob * denom_x_m.T
     if len(means) > 1:
-        mixture_derivative = np.array([np.sum(unsumed_mixture_derivative, axis=1)]).T
+        mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=2)]).T
     else:
-        mixture_derivative = unsumed_mixture_derivative
+        mixture_derivative = np.transpose(unsummed_mixture_derivative, (1, 0, 2))
 
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
@@ -129,15 +144,23 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
-    dx = np.array([image_gradient_by_point[0]]).T
-    dy = np.array([image_gradient_by_point[1]]).T
-    x_ = aux * dx
-    y_ = aux * dy
+    dx = np.array([image_gradient_by_point[0]])
+    dy = np.array([image_gradient_by_point[1]])
+
+    x_ = aux.T * dx
+    y_ = aux.T * dy
     second_prod_x = np.dot(np.transpose(x_, (2, 0, 1)), affine_omega_coord)
     second_prod_y = np.dot(np.transpose(y_, (2, 0, 1)), affine_omega_coord)
-    grad = np.concatenate([second_prod_x, second_prod_y]).T
+    grad = np.concatenate([second_prod_x, second_prod_y], axis=1).T
     return grad
 
+    # def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
+    # # image_gradient_by_point = np.transpose(image_gradient_by_point)
+    #     aux = np.tile(aux, (2, 1, 1))
+    #     first_prod = np.multiply(aux, np.transpose(image_gradient_by_point, (0, 2, 1)))
+    #
+    #     second_prod = np.dot(first_prod, affine_omega_coord)
+    #     return second_prod
 
 
     # ================================
@@ -145,14 +168,14 @@ def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradien
     # def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
     # '''
     # Computes the derivative of the Gaussian Energy of an Image with respect to the control points
-    #     :param omega1_coord (numpy array): Omega coordinates for region Omega 1
-    #     :param omega2_coord (numpy array): Omega coordinates for region Omega 2
-    #     :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
-    #     :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
-    #     :param image (numpy array): The Image
-    #     :return:
-    #     '''
-    #     # Calculate Image gradient
+    # :param omega1_coord (numpy array): Omega coordinates for region Omega 1
+    # :param omega2_coord (numpy array): Omega coordinates for region Omega 2
+    # :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
+    # :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
+    # :param image (numpy array): The Image
+    # :return:
+    # '''
+    # # Calculate Image gradient
     #     image_gradient = np.array(np.gradient(image))
     #
     #     # Calculate Energy Per region:
