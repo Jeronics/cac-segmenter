@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter
 
 import utils
 import opencv_utils as opencv_ut
@@ -13,6 +14,8 @@ import mixture_gaussian
 
 def multivariate_initialize_seed(CAC, from_gt=True):
     image = CAC.image_obj.image
+    image = gaussian_filter(image, sigma=0.5, order=0)
+
     if from_gt:
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
@@ -69,32 +72,35 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
-    weights = np.array([w for w in gmm.weights_])
+    weights = np.array([w for w in gmm.weights_]).T
 
     x_ = utils.evaluate_image(omega_coord, image)
     x_m = np.transpose(np.tile(x_, (1, 1, 1)), (1, 0, 2)) - means
     # print x_m.shape
-    denom = np.linalg.inv(2 * covars)
+    denom = np.linalg.inv(covars)
     x_m_denom = np.dot(x_m, denom)
     x_m_denom = np.array([x_m_denom[:, i, i, :] for i in xrange(len(weights))])
-
-    exp_x_m_denom_x_m = np.exp(-np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m))
+    aux=-np.sum(np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m), axis=2)/2.
+    exp_x_m_denom_x_m = np.exp(aux)
 
     k = means.shape[1]
     coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
-    mixt = np.transpose(exp_x_m_denom_x_m, (0, 2, 1)) * coeff
+    mixt = exp_x_m_denom_x_m * coeff
     unsummed_mixture_prob = mixt * weights
+    unsummed_mixture_prob = np.tile(unsummed_mixture_prob, (3, 1, 1))
+    unsummed_mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
 
     if len(means) > 1:
-        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)]).T
+        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)])
     else:
-        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
+        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2)).T
 
-    # caluculate 1/P(x)
-    coeff_ = 1 / mixture_prob
+    k = mixture_prob
+    smallest_num = np.exp(-200)
+    k[k < smallest_num] = smallest_num  # careful with when k[k>0] is empty
+    mixture_prob = k
 
-    energy = np.sum(np.log(mixture_prob))
-    print 'Step 2'
+    energy= np.sum(np.log(mixture_prob))
     return energy
 
 
@@ -106,21 +112,28 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     x_ = utils.evaluate_image(omega_coord, image)
     x_m = np.transpose(np.tile(x_, (1, 1, 1)), (1, 0, 2)) - means
     # print x_m.shape
-    denom = np.linalg.inv(2 * covars)
+    denom = np.linalg.inv(covars)
     x_m_denom = np.dot(x_m, denom)
     x_m_denom = np.array([x_m_denom[:, i, i, :] for i in xrange(len(weights))])
-
-    exp_x_m_denom_x_m = np.exp(-np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m))
+    aux=-np.sum(np.multiply(np.transpose(x_m_denom, (1, 0, 2)), x_m), axis=2)/2.
+    exp_x_m_denom_x_m = np.exp(aux)
 
     k = means.shape[1]
     coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
-    mixt = np.transpose(exp_x_m_denom_x_m, (0, 2, 1)) * coeff
+    mixt = exp_x_m_denom_x_m * coeff
     unsummed_mixture_prob = mixt * weights
+    unsummed_mixture_prob = np.tile(unsummed_mixture_prob, (3, 1, 1))
+    unsummed_mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
 
     if len(means) > 1:
-        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)]).T
+        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)])
     else:
-        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
+        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2)).T
+
+    k = mixture_prob
+    smallest_num = np.exp(-200)
+    k[k < smallest_num] = smallest_num  # careful with when k[k>0] is empty
+    mixture_prob = k
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
@@ -129,17 +142,19 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
     # calculate the derivative of the mixture
     denom_x_m = np.dot(denom, np.transpose(x_m, (0, 2, 1)))
+
     denom_x_m = np.array([denom_x_m[i, :, :, i] for i in xrange(len(weights))])
-    unsummed_mixture_derivative = unsummed_mixture_prob * denom_x_m.T
+
+    unsummed_mixture_derivative = unsummed_mixture_prob * denom_x_m.T / 2.
     if len(means) > 1:
-        mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=2)]).T
+        mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=2)])
     else:
-        mixture_derivative = np.transpose(unsummed_mixture_derivative, (1, 0, 2))
+        mixture_derivative = np.transpose(unsummed_mixture_derivative, (1, 0, 2)).T
 
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
     prod_2 = coeff_ * mixture_derivative
-    grad = gradient_gauss_energy_for_each_vertex(prod_2, affine_omega_coord, image_gradient_by_point)
+    grad = gradient_gauss_energy_for_each_vertex(prod_2.T, affine_omega_coord, image_gradient_by_point)
     return grad
 
 
@@ -153,72 +168,3 @@ def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradien
     second_prod_y = np.dot(np.transpose(y_, (2, 0, 1)), affine_omega_coord)
     grad = np.concatenate([second_prod_x, second_prod_y], axis=1).T
     return grad
-
-    # def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):
-    # # image_gradient_by_point = np.transpose(image_gradient_by_point)
-    #     aux = np.tile(aux, (2, 1, 1))
-    #     first_prod = np.multiply(aux, np.transpose(image_gradient_by_point, (0, 2, 1)))
-    #
-    #     second_prod = np.dot(first_prod, affine_omega_coord)
-    #     return second_prod
-
-
-    # ================================
-    #
-    # def grad_gauss_energy(omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image):
-    # '''
-    # Computes the derivative of the Gaussian Energy of an Image with respect to the control points
-    # :param omega1_coord (numpy array): Omega coordinates for region Omega 1
-    # :param omega2_coord (numpy array): Omega coordinates for region Omega 2
-    # :param affine_omega_1_coord (numpy array): Affine coordinates for region Omega 1
-    # :param affine_omega_2_coord (numpy array): Affine coordinates for region Omega 2
-    # :param image (numpy array): The Image
-    # :return:
-    # '''
-    # # Calculate Image gradient
-    #     image_gradient = np.array(np.gradient(image))
-    #
-    #     # Calculate Energy Per region:
-    #     omega_1 = grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.gmm, image, image_gradient)
-    #     omega_2 = grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.gmm, image, image_gradient)
-    #
-    #     energy = -(omega_1 + omega_2)
-    #     return energy
-    #
-    #
-    # def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    #     region_energy = 0
-    #     for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
-    #         aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
-    #         k = len(omega_std)
-    #         term_1 = len(aux) * k * np.log(2 * np.pi)
-    #         term_2 = len(aux) * np.log(np.linalg.det(omega_std))
-    #         sigma = np.linalg.inv(omega_std)
-    #         x_sigma = np.dot(aux, sigma)
-    #         term_3 = np.multiply(x_sigma, aux)
-    #         term_3 = np.sum(term_3, axis=1)
-    #         region_energy += omega_weight * (term_1 + term_2 + sum(term_3))
-    #     return region_energy
-    #
-    #
-    # def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
-    #     grad = np.zeros([affine_omega_coord.shape[1], omega_coord.shape[1], image.shape[2]])
-    #     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0], 0),
-    #                                         utils.evaluate_image(omega_coord, image_gradient[1], 0)])
-    #     for i, (omega_mean, omega_std, omega_weight) in enumerate(zip(gmm.means_, gmm.covars_, gmm.weights_)):
-    #         sigma = np.linalg.inv(omega_std)
-    #         aux = utils.evaluate_image(omega_coord, image)
-    #         aux -= omega_mean
-    #         sigma_aux = np.dot(sigma, aux.T)
-    #         grad_ = gradient_gauss_energy_for_each_vertex(sigma_aux, affine_omega_coord,
-    #                                                       image_gradient_by_point) * omega_weight
-    #         grad += np.transpose(grad_, (2, 0, 1))
-    #     return grad
-    #
-    #
-    # def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point, ):
-    #     # image_gradient_by_point = np.transpose(image_gradient_by_point)
-    #     aux = np.tile(aux, (2, 1, 1))
-    #     first_prod = np.multiply(aux, np.transpose(image_gradient_by_point, (0, 2, 1)))
-    #     second_prod = np.dot(first_prod, affine_omega_coord)
-    #     return second_prod

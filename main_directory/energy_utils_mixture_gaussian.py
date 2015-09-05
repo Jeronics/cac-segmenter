@@ -77,6 +77,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([np.round(w) for w in gmm.weights_])
+
     x_m = utils.evaluate_image(omega_coord, image) - means
     x_m = x_m.T
     x_m_squared = x_m * x_m
@@ -110,9 +111,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     exp_aux = np.exp(-x_m_squared / denom)
 
     coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars.T))
-    # k = exp_aux
-    # k[k == 0] = np.min(np.exp(-744))
-    # exp_aux = k
     mixt = coeff * exp_aux
 
     unsummed_mixture_prob = weights * mixt
@@ -120,12 +118,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     number_of_components = len(means)
     if number_of_components > 1:
         mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=1)]).T
-        # mixture_prob_ind = np.argmax(mixture_prob, axis=1)
-        # mixture_prob = mixture_prob[mixture_prob_ind]
-        # means = np.array(means)[mixture_prob_ind]
-        # covars = np.array(covars)[mixture_prob_ind].T
-        # weights = np.array(weights)[mixture_prob_ind]
-
     else:
         mixture_prob = unsummed_mixture_prob
 
@@ -138,8 +130,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     energy = np.sum(np.log(k))
     print 'energy', energy
 
-    # import pdb;pdb.set_trace()
-
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
@@ -147,7 +137,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     unsummed_mixture_derivative = unsummed_mixture_prob * (x_m / covars.T)
     if number_of_components > 1:
         mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=1)]).T
-        # mixture_prob_ind = np.argmax(mixture_prob, axis=1)
     else:
         mixture_derivative = unsummed_mixture_derivative
 

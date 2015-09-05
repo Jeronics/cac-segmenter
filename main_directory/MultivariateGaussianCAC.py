@@ -1,9 +1,10 @@
+import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+
 from CACSegmenter import CACSegmenter
 from CAC import CAC
-import numpy as np
 import energy_utils_multivariate_gaussian as g_energies
 import utils
-from scipy.ndimage.filters import gaussian_filter
 
 
 class MultivariateGaussianCAC(CAC):
@@ -26,7 +27,8 @@ class MultivariateGaussianCAC(CAC):
         # Calculate Image gradient
         image = image_obj.image
         image = gaussian_filter(image, sigma=0.5, order=0)
-        image_gradient = np.array(np.gradient(image))
+        image_gradient = np.array([np.array(np.gradient(image[:, :, slice])) for slice in xrange(image.shape[2])])
+        image_gradient = np.transpose(image_gradient, (1,2,3,0))
         # Calculate Energy:
         omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
                                                           image_gradient)

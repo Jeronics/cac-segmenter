@@ -1,9 +1,10 @@
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+
 from CACSegmenter import CACSegmenter
 from CAC import CAC
 import energy_utils_multimixture_gaussian as g_energies
 import utils
-from scipy.ndimage.filters import gaussian_filter
 
 
 class MultiMixtureGaussianCAC(CAC):
@@ -26,7 +27,8 @@ class MultiMixtureGaussianCAC(CAC):
         # Calculate Image gradient
         image = image_obj.image
         image = gaussian_filter(image, sigma=0.5, order=0)
-        image_gradient = np.array(np.gradient(image))
+        image_gradient = np.array([np.array(np.gradient(image[:, :, slice])) for slice in xrange(image.shape[2])])
+        image_gradient = np.transpose(image_gradient, (1, 2, 3, 0))
         # Calculate Energy:
         omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
                                                           image_gradient)
@@ -36,12 +38,10 @@ class MultiMixtureGaussianCAC(CAC):
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, image_obj.gray_image, points=cage_obj.cage, color=color,
+        utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
 
-
 if __name__ == '__main__':
-
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
