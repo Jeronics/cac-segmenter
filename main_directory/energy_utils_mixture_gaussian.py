@@ -83,7 +83,7 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     x_m = x_m.T
     x_m_squared = x_m * x_m
     denom = 2 * covars
-    exp_aux = np.exp(x_m_squared / denom)
+    exp_aux = np.exp(-x_m_squared / denom)
     coeff = 1 / (np.sqrt(2 * np.pi) * np.sqrt(covars))
     mixt = coeff * exp_aux
     mixture_prob = weights * mixt
@@ -126,8 +126,8 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
         mixture_prob = unsummed_mixture_prob
 
     # Avoid logarithm of zero
-
     mixture_prob = avoid_zero_terms(mixture_prob)
+
     energy = np.sum(np.log(mixture_prob))
 
     # caluculate 1/P(x)

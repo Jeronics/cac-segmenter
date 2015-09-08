@@ -26,7 +26,8 @@ class MixtureGaussianCAC(CAC):
         image = self.image_obj.gray_image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
-        energy = (omega_1 + omega_2) / float(2)
+        energy = -(omega_1 + omega_2) / 2.
+        print 'Energy', energy
         return energy
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord):

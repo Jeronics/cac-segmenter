@@ -16,17 +16,18 @@ class MultiMixtureGaussianCAC(CAC):
         self.outside_gmm = outside_gmm
         self.weight = [1, 1, 1]
 
-    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-        image = image_obj.image
-        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image, )
-        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image, )
-        energy = (omega_1 + omega_2) / float(2)
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord):
+        image = self.image_obj.image
+        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
+        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
+        energy = -(omega_1 + omega_2) / 2.
+        print 'Energy', energy
+
         return energy
 
-    def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord):
         # Calculate Image gradient
-        image = image_obj.image
-        image = gaussian_filter(image, sigma=0.5, order=0)
+        image = self.image_obj.image
         image_gradient = np.array([np.array(np.gradient(image[:, :, slice])) for slice in xrange(image.shape[2])])
         image_gradient = np.transpose(image_gradient, (1, 2, 3, 0))
         # Calculate Energy:
@@ -37,9 +38,9 @@ class MultiMixtureGaussianCAC(CAC):
         energy = np.sum((omega_1 + omega_2) * self.weight, axis=2)
         return energy
 
-    def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, image_obj.image, points=cage_obj.cage, color=color,
-                                 points2=cage_obj.cage - alpha * 10 * grad_k)
+    def _plotContourOnImage(self, contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.]):
+        utils.plotContourOnImage(contour_coord, self.image_obj.image, points=current_cage_obj.cage, color=color,
+                                 points2=current_cage_obj.cage - alpha * 10 * grad_k)
 
 if __name__ == '__main__':
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)

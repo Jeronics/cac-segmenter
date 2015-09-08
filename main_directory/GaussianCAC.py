@@ -21,8 +21,8 @@ class GaussianCAC(CAC):
         self.outside_seed_std = outside_seed_std
         print self.inside_seed_mean, self.inside_seed_std, self.outside_seed_mean, self.outside_seed_std
 
-    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
-        image = image_obj.gray_image
+    def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord):
+        image = self.image_obj.gray_image
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_seed_mean,
                                                      self.inside_seed_std, image)
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_seed_mean,
@@ -30,10 +30,9 @@ class GaussianCAC(CAC):
         energy = (omega_1 + omega_2) / 2.
         return energy
 
-    def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord, image_obj):
+    def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord):
         # Calculate Image gradient
-        image = image_obj.gray_image
-        image = gaussian_filter(image, sigma=0.5, order=0)
+        image = self.image_obj.gray_image
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
@@ -44,8 +43,8 @@ class GaussianCAC(CAC):
         energy = omega_1 + omega_2
         return energy
 
-    def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, image_obj.gray_image, points=cage_obj.cage, color=color,
+    def _plotContourOnImage(self, contour_coord, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
+        utils.plotContourOnImage(contour_coord, self.image_obj.gray_image, points=cage_obj.cage, color=color,
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
 
 

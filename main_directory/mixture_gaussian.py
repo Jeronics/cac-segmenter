@@ -24,9 +24,6 @@ def get_number_of_components(X, maximum_n_components=7):
             if bic[-1] < lowest_bic:
                 lowest_bic = bic[-1] - bic[-1] * 0.0
                 best_gmm = gmm
-    print best_gmm.covars_
-    print best_gmm.means_
-    print best_gmm.weights_
 
     # bic = np.array(bic)
     # color_iter = itertools.cycle(['k', 'r', 'g', 'b', 'c', 'm', 'y'])
