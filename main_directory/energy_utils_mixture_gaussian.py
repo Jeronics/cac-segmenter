@@ -1,4 +1,5 @@
 import numpy as np
+
 import utils
 import opencv_utils as opencv_ut
 from MaskClass import MaskClass
@@ -72,8 +73,8 @@ def get_values_in_region(omega_coord, image):
     gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=7)
     return gmm
 
+
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([np.round(w) for w in gmm.weights_])
@@ -88,14 +89,17 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     mixture_prob = weights * mixt
 
     # Avoid logarithm of zero
-    k = mixture_prob
-    smallest_num = np.exp(-100)
-    k[k < smallest_num] = np.max(np.min(k[k > smallest_num]), smallest_num) # careful with when k[k>0] is empty
-    mixture_prob = k
+    mixture_prob = avoid_zero_terms(mixture_prob)
 
     energy = np.sum(np.log(mixture_prob))
-    print 'Step 2'
     return energy
+
+
+def avoid_zero_terms(k):
+    smallest_num = np.exp(-100)
+    if len(k < smallest_num) > 0:
+        k[k < smallest_num] = smallest_num  # careful with when k[k>0] is empty
+    return k
 
 
 def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
@@ -121,14 +125,10 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     else:
         mixture_prob = unsummed_mixture_prob
 
-
     # Avoid logarithm of zero
-    k = mixture_prob
-    smallest_num = np.exp(-100)
-    k[k < smallest_num] = np.max(np.min(k[k > smallest_num]), smallest_num)  # careful with when k[k>0] is empty
-    mixture_prob = k
-    energy = np.sum(np.log(k))
-    print 'energy', energy
+
+    mixture_prob = avoid_zero_terms(mixture_prob)
+    energy = np.sum(np.log(mixture_prob))
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
@@ -144,7 +144,47 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
     prod_2 = coeff_ * mixture_derivative
     grad = gradient_gauss_energy_for_each_vertex(prod_2, affine_omega_coord, image_gradient_by_point)
+
+    plot_grad = False
+    if plot_grad:
+        show_direction(image, prod_2, omega_coord, affine_omega_coord, image_gradient_by_point)
     return grad, energy
+
+
+def show_direction(image, aux, omega_coord, affine_omega_coord, image_gradient_by_point):
+    dx = np.array([image_gradient_by_point[0]]).T
+    dy = np.array([image_gradient_by_point[1]]).T
+    x_ = aux * dx
+    y_ = aux * dy
+    import copy
+
+    im = copy.copy(image)
+    x = np.multiply(y_.T, affine_omega_coord[:, 3])
+
+    import matplotlib.pyplot as plt
+
+
+    # max_num = 100000
+    # x[abs(x) > max_num] = x[abs(x) > max_num] / np.abs(x[abs(x) > max_num])
+
+    x = (x - np.min(x)) / float(np.max(x) - np.min(x))
+    im = im * 0.
+    im[np.array(omega_coord[:, 0], dtype=int), np.array(omega_coord[:, 1], dtype=int)] = x
+    plot_grad = False
+    if plot_grad:
+        plt.figure()
+        plt.plot(im[150, :].T * 255., label="direction")
+        plt.plot(image[150, :].T, label="Image")
+        plt.xlabel('pixels')
+        plt.ylabel('Intensity')
+        plt.legend()
+        plt.ylim([-1, 256])
+        plt.show()
+    print 'Wait a un minute .. printing the gradient.. '
+
+    plt.figure()
+    plt.imshow(im)
+    plt.show()
 
 
 def gradient_gauss_energy_for_each_vertex(aux, affine_omega_coord, image_gradient_by_point):

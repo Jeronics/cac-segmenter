@@ -7,6 +7,7 @@ import utils
 from CageClass import CageClass
 from MaskClass import MaskClass
 from ImageClass import ImageClass
+from scipy.ndimage.filters import gaussian_filter
 
 
 class CACSegmenter():
@@ -22,6 +23,7 @@ class CACSegmenter():
         self.type = type
         self.weight = weight
         self.CAC = CAC
+
 
     def load_dataset(self, dataset_name):
         assert os.path.isfile(dataset_name), 'The input dataset file name is not valid!'
@@ -70,13 +72,13 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 16:
+            if i < 18 or i in [42, 86, 98]:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ' + str(i) + '..'
-            cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight, band_size=80)
-            result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
-                                        plot_evolution=plot_evolution)
+            cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight, band_size=500)
+            image_obj = self.preprocess_image(image_obj)
+            result = cac_object.segment(plot_evolution=plot_evolution)
             # try:
             #     result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
             #                                 plot_evolution=plot_evolution)
@@ -90,6 +92,16 @@ class CACSegmenter():
                 result.save_cage(results_folder + '/' + image_obj.spec_name + '.txt')
         return 0
         # return resulting_cages, evaluation
+
+    def preprocess_image(self,image_obj):
+        image = gaussian_filter(image_obj.image, sigma=1.0, order=0)
+        image_obj.image = image
+
+        gray_image = gaussian_filter(image_obj.gray_image, sigma=1.5, order=0)
+        image_obj.gray_image = gray_image
+
+
+        return image_obj
 
 
     def _partition_dataset(self, dataset, i_th, CV):

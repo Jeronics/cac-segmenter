@@ -21,12 +21,9 @@ class MeanCAC(CAC):
         image_gradient = np.array(np.gradient(image))
 
         # Calculate Energy:
-        print 'interior'
         omega_1 = mean_energy.mean_energy_grad_per_region(omega1_coord, affine_omega_1_coord, image, image_gradient)
-        print 'exterior'
         omega_2 = mean_energy.mean_energy_grad_per_region(omega2_coord, affine_omega_2_coord, image, image_gradient)
         energy = omega_1 + omega_2
-        print '\n'
         return energy
 
     def _plotContourOnImage(self, contour_coord, image_obj, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -38,7 +35,7 @@ if __name__ == '__main__':
     mean_gray_cac = CACSegmenter(MeanCAC)
     parameter_list = mean_gray_cac.get_parameters()
 
-    dataset = mean_gray_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'segment_results_synthetic/' + mean_gray_cac.CAC.__name__
-    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    dataset = mean_gray_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_new/' + mean_gray_cac.CAC.__name__
+    mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
     # color_cac.train_model('BSDS300_input.txt')

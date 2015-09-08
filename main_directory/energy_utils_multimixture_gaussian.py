@@ -14,7 +14,7 @@ import mixture_gaussian
 
 def multivariate_initialize_seed(CAC, from_gt=True):
     image = CAC.image_obj.image
-    image = gaussian_filter(image, sigma=0.5, order=0)
+    # image = gaussian_filter(image, sigma=0.5, order=0)
 
     if from_gt:
         print 'Seed from ground truth...'
@@ -69,7 +69,6 @@ def get_values_in_region(omega_coord, image):
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
-    print 'step 2'
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([w for w in gmm.weights_]).T

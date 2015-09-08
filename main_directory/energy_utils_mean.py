@@ -17,7 +17,6 @@ def mean_energy_per_region(omega_coord, affine_omega_coord, image):
 def mean_energy_grad_per_region(omega_coord, affine_omega_coord, image, image_gradient):
     # E_mean
     omega_mean, omega_std = get_omega_mean(omega_coord, image)
-    print omega_mean, omega_std
     aux = utils.evaluate_image(omega_coord, image, omega_mean) - omega_mean
     image_gradient_by_point = [utils.evaluate_image(omega_coord, image_gradient[0], 0),
                                utils.evaluate_image(omega_coord, image_gradient[1], 0)]

@@ -1,10 +1,12 @@
-import pandas as pd
 import os
+
+import pandas as pd
 import matplotlib.pyplot as plt
-import pprint
+
 
 if __name__ == '__main__':
-    folder_name = os.getcwd() + '/'
+    results_folder_name = 'segment_results_alpert_new/'
+    folder_name =  results_folder_name
     first = None
     for r, s, f in os.walk(folder_name):
         for sub in s:
@@ -19,7 +21,7 @@ if __name__ == '__main__':
                 sorensen_dice.columns = [sub]
                 if not first:
                     df = sorensen_dice
-                    first=True
+                    first = True
                 else:
                     df = df.join(sorensen_dice, how='inner')
                 print 'Num inst.', len(sorensen_dice)
@@ -27,7 +29,7 @@ if __name__ == '__main__':
                 print 'STD', sorensen_dice.std().values[0]
                 print '\n'
 
-        df=df.fillna(-1)
+        df = df.fillna(-1)
         plt.figure()
         for sub in s:
             sorensen_dice_file = folder_name + sub + '/' + 'sorensen_dice_coeff.txt'
