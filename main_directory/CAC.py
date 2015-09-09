@@ -67,7 +67,7 @@ class CAC():
         d = 2 * beta
         constraint_params = [d, k]
         continue_while = True
-        previous_energy = None
+        energy = np.inf
         while continue_while:
             if iter > max_iter:
                 continue_while = False
@@ -111,20 +111,18 @@ class CAC():
                     axis = energies.multiple_normalize(axis)
                 grad_k = energies.multiple_project_gradient_on_axis(grad_k, axis)
                 alpha = beta
-
             else:
                 energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord,
                                      affine_omega_2_coord) + cage_constraint.energy_constraint(current_cage_obj.cage, d,
                                                                                                k)
-                if previous_energy:
-                    if energy > previous_energy:
-                        print 'second'
-                        continue_while = False
+                # if previous_energy:
+                #     if energy > previous_energy:
+                #         print 'second'
+                #         continue_while = False
 
-                previous_energy = energy
-                print 'first time'
 
                 print 'Beat this', energy
+                alpha=beta
                 alpha_new = self.second_step_alpha(alpha, current_cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates, contour_size, energy,
                                                    constraint_params)
@@ -167,10 +165,9 @@ class CAC():
 
     def second_step_alpha(self, alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy,
                           constraint_params):
-
         d, k = constraint_params
-        step = 0.1
-        next_energy = current_energy + 1
+        step = 0.2
+        next_energy = np.inf
         alpha += step
         nrow, ncol = self.mask_obj.shape
         while current_energy < next_energy:
@@ -201,7 +198,7 @@ class CAC():
             print 'STOP'
             return 0
         print 'Good alpha', alpha
-        return 1
+        return alpha
 
         # def second_step_alpha(self, alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, constraint_params):
         #

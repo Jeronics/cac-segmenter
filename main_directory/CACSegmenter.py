@@ -72,7 +72,7 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 16 or i in [42, 86, 98]:
+            if i < 17 or i in [42, 86, 98]:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ' + str(i) + '..'
