@@ -52,6 +52,6 @@ if __name__ == '__main__':
     gaussian_gray_cac = CACSegmenter(GaussianCAC)
     parameter_list = gaussian_gray_cac.get_parameters()
 
-    dataset = gaussian_gray_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'segment_synthetic/' + gaussian_gray_cac.CAC.__name__
+    dataset = gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_1/' + gaussian_gray_cac.CAC.__name__
     gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

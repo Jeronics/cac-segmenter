@@ -34,6 +34,6 @@ if __name__ == '__main__':
     mean_gray_cac = CACSegmenter(MeanCAC)
     parameter_list = mean_gray_cac.get_parameters()
 
-    dataset = mean_gray_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'segment_results_synthetic/' + mean_gray_cac.CAC.__name__
+    dataset = mean_gray_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_1/' + mean_gray_cac.CAC.__name__
     mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

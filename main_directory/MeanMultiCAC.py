@@ -37,6 +37,6 @@ class MeanMultiCAC(CAC):
 if __name__ == '__main__':
     rgb_cac = CACSegmenter(MeanMultiCAC, type=['N', 'N', 'N'], weight=[0, 0, 1])
     parameter_list = rgb_cac.get_parameters()
-    dataset = rgb_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'segment_results_synthetic/' + rgb_cac.CAC.__name__
+    dataset = rgb_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_1/' + rgb_cac.CAC.__name__
     rgb_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
