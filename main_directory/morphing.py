@@ -3,7 +3,9 @@ __author__ = 'jeroni'
 import ctypes_utils
 from utils import *
 import numpy as np
-from main_directory import utils
+from ImageClass import ImageClass
+from MaskClass import MaskClass
+import utils
 from scipy import interpolate
 import matplotlib.pyplot as plt
 
@@ -20,9 +22,32 @@ def morphing(origin_image, origin_cage, destination_mask, destination_cage):
     pear_coord = transformed_coord.astype(int)
     values = origin_image.image[pear_coord[:, 0], pear_coord[:, 1]]
 
-    end_image = utils.ImageClass(np.zeros([destination_mask.shape[0], destination_mask.shape[1], 3]))
+    end_image = ImageClass(np.zeros([destination_mask.shape[0], destination_mask.shape[1], 3]))
     end_image.image[np.where(end_mask == 255)] = values
 
+    return end_image
+
+def morphing_mask(origin_image, origin_cage, destination_mask, destination_cage):
+    end_mask = destination_mask.mask
+    eagle_coord = np.array(np.where(end_mask == 255.)).transpose()
+    eagle_coord_ = eagle_coord.copy()
+    eagle_coord_ = eagle_coord_.astype(dtype=float64)
+    affine_contour_coordinates = ctypes_utils.get_affine_contour_coordinates(eagle_coord_, destination_cage.cage)
+
+    transformed_coord = np.dot(affine_contour_coordinates, origin_cage.cage)
+
+    pear_coord = transformed_coord.astype(int)
+    boolean = utils.are_inside_image(pear_coord, origin_image.mask.shape)
+
+    pear_coord_ = pear_coord[boolean]
+    values = origin_image.mask[pear_coord_[:, 0], pear_coord_[:, 1]]
+
+
+    end_image = MaskClass(np.zeros([destination_mask.mask.shape[0], destination_mask.mask.shape[1]]))
+    aux=end_image.mask[np.where(end_mask == 255)]
+    aux[boolean]=values
+
+    end_image.mask[np.where(end_mask == 255)] = aux
     return end_image
 
 #
@@ -38,6 +63,7 @@ if __name__ == '__main__':
     eagle_cage.read_txt('../dataset/eagle/eagle2/results/cage_16_1.05_out.txt')
 
     pear_cage = utils.CageClass()
+
     pear_cage.read_txt('../dataset/pear/pear1/results/cage_16_1.05_out.txt')
 
     pear_image = utils.ImageClass()

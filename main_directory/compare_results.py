@@ -78,7 +78,9 @@ if __name__ == '__main__':
     # print np.argmin(final_images['MultivariateGaussianCAC']), min(final_images['MultivariateGaussianCAC'])
     # print np.argmin(final_images_t.mean()), min(final_images_t.max())
 
-    print final
+    # print final
+    print final_images.mean()
+    len(final_images)
     filename='text_results/AlpertGBB07/'
     if not os.path.exists(filename):
         os.makedirs(filename)
