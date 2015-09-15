@@ -20,9 +20,6 @@ def initialize_seed(CAC, from_gt=True):
     else:
         center = CAC.mask_obj.center
         radius_point = CAC.mask_obj.radius_point
-        print 'CENTER:', center
-        print 'RADIUS POINT:', radius_point
-        print 'RADIUS:', np.linalg.norm(np.array(radius_point) - np.array(center))
         radius = np.linalg.norm(np.array(radius_point) - np.array(center))
 
         inside_seed_omega = [center[0] + radius * 0.2, center[1]]

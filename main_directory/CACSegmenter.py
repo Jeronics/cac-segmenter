@@ -72,7 +72,7 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         for i, x in dataset.iterrows():
-            if i < 0 or i in [42, 86, 98]:
+            if i < 97 or i in [42, 86, 98]:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ' + str(i) + '..'
@@ -94,10 +94,10 @@ class CACSegmenter():
         # return resulting_cages, evaluation
 
     def preprocess_image(self,image_obj):
-        image = gaussian_filter(image_obj.image, sigma=0.5, order=0)
+        image = gaussian_filter(image_obj.image, sigma=0.25, order=0)
         image_obj.image = image
 
-        gray_image = gaussian_filter(image_obj.gray_image, sigma=0.5, order=0)
+        gray_image = gaussian_filter(image_obj.gray_image, sigma=0.25, order=0)
         image_obj.gray_image = gray_image
 
         return image_obj

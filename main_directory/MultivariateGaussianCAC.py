@@ -46,5 +46,5 @@ if __name__ == '__main__':
     parameter_list = multivariate_gaussian_gray_cac.get_parameters()
 
     dataset = multivariate_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_1/' + multivariate_gaussian_gray_cac.CAC.__name__
-    multivariate_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    results_folder = 'segment_results_alpert_4/' + multivariate_gaussian_gray_cac.CAC.__name__
+    multivariate_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

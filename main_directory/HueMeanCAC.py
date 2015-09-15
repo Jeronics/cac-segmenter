@@ -6,7 +6,7 @@ from scipy.ndimage.filters import gaussian_filter
 import utils
 
 
-class MeanColorCAC(CAC):
+class HueMeanCAC(CAC):
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord):
         energy1 = energy_ut.mean_color_energy_per_region(omega_1_coord, self.image_obj)
         energy2 = energy_ut.mean_color_energy_per_region(omega_2_coord, self.image_obj)
@@ -26,9 +26,9 @@ class MeanColorCAC(CAC):
 
 
 if __name__ == '__main__':
-    color_cac = CACSegmenter(MeanColorCAC)
+    color_cac = CACSegmenter(HueMeanCAC)
     parameter_list = color_cac.get_parameters()
     parameter_list = color_cac.get_parameters()
-    dataset = color_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'segment_results_synthetic/' + color_cac.CAC.__name__
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    dataset = color_cac.load_dataset('AlpertGBB07_input.txt')
+    results_folder = 'segment_results_alpert_3/' + color_cac.CAC.__name__
+    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

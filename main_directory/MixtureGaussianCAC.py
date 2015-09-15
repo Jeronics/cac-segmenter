@@ -12,13 +12,6 @@ class MixtureGaussianCAC(CAC):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
         inside_gmm, outside_gmm = g_energies.mixture_initialize_seed(self)
-        print 'Inside Mean', inside_gmm.means_
-        print 'Inside covars', inside_gmm.covars_
-        print 'Inside weights', inside_gmm.weights_
-
-        print 'outside Mean', outside_gmm.means_
-        print 'outside Covars', outside_gmm.covars_
-        print 'outside weight', outside_gmm.weights_
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
 
@@ -27,7 +20,6 @@ class MixtureGaussianCAC(CAC):
         omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
         omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
         energy = -(omega_1 + omega_2) / 2.
-        print 'Energy', energy
         return energy
 
     def energy_gradient(self, omega1_coord, omega2_coord, affine_omega_1_coord, affine_omega_2_coord):
@@ -55,5 +47,5 @@ if __name__ == '__main__':
     parameter_list = mixture_gaussian_gray_cac.get_parameters()
 
     dataset = mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_1/' + mixture_gaussian_gray_cac.CAC.__name__
-    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    results_folder = 'segment_results_alpert_4/' + mixture_gaussian_gray_cac.CAC.__name__
+    mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

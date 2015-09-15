@@ -121,7 +121,6 @@ class CAC():
                 #         continue_while = False
 
 
-                print 'Beat this', energy
                 alpha=beta
                 alpha_new = self.second_step_alpha(alpha, current_cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates, contour_size, energy,
@@ -195,9 +194,7 @@ class CAC():
             aux = cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)
             next_energy += aux
         if alpha < 0.01:
-            print 'STOP'
             return 0
-        print 'Good alpha', alpha
         return alpha
 
         # def second_step_alpha(self, alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, constraint_params):

@@ -12,14 +12,10 @@ class GaussianCAC(CAC):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
         inside_seed_mean, inside_seed_std, outside_seed_mean, outside_seed_std = g_energies.initialize_seed(self)
-        print 'STANDARDIZE:', self.standardize
-        print inside_seed_mean, inside_seed_std
-        print outside_seed_mean, outside_seed_std
         self.inside_seed_mean = inside_seed_mean
         self.inside_seed_std = inside_seed_std
         self.outside_seed_mean = outside_seed_mean
         self.outside_seed_std = outside_seed_std
-        print self.inside_seed_mean, self.inside_seed_std, self.outside_seed_mean, self.outside_seed_std
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord):
         image = self.image_obj.gray_image
@@ -53,5 +49,5 @@ if __name__ == '__main__':
     parameter_list = gaussian_gray_cac.get_parameters()
 
     dataset = gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_1/' + gaussian_gray_cac.CAC.__name__
-    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    results_folder = 'segment_results_alpert_4/' + gaussian_gray_cac.CAC.__name__
+    gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
