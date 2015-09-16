@@ -11,7 +11,7 @@ import mixture_gaussian
 '''
 
 
-def multivariate_initialize_seed(CAC, from_gt=True):
+def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7):
     image = CAC.image_obj.image
     if from_gt:
         print 'Seed from ground truth...'
@@ -50,18 +50,18 @@ def multivariate_initialize_seed(CAC, from_gt=True):
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
     print 'Number of components:'
-    inside_gmm = get_values_in_region(inside_coordinates, image)
+    inside_gmm = get_values_in_region(inside_coordinates, image, maximum_n_components)
     print 'Interior:\t', inside_gmm.n_components
-    outside_gmm = get_values_in_region(outside_coordinates, image)
+    outside_gmm = get_values_in_region(outside_coordinates, image, maximum_n_components)
     print 'Exterior:\t', outside_gmm.n_components
     return inside_gmm, outside_gmm
 
 
-def get_values_in_region(omega_coord, image):
+def get_values_in_region(omega_coord, image, maximum_n_components=7):
     omega_boolean = utils.are_inside_image(omega_coord, image.shape)
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[omega_coord_aux[:, 0], omega_coord_aux[:, 1]]
-    gmm = mixture_gaussian.get_number_of_components(values_in_region)
+    gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components)
     return gmm
 
 

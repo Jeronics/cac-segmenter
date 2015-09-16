@@ -46,7 +46,6 @@ def morphing_mask(origin_image, origin_cage, destination_mask, destination_cage)
     end_image = MaskClass(np.zeros([destination_mask.mask.shape[0], destination_mask.mask.shape[1]]))
     aux=end_image.mask[np.where(end_mask == 255)]
     aux[boolean]=values
-
     end_image.mask[np.where(end_mask == 255)] = aux
     return end_image
 

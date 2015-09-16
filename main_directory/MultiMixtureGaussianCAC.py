@@ -11,7 +11,7 @@ class MultiMixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
-        inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self)
+        inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self,maximum_n_components=12)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
         self.weight = [1, 1, 1]
@@ -45,5 +45,5 @@ if __name__ == '__main__':
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
     dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_4/' + multi_mixture_gaussian_gray_cac.CAC.__name__
+    results_folder = 'segment_results_alpert_prova/' + multi_mixture_gaussian_gray_cac.CAC.__name__+ '_14/'
     multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

@@ -59,10 +59,11 @@ class MaskClass:
         self.__init__(im, filename='', threshold=125., center=c, radius_point=p)
 
 
-    def plot_image(self, show_plot=True):
+    def plot_image(self, show_plot=True, title_name=''):
         im_aux = self.mask.astype('uint8')
         plt.gray()
         plt.imshow(im_aux, interpolation='nearest')
+        plt.title(title_name)
         plt.axis('off')
         if show_plot:
             plt.show()

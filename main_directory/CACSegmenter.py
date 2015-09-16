@@ -1,13 +1,14 @@
 import os
+import pickle
 
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
+from scipy.ndimage.filters import gaussian_filter
 
 import utils
 from CageClass import CageClass
 from MaskClass import MaskClass
 from ImageClass import ImageClass
-from scipy.ndimage.filters import gaussian_filter
 
 
 class CACSegmenter():
@@ -71,16 +72,19 @@ class CACSegmenter():
         utils.mkdir(results_folder)
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
+        pickle.dump(params, open(results_folder + 'parameters.p', 'wb'))
+
         for i, x in dataset.iterrows():
-            if i < 97 or i in [42, 86, 98]:
+            if i < 0 or i in [42, 86, 98]:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ' + str(i) + '..'
-            cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight, band_size=500)
+            cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight,
+                                  band_size=500)
             image_obj = self.preprocess_image(image_obj)
             result = cac_object.segment(plot_evolution=plot_evolution)
             # try:
-            #     result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
+            # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
             #                                 plot_evolution=plot_evolution)
             # except:
             #     result = None
@@ -93,7 +97,7 @@ class CACSegmenter():
         return 0
         # return resulting_cages, evaluation
 
-    def preprocess_image(self,image_obj):
+    def preprocess_image(self, image_obj):
         image = gaussian_filter(image_obj.image, sigma=0.25, order=0)
         image_obj.image = image
 

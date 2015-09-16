@@ -1,7 +1,6 @@
 import os
 
 import pandas as pd
-import numpy as np
 
 
 if __name__ == '__main__':
@@ -10,8 +9,9 @@ if __name__ == '__main__':
     # 'segment_results_alpert_3/'--> sigma=0.25
     # 'segment_results_alpert_4/'--> sigma=0.1
     # 'segment_results_alpert_prova/'--> sigma=1.0
+    # 'segment_results_alpert_3/'--> sigma=0.25
 
-    results_folder_name = 'segment_results_alpert_3/'
+    results_folder_name = 'segment_results_alpert_prova/'
     folder_name = results_folder_name
     first = None
 
@@ -61,9 +61,15 @@ if __name__ == '__main__':
     # print len(final_images.values)
 
     final_images_t = pd.DataFrame.from_dict(images_dict, orient='index')
-
+    final_images = final_images.drop(
+        ['san_andres_130', 'img_3803', 'bw4', 'sg_01_img_1943_tratada', 'palovigna', 'tendrils', 'cheeky_penguin',
+         'ireland_62_bg_061502', 'snow2_004', 'yokohm060409_dyjsn191', 'sharp_image', 'matsumt060102_dyj08', 'carriage',
+         'dscf3623', 'egret_face', '114591144943', 'img_4214', 'img_1516', 'osaka060102_dyjsn071', 'estb_img_6461_',
+         'b7nature_trees002', 'dsc_0959', 'img_7359_copia', 'imgp2712', 'dscn2064', 'chaom38', 'europe_holiday_484',
+         'b2pods001', 'chain98', 'b1snake001', 'img_3083_modif', 'b19objects118', 'carrigafoyle_castle_ext',
+         '112255696146', 'imagen_072__1_', 'dscf0459', '20060319_087'])
     # final_images = final_images.drop(
-    #     ['palovigna', 'culzeancastle', 'osaka060102_dyjsn071', 'img_1516', 'b4nature_animals_land009', 'san_andres_130',
+    # ['palovigna', 'culzeancastle', 'osaka060102_dyjsn071', 'img_1516', 'b4nature_animals_land009', 'san_andres_130',
     #      'dscn2064', 'dscf3623', 'matsumt060102_dyj08', '110016671724', 'img_4214', 'estb_img_6461_',
     #      'ireland_62_bg_061502', 'hpim1242', 'dscn2154', 'dscn6805', 'imgp2712', 'tendrils'])
     # final_images = final_images.drop(
@@ -80,11 +86,9 @@ if __name__ == '__main__':
 
     # print final
     print final_images.mean()
-    len(final_images)
-    filename='text_results/AlpertGBB07/'
+    print len(final_images)
+    filename = 'text_results/AlpertGBB07/'
     if not os.path.exists(filename):
         os.makedirs(filename)
-    final.to_csv(filename+'segment_results_alpert_3.txt')
+    final.to_csv(filename + 'segment_results_alpert_prova.txt')
     # print len(final_images.values)
-
-
