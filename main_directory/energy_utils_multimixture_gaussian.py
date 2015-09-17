@@ -23,6 +23,9 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7):
 
         inside_seed = opencv_ut.erode(inside_seed, width=10)
         outside_seed = opencv_ut.erode(outside_seed, width=10)
+        print outside_seed.shape
+        outside_band_seed = outside_seed-opencv_ut.erode(outside_seed, width=50)
+        print outside_band_seed.shape
     else:
         center = CAC.mask_obj.center
         radius_point = CAC.mask_obj.radius_point
@@ -45,9 +48,11 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7):
 
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
-    # utils.printNpArray(outside_seed)
+    # utils.printNpArray(outside_band_seed)
+    print  np.unique(outside_band_seed)
     inside_coordinates = np.argwhere(inside_seed == 255.)
-    outside_coordinates = np.argwhere(outside_seed == 255.)
+    outside_coordinates = np.argwhere(outside_band_seed == 255.)
+    print len(outside_coordinates)
 
     print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image, maximum_n_components)
@@ -66,7 +71,7 @@ def get_values_in_region(omega_coord, image, maximum_n_components=7):
 
 
 def avoid_zero_terms(k):
-    smallest_num = np.exp(-400)
+    smallest_num = np.exp(-100)
     if len(k < smallest_num) > 0:
         k[k < smallest_num] = smallest_num  # careful with when k[k>0] is empty
     return k

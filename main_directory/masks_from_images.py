@@ -66,7 +66,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    dataset_name = 'synthetic'
+    dataset_name = 'alpert'
     if dataset_name == 'bsds300':
         file_name = '../../BSDS300_images.txt'
         gt_file_name = '../../BSDS300_gt.txt'
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     if dataset_name == 'alpert':
         file_name = '../../AlpertGBB07_images.txt'
         gt_file_name = '../../AlpertGBB07_gt.txt'
-        output_file_name = 'AlpertGBB07_input.txt'
+        output_file_name = 'AlpertGBB07_input_2.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'synthetic':
         file_name = '../../synthetic_images.txt'

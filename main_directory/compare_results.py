@@ -90,5 +90,5 @@ if __name__ == '__main__':
     filename = 'text_results/AlpertGBB07/'
     if not os.path.exists(filename):
         os.makedirs(filename)
-    final.to_csv(filename + 'segment_results_alpert_prova.txt')
+    final.to_csv(filename + 'segment_results_synthetic_prova.txt')
     # print len(final_images.values)
