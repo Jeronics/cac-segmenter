@@ -18,8 +18,8 @@ class CACSegmenter():
         self.d = 10
         self.other = 10
         self.parameters = {
-            'num_points': [12, 14, 16],
-            'ratio': [1.05, 1.1, 1.15, 1.2, 1.25],
+            'num_points': [12],  # [12, 18, 24],
+            'ratio': [1.05]  #[1.05, 1.1, 1.15, 1.2, 1.25],
         }
         self.type = type
         self.weight = weight
@@ -75,17 +75,19 @@ class CACSegmenter():
         pickle.dump(params, open(results_folder + 'parameters.p', 'wb'))
 
         for i, x in dataset.iterrows():
-            if i < 16: # or i in [42, 86, 98] or i in []:
+            # if i < 94 or i in [42, 86, 98] or i in []:
+            #     continue
+            if i < 0 or i==26:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
-            print 'Start Segmentation  of ' + str(i) + '..'
+            print 'Start Segmentation  of ', 'Num:', str(i), image_obj.spec_name, '..'
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight,
                                   band_size=500)
             image_obj = self.preprocess_image(image_obj)
             result = cac_object.segment(plot_evolution=plot_evolution)
             # try:
             # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
-            #                                 plot_evolution=plot_evolution)
+            # plot_evolution=plot_evolution)
             # except:
             #     result = None
             print 'End Segmentation'
@@ -98,10 +100,10 @@ class CACSegmenter():
         # return resulting_cages, evaluation
 
     def preprocess_image(self, image_obj):
-        image = gaussian_filter(image_obj.image, sigma=1.0, order=0)
+        image = gaussian_filter(image_obj.image, sigma=0.75, order=0)
         image_obj.image = image
 
-        gray_image = gaussian_filter(image_obj.gray_image, sigma=1.0, order=0)
+        gray_image = gaussian_filter(image_obj.gray_image, sigma=0.75, order=0)
         image_obj.gray_image = gray_image
 
         return image_obj

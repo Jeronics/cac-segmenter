@@ -67,7 +67,6 @@ class CAC():
         d = 2 * beta
         constraint_params = [d, k]
         continue_while = True
-        energy = np.inf
         while continue_while:
             if iter > max_iter:
                 continue_while = False
@@ -99,7 +98,7 @@ class CAC():
             if self.standardize:
                 grad_k = energies.multiple_standardize(grad_k)
                 # Maximum cut if greater than one
-                grad_k[abs(grad_k) > 1] /= abs(grad_k[abs(grad_k) > 1])
+                # grad_k[abs(grad_k) > 1] /= abs(grad_k[abs(grad_k) > 1])
             else:
                 grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
@@ -144,7 +143,7 @@ class CAC():
             # plotContourOnImage(contour_coord, self.mask_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
             # points2=cage_obj.cage - alpha * 10 * grad_k)
 
-            if plot_evolution:
+            if plot_evolution and iter%10 ==0:
                 self._plotContourOnImage(contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.])
 
             # Update File current cage
@@ -196,36 +195,3 @@ class CAC():
         if alpha < 0.01:
             return 0
         return alpha
-
-        # def second_step_alpha(self, alpha, curr_cage, grad_k, band_size, affine_contour_coord, contour_size, current_energy, constraint_params):
-        #
-        # d, k = constraint_params
-        # step = 0.2
-        #     next_energy = current_energy + 1
-        #     alpha += step
-        #     nrow, ncol = self.image_obj.shape
-        #     while current_energy < next_energy:
-        #         alpha -= step
-        #
-        #         # calculate new contour_coord
-        #         contour_coord = np.dot(affine_contour_coord, curr_cage - grad_k * alpha)
-        #
-        #         # Calculate new omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord,
-        #         omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = ctypes.get_omega_1_and_2_coord(band_size,
-        #                                                                                                   contour_coord,
-        #                                                                                                   contour_size,
-        #                                                                                                   ncol, nrow)
-        #         if not omega_1_size:
-        #             return None
-        #         affine_omega_1_coord, affine_omega_2_coord = ctypes.get_omega_1_and_2_affine_coord(omega_1_coord,
-        #                                                                                            omega_1_size,
-        #                                                                                            omega_2_coord,
-        #                                                                                            omega_2_size,
-        #                                                                                            len(curr_cage),
-        #                                                                                            curr_cage - grad_k * alpha)
-        #
-        #         next_energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord) + \
-        #                       cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)
-        #     if alpha < 0.1:
-        #         return 0
-        #     return 1

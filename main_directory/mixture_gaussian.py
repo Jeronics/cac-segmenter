@@ -21,7 +21,7 @@ def get_number_of_components(X, maximum_n_components=7):
             aux_score = gmm.bic(X)
             bic.append(aux_score)
             # print bic[-1], lowest_bic
-            if bic[-1] < lowest_bic:
+            if bic[-1] < lowest_bic: # and np.min(gmm.weights_) > 0.:
                 lowest_bic = bic[-1] - bic[-1] * 0.0
                 best_gmm = gmm
 
@@ -36,7 +36,7 @@ def get_number_of_components(X, maximum_n_components=7):
     # xpos = np.array(n_components_range) + .2 * (i - 2)
     # bars.append(plt.bar(xpos, bic[i * len(n_components_range):
     # (i + 1) * len(n_components_range)],
-    #                         width=.2, color=color))
+    # width=.2, color=color))
     # plt.xticks(n_components_range)
     # plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
     # plt.title('BIC score per model')

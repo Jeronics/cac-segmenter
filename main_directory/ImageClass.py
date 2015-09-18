@@ -4,6 +4,7 @@ import energy_utils_mean_hue as hue_mean
 import rose_graph
 import matplotlib
 import scipy
+import scipy.misc as misc
 matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
 
@@ -114,7 +115,8 @@ class ImageClass:
     def save_image(self, filename=''):
         if filename == '':
             filename = self.save_path
-        scipy.misc.imsave(filename, self.image)
+        print self.image
+        misc.imsave(filename, self.image)
 
     def rgb2gray(self, rgb):
         if len(rgb.shape) == 3:
