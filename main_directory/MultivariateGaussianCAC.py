@@ -33,7 +33,7 @@ class MultivariateGaussianCAC(CAC):
                                                           image_gradient)
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
                                                           image_gradient)
-        energy = np.sum((omega_1 + omega_2) * self.weight, axis=2)
+        energy = omega_1 + omega_2
         return energy
 
     def _plotContourOnImage(self, contour_coord, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -45,6 +45,6 @@ if __name__ == '__main__':
     multivariate_gaussian_gray_cac = CACSegmenter(MultivariateGaussianCAC)
     parameter_list = multivariate_gaussian_gray_cac.get_parameters()
 
-    dataset = multivariate_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_prova/' + multivariate_gaussian_gray_cac.CAC.__name__
+    dataset = multivariate_gaussian_gray_cac.load_dataset('synthetic_input.txt')
+    results_folder = 'other/' + multivariate_gaussian_gray_cac.CAC.__name__
     multivariate_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
