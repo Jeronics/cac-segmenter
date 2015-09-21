@@ -143,11 +143,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
     denom_x_m_derImage = -np.array([np.sum(Mx * image_gradient_by_point, axis=1) for Mx in denom_x_m])/2.
 
-
-    # if len(means)>1:
-    #     unsummed_mixture_prob = unsummed_mixture_prob
-    # else:
-    #     unsummed_mixture_prob = unsummed_mixture_prob
     prod_2 = coeff_ * unsummed_mixture_prob.T
 
     prod_3 = np.multiply(prod_2, np.transpose(denom_x_m_derImage, (1, 0, 2)))
