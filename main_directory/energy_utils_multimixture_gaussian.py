@@ -4,6 +4,7 @@ import utils
 import opencv_utils as opencv_ut
 from MaskClass import MaskClass
 import mixture_gaussian
+import copy
 
 
 '''
@@ -11,7 +12,8 @@ import mixture_gaussian
 '''
 
 
-def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only_band=True, plot_coordinate_distribution=False):
+def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only_band=True,
+                                 plot_coordinate_distribution=False):
     image = CAC.image_obj.image
     if from_gt:
         print 'Seed from ground truth...'
@@ -45,11 +47,13 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only
         inside_seed = inside_mask_seed.mask
         outside_band_seed = 255. - outside_mask_seed.mask
 
+
     # inside_mask_seed.plot_image()
     # CAC.mask_obj.plot_image()
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_band_seed == 255.)
     if plot_coordinate_distribution:
+        print 'TODO'
 
     print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image, maximum_n_components)
@@ -92,12 +96,17 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, smalles
     coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
     mixt = exp_x_m_denom_x_m * coeff
     mixture_prob = mixt * weights
+    if len(means) > 1:
+        mixture_prob = np.sum(mixture_prob, axis=1)
+    else:
+        mixture_prob = mixture_prob
     mixture_prob = avoid_zero_terms(mixture_prob, smallest_num=smallest_num)
     energy = np.sum(np.log(mixture_prob))
     return energy
 
 
-def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient, smallest_num=np.exp(-200)):
+def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient,
+                                 smallest_num=np.exp(-200)):
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([w for w in gmm.weights_]).T
@@ -117,37 +126,33 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
     mixt = exp_x_m_denom_x_m * coeff
     unsummed_mixture_prob = mixt * weights
-    unsummed_mixture_prob = np.tile(unsummed_mixture_prob, (3, 1, 1))
-    unsummed_mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2))
 
-    if len(means) > 1:
-        mixture_prob = np.array([np.sum(unsummed_mixture_prob, axis=2)])
-    else:
-        mixture_prob = np.transpose(unsummed_mixture_prob, (1, 0, 2)).T
-
-    mixture_prob = mixture_prob[0, :, :]
+    mixture_prob = np.sum(unsummed_mixture_prob, axis=1)
 
     mixture_prob = avoid_zero_terms(mixture_prob, smallest_num=smallest_num)
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
 
-    # calculate the derivative of the mixture
-    # denom_x_m = np.dot(denom, np.transpose(x_m, (0, 2, 1)))
-    # denom_x_m = np.array([denom_x_m[i, :, :, i] for i in xrange(len(weights))])
     denom_x_m = np.array([np.dot(M, X) for M, X in zip(denom, np.transpose(x_m, (1, 2, 0)))])
-
-    unsummed_mixture_derivative = unsummed_mixture_prob * denom_x_m.T / 2.
-
-    if len(means) > 1:
-        mixture_derivative = np.array([np.sum(unsummed_mixture_derivative, axis=2)])
-    else:
-        mixture_derivative = np.transpose(unsummed_mixture_derivative, (1, 0, 2)).T
+    # x_m_denom = np.transpose(np.array([np.dot(X, M) for M, X in zip(denom, np.transpose(x_m, (1, 0, 2)))]),(0,2,1))
 
     image_gradient_by_point = np.array([utils.evaluate_image(omega_coord, image_gradient[0]),
                                         utils.evaluate_image(omega_coord, image_gradient[1])])
-    prod_2 = coeff_ * mixture_derivative
-    grad = gradient_gauss_energy_for_each_vertex(prod_2.T, affine_omega_coord, image_gradient_by_point)
+    image_gradient_by_point = np.transpose(image_gradient_by_point, (0, 2, 1))
+
+    denom_x_m_derImage = -np.array([np.sum(Mx * image_gradient_by_point, axis=1) for Mx in denom_x_m])/2.
+
+
+    # if len(means)>1:
+    #     unsummed_mixture_prob = unsummed_mixture_prob
+    # else:
+    #     unsummed_mixture_prob = unsummed_mixture_prob
+    prod_2 = coeff_ * unsummed_mixture_prob.T
+
+    prod_3 = np.multiply(prod_2, np.transpose(denom_x_m_derImage, (1, 0, 2)))
+    prod_4 = np.sum(prod_3, axis=1)
+    grad = np.dot(prod_4, affine_omega_coord).T
     return grad
 
 

@@ -35,7 +35,7 @@ class MultiMixtureGaussianCAC(CAC):
                                                           image_gradient, smallest_num=self.smallest_number)
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
                                                           image_gradient, smallest_num=self.smallest_number)
-        energy = np.sum((omega_1 + omega_2) * self.weight, axis=2)
+        energy = -(omega_1 + omega_2)
         return energy
 
     def _plotContourOnImage(self, contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.]):
@@ -48,12 +48,12 @@ if __name__ == '__main__':
     new_parameters = {
         'num_points': [16],
         'ratio': [1.05],
-        'smallest_number': [np.exp(-100)],
+        'smallest_number': [np.exp(-200)],
     }
     multi_mixture_gaussian_gray_cac.parameters = new_parameters
     multi_mixture_gaussian_gray_cac.sigma = 0.25
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
     dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input_subtest.txt')
-    results_folder = 'other/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + '_16_105_025_100/'
+    results_folder = 'other/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + 'new_16_105_025_100/'
     multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

@@ -96,12 +96,11 @@ class CAC():
                 current_cage_obj.cage, d, k)
             grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord,
                                           affine_omega_2_coord) + internal_energy
-            print internal_energy
             if self.standardize:
                 grad_k = energies.multiple_standardize(grad_k)
                 # Maximum cut if greater than one
-                big_values = energies.multiple_norm(grad_k)>1
-                grad_k[big_values]=energies.multiple_normalize(grad_k[big_values])
+                big_values = energies.multiple_norm(grad_k) > 1
+                grad_k[big_values] = energies.multiple_normalize(grad_k[big_values])
             else:
                 grad_k = energies.multiple_normalize(grad_k)
             if first_stage:
@@ -118,12 +117,12 @@ class CAC():
                                      affine_omega_2_coord) + cage_constraint.energy_constraint(current_cage_obj.cage, d,
                                                                                                k)
                 # if previous_energy:
-                #     if energy > previous_energy:
+                # if energy > previous_energy:
                 #         print 'second'
                 #         continue_while = False
 
 
-                alpha=beta
+                alpha = beta
                 alpha_new = self.second_step_alpha(alpha, current_cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates, contour_size, energy,
                                                    constraint_params)
@@ -146,7 +145,7 @@ class CAC():
             # plotContourOnImage(contour_coord, self.mask_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
             # points2=cage_obj.cage - alpha * 10 * grad_k)
 
-            if plot_evolution and iter%10 ==0:
+            if plot_evolution and iter % 1 == 0:
                 self._plotContourOnImage(contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.])
 
             # Update File current cage

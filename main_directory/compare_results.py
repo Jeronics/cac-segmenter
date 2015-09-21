@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     # print final
     print final
-    print final.sort('mean_correct')
+    print final.sort('Mean')
     # print len(final_images)
     # filename = 'text_results/subtests_AlpertGBB07/'
     # if not os.path.exists(filename):
