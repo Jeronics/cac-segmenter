@@ -11,7 +11,7 @@ import mixture_gaussian
 '''
 
 
-def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only_band=True):
+def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only_band=True, plot_coordinate_distribution=False):
     image = CAC.image_obj.image
     if from_gt:
         print 'Seed from ground truth...'
@@ -49,6 +49,7 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only
     # CAC.mask_obj.plot_image()
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_band_seed == 255.)
+    if plot_coordinate_distribution:
 
     print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image, maximum_n_components)
