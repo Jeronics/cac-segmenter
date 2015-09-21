@@ -92,13 +92,16 @@ class CAC():
             grad_k_3 = grad_k_2.copy()
             grad_k_2 = grad_k_1.copy()
             grad_k_1 = grad_k.copy()
-            grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord,
-                                          affine_omega_2_coord) + cage_constraint.grad_energy_constraint(
+            internal_energy = + cage_constraint.grad_energy_constraint(
                 current_cage_obj.cage, d, k)
+            grad_k = self.energy_gradient(omega_1_coord, omega_2_coord, affine_omega_1_coord,
+                                          affine_omega_2_coord) + internal_energy
+            print internal_energy
             if self.standardize:
                 grad_k = energies.multiple_standardize(grad_k)
                 # Maximum cut if greater than one
-                # grad_k[abs(grad_k) > 1] /= abs(grad_k[abs(grad_k) > 1])
+                big_values = energies.multiple_norm(grad_k)>1
+                grad_k[big_values]=energies.multiple_normalize(grad_k[big_values])
             else:
                 grad_k = energies.multiple_normalize(grad_k)
             if first_stage:

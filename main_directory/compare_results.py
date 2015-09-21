@@ -41,7 +41,9 @@ if __name__ == '__main__':
                 dict_methods[sub] = {
                     'Num_inst': len(sorensen_dice),
                     'Mean': sorensen_dice.mean().values[0],
-                    'STD': sorensen_dice.std().values[0]
+                    'STD': sorensen_dice.std().values[0],
+                    'num_correct':len(sorensen_dice[sorensen_dice[sub]>0.8]),
+                    'mean_correct': sorensen_dice[sorensen_dice[sub]>0.8].mean().values[0]
                 }
 
                 # df = df.fillna(-1)
@@ -85,10 +87,11 @@ if __name__ == '__main__':
     # print np.argmin(final_images_t.mean()), min(final_images_t.max())
 
     # print final
-    print final_images.mean()
-    print len(final_images)
-    filename = 'text_results/subtests_AlpertGBB07/'
-    if not os.path.exists(filename):
-        os.makedirs(filename)
-    final.to_csv(filename + 'subtests.txt')
+    print final
+    print final.sort('mean_correct')
+    # print len(final_images)
+    # filename = 'text_results/subtests_AlpertGBB07/'
+    # if not os.path.exists(filename):
+    #     os.makedirs(filename)
+    # final.to_csv(filename + 'subtests.txt')
     # print len(final_images.values)

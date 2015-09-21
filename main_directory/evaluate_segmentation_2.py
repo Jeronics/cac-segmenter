@@ -55,10 +55,8 @@ def _load_model(x, parameters):
 
 def walk_through_images(dataset, params, results_cage_folder):
     for i, x in dataset.iterrows():
-        print 'hi', i
-        if i < 89 or i in [42, 86, 98]:
+        if i ==26:# i in [42, 86, 98]:
             continue
-        print params
         image_obj, mask_obj, cage_obj, gt_mask = _load_model(x, params)
         results_cage_file = results_cage_folder + image_obj.spec_name + '.txt'
         if not os.path.exists(results_cage_file):
@@ -77,8 +75,8 @@ def walk_through_images(dataset, params, results_cage_folder):
 
 
 if __name__ == '__main__':
-    dataset = load_masks('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_prova/' + 'MultiMixtureGaussianCAC_7/'
+    dataset = load_masks('AlpertGBB07_input_subtest.txt')
+    results_folder = 'segment_subtests/' + 'MultiMixtureGaussianCAC_20_105_025_100/'
     parameter_file = results_folder + 'parameters.p'
     params = pickle.load(open(parameter_file, "rb"))
     walk_through_images(dataset, params, results_folder)

@@ -50,7 +50,6 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_band_seed == 255.)
 
-
     print 'Number of components:'
     inside_gmm = get_values_in_region(inside_coordinates, image, maximum_n_components)
     print 'Interior:\t', inside_gmm.n_components
@@ -67,14 +66,13 @@ def get_values_in_region(omega_coord, image, maximum_n_components=7):
     return gmm
 
 
-def avoid_zero_terms(k):
-    smallest_num = np.exp(-300)
+def avoid_zero_terms(k, smallest_num=np.exp(-200)):
     if np.sum(k < smallest_num) > 0:
         k[k < smallest_num] = k[k < smallest_num] * 0 + smallest_num  # careful with when k[k>0] is empty
     return k
 
 
-def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
+def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, smallest_num=np.exp(-200)):
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([w for w in gmm.weights_]).T
@@ -93,12 +91,12 @@ def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):
     coeff = 1 / (np.power(np.sqrt(2 * np.pi), k) * np.sqrt(np.linalg.det(covars)))
     mixt = exp_x_m_denom_x_m * coeff
     mixture_prob = mixt * weights
-    mixture_prob = avoid_zero_terms(mixture_prob)
+    mixture_prob = avoid_zero_terms(mixture_prob, smallest_num=smallest_num)
     energy = np.sum(np.log(mixture_prob))
     return energy
 
 
-def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient):
+def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, image_gradient, smallest_num=np.exp(-200)):
     means = np.array([m for m in gmm.means_])
     covars = np.array([v for v in gmm.covars_])
     weights = np.array([w for w in gmm.weights_]).T
@@ -128,7 +126,7 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
 
     mixture_prob = mixture_prob[0, :, :]
 
-    mixture_prob = avoid_zero_terms(mixture_prob)
+    mixture_prob = avoid_zero_terms(mixture_prob, smallest_num=smallest_num)
 
     # caluculate 1/P(x)
     coeff_ = 1 / mixture_prob
@@ -137,8 +135,6 @@ def grad_gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image, im
     # denom_x_m = np.dot(denom, np.transpose(x_m, (0, 2, 1)))
     # denom_x_m = np.array([denom_x_m[i, :, :, i] for i in xrange(len(weights))])
     denom_x_m = np.array([np.dot(M, X) for M, X in zip(denom, np.transpose(x_m, (1, 2, 0)))])
-
-
 
     unsummed_mixture_derivative = unsummed_mixture_prob * denom_x_m.T / 2.
 

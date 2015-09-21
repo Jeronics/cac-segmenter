@@ -21,7 +21,7 @@ def get_number_of_components(X, maximum_n_components=7):
             aux_score = gmm.bic(X)
             bic.append(aux_score)
             # print bic[-1], lowest_bic
-            if bic[-1] < lowest_bic: # and np.min(gmm.weights_) > 0.:
+            if bic[-1] < lowest_bic and np.min(gmm.weights_) > 0.:
                 lowest_bic = bic[-1] - bic[-1] * 0.0
                 best_gmm = gmm
 

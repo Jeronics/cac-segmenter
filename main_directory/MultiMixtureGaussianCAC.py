@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.ndimage.filters import gaussian_filter
 
 from CACSegmenter import CACSegmenter
 from CAC import CAC
@@ -11,15 +10,18 @@ class MultiMixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
-        inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self,maximum_n_components=7)
+        inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self, maximum_n_components=7)
+        self.smallest_number = np.exp(-200)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
         self.weight = [1, 1, 1]
 
     def energy(self, omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord):
         image = self.image_obj.image
-        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image)
-        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image)
+        omega_1 = g_energies.gauss_energy_per_region(omega_1_coord, affine_omega_1_coord, self.inside_gmm, image,
+                                                     smallest_num=self.smallest_number)
+        omega_2 = g_energies.gauss_energy_per_region(omega_2_coord, affine_omega_2_coord, self.outside_gmm, image,
+                                                     smallest_num=self.smallest_number)
         energy = -(omega_1 + omega_2) / 2.
         return energy
 
@@ -30,9 +32,9 @@ class MultiMixtureGaussianCAC(CAC):
         image_gradient = np.transpose(image_gradient, (1, 2, 3, 0))
         # Calculate Energy:
         omega_1 = g_energies.grad_gauss_energy_per_region(omega1_coord, affine_omega_1_coord, self.inside_gmm, image,
-                                                          image_gradient)
+                                                          image_gradient, smallest_num=self.smallest_number)
         omega_2 = g_energies.grad_gauss_energy_per_region(omega2_coord, affine_omega_2_coord, self.outside_gmm, image,
-                                                          image_gradient)
+                                                          image_gradient, smallest_num=self.smallest_number)
         energy = np.sum((omega_1 + omega_2) * self.weight, axis=2)
         return energy
 
@@ -40,10 +42,18 @@ class MultiMixtureGaussianCAC(CAC):
         utils.plotContourOnImage(contour_coord, self.image_obj.image, points=current_cage_obj.cage, color=color,
                                  points2=current_cage_obj.cage - alpha * 10 * grad_k)
 
+
 if __name__ == '__main__':
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
+    new_parameters = {
+        'num_points': [16],
+        'ratio': [1.05],
+        'smallest_number': [np.exp(-100)],
+    }
+    multi_mixture_gaussian_gray_cac.parameters = new_parameters
+    multi_mixture_gaussian_gray_cac.sigma = 0.25
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
     dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input_subtest.txt')
-    results_folder = 'segment_subtests/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + '_12_105_075_300/'
-    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    results_folder = 'other/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + '_16_105_025_100/'
+    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
