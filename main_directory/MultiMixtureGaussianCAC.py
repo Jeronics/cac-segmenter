@@ -46,14 +46,14 @@ class MultiMixtureGaussianCAC(CAC):
 if __name__ == '__main__':
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     new_parameters = {
-        'num_points': [16],
-        'ratio': [1.05],
-        'smallest_number': [np.exp(-200)],
+        'num_points': [20],
+        'ratio': [1.1],
+        'smallest_number': [np.exp(-300)],
     }
     multi_mixture_gaussian_gray_cac.parameters = new_parameters
     multi_mixture_gaussian_gray_cac.sigma = 0.25
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
     dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input_subtest.txt')
-    results_folder = 'other/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + 'new_16_105_025_100/'
-    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)
+    results_folder = 'segment_subtests_new/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + '_20_11_025_300/'
+    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)

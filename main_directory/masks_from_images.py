@@ -66,7 +66,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    dataset_name = 'alpert'
+    dataset_name = 'mri_images'
     if dataset_name == 'bsds300':
         file_name = '../../BSDS300_images.txt'
         gt_file_name = '../../BSDS300_gt.txt'
@@ -82,3 +82,9 @@ if __name__ == '__main__':
         gt_file_name = '../../synthetic_gt.txt'
         output_file_name = 'synthetic_input.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    if dataset_name == 'mri_images':
+        file_name = '../../mri_images.txt'
+        gt_file_name = '../../mri_gt.txt'
+        output_file_name = 'mri_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+        

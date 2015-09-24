@@ -11,7 +11,7 @@ if __name__ == '__main__':
     # 'segment_results_alpert_prova/'--> sigma=1.0
     # 'segment_results_alpert_3/'--> sigma=0.25
 
-    results_folder_name = 'segment_subtests/'
+    results_folder_name = 'segment_subtests_new/'
     folder_name = results_folder_name
     first = None
 
@@ -24,6 +24,9 @@ if __name__ == '__main__':
             if os.path.exists(sorensen_dice_file):
                 sorensen_dice = pd.read_csv(sorensen_dice_file, index_col=0, sep='\t', header=None)
                 images_dict[sub] = sorensen_dice.to_dict().values()[0]
+                if len(sorensen_dice.columns)>1:
+                    sorensen_dice=pd.DataFrame(sorensen_dice[1])
+
 
                 # Remove duplicates
                 grouped = sorensen_dice.groupby(level=0)
@@ -42,8 +45,8 @@ if __name__ == '__main__':
                     'Num_inst': len(sorensen_dice),
                     'Mean': sorensen_dice.mean().values[0],
                     'STD': sorensen_dice.std().values[0],
-                    'num_correct':len(sorensen_dice[sorensen_dice[sub]>0.8]),
-                    'mean_correct': sorensen_dice[sorensen_dice[sub]>0.8].mean().values[0]
+                    # 'num_correct':len(sorensen_dice[sorensen_dice[sub]>0.8]),
+                    # 'mean_correct': sorensen_dice[sorensen_dice[sub]>0.8].mean().values[0]
                 }
 
                 # df = df.fillna(-1)

@@ -1,5 +1,6 @@
 __author__ = 'jeroni'
 import turning_function as tf
+import procrustes_analysis as pa
 import numpy as np
 import collections
 import sets
@@ -173,13 +174,14 @@ if __name__ == '__main__':
     tf.plot_polygon(poly_d)
     tf.plot_polygon(poly_e)
     tf.plot_polygon(poly_f)
-    print polygon_comparison(poly_1, poly_1)
-    print polygon_comparison(poly_1, poly_2)
-    print polygon_comparison(poly_1, poly_3)
-    print polygon_comparison(poly_1, poly_4)
-    print polygon_comparison(poly_1, poly_5)
-    print polygon_comparison(poly_1, poly_b)
-    print polygon_comparison(poly_1, poly_c)
-    print polygon_comparison(poly_1, poly_d)
-    print polygon_comparison(poly_1, poly_e)
-    print polygon_comparison(poly_1, poly_f)
+    # print polygon_comparison(poly_1, poly_1)
+    # print polygon_comparison(poly_1, poly_2)
+    # print polygon_comparison(poly_1, poly_3)
+    # print polygon_comparison(poly_1, poly_4)
+    # print polygon_comparison(poly_1, poly_5)
+    # print polygon_comparison(poly_1, poly_b)
+    # print polygon_comparison(poly_1, poly_c)
+    # print polygon_comparison(poly_1, poly_d)
+    # print polygon_comparison(poly_1, poly_e)
+    # print polygon_comparison(poly_1, poly_f)
+    pa.procrustes(poly_1,poly_2)

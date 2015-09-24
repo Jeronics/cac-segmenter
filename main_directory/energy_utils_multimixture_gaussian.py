@@ -23,8 +23,8 @@ def multivariate_initialize_seed(CAC, from_gt=True, maximum_n_components=7, only
         inside_seed = inside_mask_seed.mask
         outside_seed = 255. - outside_mask_seed.mask
 
-        inside_seed = opencv_ut.erode(inside_seed, width=10)
-        outside_band_seed = opencv_ut.erode(outside_seed, width=10)
+        inside_seed = opencv_ut.erode(inside_seed, width=15)
+        outside_band_seed = opencv_ut.erode(outside_seed, width=15)
         if only_band:
             outside_band_seed = outside_band_seed - opencv_ut.erode(outside_seed, width=150)
     else:

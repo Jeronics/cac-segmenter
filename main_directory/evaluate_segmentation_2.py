@@ -76,7 +76,7 @@ def walk_through_images(dataset, params, results_cage_folder):
 
 if __name__ == '__main__':
     dataset = load_masks('AlpertGBB07_input_subtest.txt')
-    results_folder = 'other/' + 'MultiMixtureGaussianCACnew_16_105_025_100/'
+    results_folder = 'segment_subtests_new/' + 'MultiMixtureGaussianCAC_16_11_025_300/'
     parameter_file = results_folder + 'parameters.p'
     params = pickle.load(open(parameter_file, "rb"))
     walk_through_images(dataset, params, results_folder)

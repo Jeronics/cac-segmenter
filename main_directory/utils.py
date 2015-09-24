@@ -97,10 +97,33 @@ def sorensen_dice_coefficient(mask1, mask2):
     mask1_bool = mask1.mask == 255.
     mask2_bool = mask2.mask == 255.
     intersection_bool = mask1_bool & mask2_bool
-    intersection_card = sum(intersection_bool)
-    sorensen_dice = 2 * intersection_card / float(sum(mask1_bool) + sum(mask2_bool))
+    intersection_card = np.sum(intersection_bool)
+    sorensen_dice = 2 * intersection_card / float(np.sum(mask1_bool) + np.sum(mask2_bool))
     return sorensen_dice
 
+
+def evaluate_segmentation(mask1, mask2):
+    mask1_bool = mask1.mask == 255.
+    mask2_bool = mask2.mask == 255.
+    c_mask1_bool = mask1.mask == 0.
+    c_mask2_bool = mask2.mask == 0.
+
+    # True Positives
+    TP_bool = mask1_bool & mask2_bool
+    TP = np.sum(TP_bool)
+
+    # True Negatives
+    TN_bool = c_mask1_bool & c_mask2_bool
+    TN = np.sum(TN_bool)
+
+    # False Positive
+    FP_bool = c_mask1_bool & mask2_bool
+    FP = np.sum(FP_bool)
+
+    # False Negative
+    FN_bool = mask1_bool & c_mask2_bool
+    FN = np.sum(FN_bool)
+    return TP, TN, FP, FN
 
 def read_png(name):
     '''

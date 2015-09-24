@@ -45,8 +45,10 @@ class CACSegmenter():
                 result_mask.save_image(filename=res_fold)
             if gt_mask:
                 sorensen_dice_coeff = utils.sorensen_dice_coefficient(gt_mask, result_mask)
+                TP, TN, FP, FN = utils.evaluate_segmentation(gt_mask, result_mask)
                 print 'Sorensen-Dice coefficient', sorensen_dice_coeff
-                return sorensen_dice_coeff
+                print 'TP:', TP, 'TN:', TN, 'FP:', FP, 'FN:', FN
+                return sorensen_dice_coeff, TP, TN, FP, FN
 
 
     def _load_model(self, x, parameters):
@@ -78,7 +80,7 @@ class CACSegmenter():
         for i, x in dataset.iterrows():
             # if i < 94 or i in [42, 86, 98] or i in []:
             # continue
-            if i < 14:
+            if i < 0 or i == 26:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ', 'Num:', str(i), image_obj.spec_name, '..'
@@ -92,12 +94,14 @@ class CACSegmenter():
             # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
             # plot_evolution=plot_evolution)
             # except:
-            #     result = None
+            # result = None
             print 'End Segmentation'
             if result:
-                sorensen_dice_coeff = self.evaluate_results(image_obj, cage_obj, mask_obj, result, gt_mask)
+                sorensen_dice_coeff, TP, TN, FP, FN = self.evaluate_results(image_obj, cage_obj, mask_obj, result,
+                                                                            gt_mask)
                 with open(results_file, 'a') as f:
-                    f.write(image_obj.spec_name + '\t' + str(sorensen_dice_coeff) + '\n')
+                    f.write(image_obj.spec_name + '\t' + str(sorensen_dice_coeff) +
+                            '\t' + str(TP) + '\t' + str(TN) + '\t' + str(FP) + '\t' + str(FN) + '\n')
                 result.save_cage(results_folder + '/' + image_obj.spec_name + '.txt')
         return 0
         # return resulting_cages, evaluation
