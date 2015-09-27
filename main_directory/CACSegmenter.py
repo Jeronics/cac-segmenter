@@ -80,7 +80,7 @@ class CACSegmenter():
         for i, x in dataset.iterrows():
             # if i < 94 or i in [42, 86, 98] or i in []:
             # continue
-            if i < 0 or i == 26:
+            if i >= 20:
                 continue
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ', 'Num:', str(i), image_obj.spec_name, '..'

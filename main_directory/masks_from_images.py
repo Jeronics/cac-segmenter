@@ -66,7 +66,7 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    dataset_name = 'mri_images'
+    dataset_name = 'bsds300'
     if dataset_name == 'bsds300':
         file_name = '../../BSDS300_images.txt'
         gt_file_name = '../../BSDS300_gt.txt'
