@@ -28,7 +28,7 @@ class CAC():
         plotContourOnImage(contour_coord, self.image_obj.image, points=current_cage_obj.cage, color=color,
                            points2=current_cage_obj.cage - alpha * 10 * grad_k)
 
-    def segment(self, plot_evolution=False):
+    def segment(self, plot_evolution=False, save_resulting_mask=None):
         current_cage_obj = deepcopy(self.cage_obj)
         if cage_out_of_the_picture(current_cage_obj.cage, self.image_obj.shape):
             print 'Cage is out of the image! Not converged. Try a smaller cage'
@@ -116,12 +116,6 @@ class CAC():
                 energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord,
                                      affine_omega_2_coord) + cage_constraint.energy_constraint(current_cage_obj.cage, d,
                                                                                                k)
-                # if previous_energy:
-                # if energy > previous_energy:
-                #         print 'second'
-                #         continue_while = False
-
-
                 alpha = beta
                 alpha_new = self.second_step_alpha(alpha, current_cage_obj.cage, grad_k, band_size,
                                                    affine_contour_coordinates, contour_size, energy,
@@ -160,6 +154,17 @@ class CAC():
 
         if plot_evolution:
             self._plotContourOnImage(contour_coord, current_cage_obj, 0, grad_k)
+        if save_resulting_mask:
+            mask_final = self.mask_obj.mask.copy() * 0.
+            omega_1_coord, omega_2_coord, omega_1_size, omega_2_size = get_omega_1_and_2_coord(band_size, contour_coord,
+                                                                                               contour_size,
+                                                                                               self.mask_obj.width,
+                                                                                               self.mask_obj.height)
+            mask_final[omega_1_coord[:,0].astype(int), omega_1_coord[:,1].astype(int)] = 255.
+            final_mask = MaskClass()
+            final_mask.mask = mask_final
+            final_mask.plot_image()
+            final_mask.save_image(filename=save_resulting_mask)
         return current_cage_obj
 
 
@@ -189,7 +194,8 @@ class CAC():
                                                                                                omega_2_coord,
                                                                                                omega_2_size,
                                                                                                len(curr_cage),
-                                                                                               curr_cage - grad_k * alpha)
+                                                                                               curr_cage -
+                                                                                               grad_k * alpha)
 
             next_energy = self.energy(omega_1_coord, omega_2_coord, affine_omega_1_coord, affine_omega_2_coord)
             aux = cage_constraint.energy_constraint(curr_cage - grad_k * alpha, d, k)

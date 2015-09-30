@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # 'segment_results_alpert_prova/'--> sigma=1.0
     # 'segment_results_alpert_3/'--> sigma=0.25
 
-    results_folder_name = 'segment_subtests_new/'
+    results_folder_name = 'segment_bsds300_old_gaussian/'
     folder_name = results_folder_name
     first = None
 

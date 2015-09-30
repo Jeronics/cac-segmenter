@@ -66,11 +66,21 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    dataset_name = 'bsds300'
+    dataset_name = 'morphing_cars'
+    if dataset_name == 'morphing_cars':
+        file_name = '../../morphing_cars.txt'
+        gt_file_name = '../../morphing_cars_gt.txt'
+        output_file_name = 'morphing_cars_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'bsds300':
         file_name = '../../BSDS300_images.txt'
         gt_file_name = '../../BSDS300_gt.txt'
         output_file_name = 'BSDS300_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
+    if dataset_name == 'bsds300_expanded':
+        file_name = '../../Berkley_images.txt'
+        gt_file_name = '../../BSDS300_gt_expanded.txt'
+        output_file_name = 'BSDS300_input_expanded.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'alpert':
         file_name = '../../AlpertGBB07_images.txt'
@@ -87,4 +97,4 @@ if __name__ == '__main__':
         gt_file_name = '../../mri_gt.txt'
         output_file_name = 'mri_input.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
-        
+

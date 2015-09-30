@@ -3,21 +3,22 @@ import numpy as np
 
 from CACSegmenter import CACSegmenter
 from MeanCAC import MeanCAC
+from HueMeanCAC import HueMeanCAC
 
 
 def run_code(num_points, ratio, sigma, smallest_number, name=''):
-    mean_cac = CACSegmenter(MeanCAC)
+    hue_mean = CACSegmenter(HueMeanCAC)
     new_parameters = {
         'num_points': [num_points],
         'ratio': [ratio],
     }
-    mean_cac.parameters = new_parameters
-    mean_cac.sigma = sigma
-    parameter_list = mean_cac.get_parameters()
-    dataset = mean_cac.load_dataset('AlpertGBB07_input_subtest.txt')
-    results_folder = 'segment_alpert_mean_subtest/' + mean_cac.CAC.__name__ + name + '/'
+    hue_mean.parameters = new_parameters
+    hue_mean.sigma = sigma
+    parameter_list = hue_mean.get_parameters()
+    dataset = hue_mean.load_dataset('AlpertGBB07_input_subtest.txt')
+    results_folder = 'segment_alpert_hue_subtest/' + hue_mean.CAC.__name__ + name + '/'
     print results_folder
-    mean_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    hue_mean.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
 
 
 def no_decimals(value):
@@ -36,6 +37,9 @@ if __name__ == '__main__':
     for p in num_points:
         for r in ratios:
             for s in sigmas:
+                # HueMeanCAC_24_105_025
+                if not (p==24 and r==1.05 and s==0.25):
+                    continue
                 name = '_' + str(p) + '_' + no_decimals(r) + '_' + no_decimals(s)
                 run_code(p, r, s, None, name=name)
                 print name
