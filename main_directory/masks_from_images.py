@@ -66,7 +66,12 @@ def create_dataset(images_file_name, gt_file_name, output_file_name, only_with_g
 
 
 if __name__ == '__main__':
-    dataset_name = 'morphing_cars'
+    dataset_name = 'synthetic'
+    if dataset_name == 'morphing_fruits':
+        file_name = '../../morphing_fruits.txt'
+        gt_file_name = '../../morphing_fruits_gt.txt'
+        output_file_name = 'morphing_fruits_input.txt'
+        create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'morphing_cars':
         file_name = '../../morphing_cars.txt'
         gt_file_name = '../../morphing_cars_gt.txt'
@@ -88,9 +93,9 @@ if __name__ == '__main__':
         output_file_name = 'AlpertGBB07_input_2.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'synthetic':
-        file_name = '../../synthetic_images.txt'
+        file_name = '../../synthetic_mixture_images.txt'
         gt_file_name = '../../synthetic_gt.txt'
-        output_file_name = 'synthetic_input.txt'
+        output_file_name = 'synthetic_mixture_input.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'mri_images':
         file_name = '../../mri_images.txt'

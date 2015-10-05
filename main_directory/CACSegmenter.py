@@ -4,6 +4,7 @@ import pickle
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
 from scipy.ndimage.filters import gaussian_filter
+import numpy as np
 
 import utils
 from CageClass import CageClass
@@ -76,12 +77,12 @@ class CACSegmenter():
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
         pickle.dump(params, open(results_folder + 'parameters.p', 'wb'))
-
         for i, x in dataset.iterrows():
             # if i < 94 or i in [42, 86, 98] or i in []:
             # continue
-            if i<0 or i==26:
+            if i<0 or i == 26 or i==38:
                 continue
+
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ', 'Num:', str(i), image_obj.spec_name, '..'
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight,
@@ -113,6 +114,7 @@ class CACSegmenter():
         gray_image = gaussian_filter(image_obj.gray_image, sigma=self.sigma, order=0)
         image_obj.gray_image = gray_image
 
+        image_obj.hsi_image = image_obj.rgb2hsi(image_obj.image)
         return image_obj
 
 

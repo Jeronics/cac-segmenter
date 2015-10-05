@@ -164,7 +164,7 @@ class CAC():
             final_mask = MaskClass()
             final_mask.mask = mask_final
             final_mask.plot_image()
-            final_mask.save_image(filename=save_resulting_mask)
+            final_mask.save_image(filename=save_resulting_mask+self.image_obj.spec_name+'.png')
         return current_cage_obj
 
 

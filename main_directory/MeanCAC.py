@@ -41,6 +41,6 @@ if __name__ == '__main__':
     parameter_list = mean_gray_cac.get_parameters()
     save_resulting_mask='../../morphed_mask/'
 
-    dataset = mean_gray_cac.load_dataset('morphing_cars_input.txt')
-    results_folder = 'segment_morphing_cars/' + mean_gray_cac.CAC.__name__+ '_7/'
+    dataset = mean_gray_cac.load_dataset('morphing_fruits_input.txt')
+    results_folder = 'segment_morphing_fruits/' + mean_gray_cac.CAC.__name__+ '/'
     mean_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
