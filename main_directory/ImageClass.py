@@ -115,7 +115,6 @@ class ImageClass:
     def save_image(self, filename=''):
         if filename == '':
             filename = self.save_path
-        print self.image
         misc.imsave(filename, self.image)
 
     def rgb2gray(self, rgb):

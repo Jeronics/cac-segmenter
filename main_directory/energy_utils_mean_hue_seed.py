@@ -1,12 +1,13 @@
 import numpy as np
 import utils
-
+from MaskClass import MaskClass
+from ImageClass import ImageClass
 '''
                     MEAN COLOR ENERGY
 '''
 
 def initialize_seed(CAC, from_gt=True):
-    image = CAC.image_obj.gray_image
+    image = CAC.image_obj.hsi_image
     if from_gt:
         print 'Seed from ground truth...'
         inside_mask_seed = CAC.ground_truth_obj
@@ -33,8 +34,8 @@ def initialize_seed(CAC, from_gt=True):
     inside_coordinates = np.argwhere(inside_seed == 255.)
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
-    omega_in_mean = mean_color_energy_per_region(inside_coordinates, image)
-    omega_out_mean = mean_color_energy_per_region(outside_coordinates, image)
+    omega_in_mean = mean_color_in_region(inside_coordinates, image)
+    omega_out_mean = mean_color_in_region(outside_coordinates, image)
     return omega_in_mean, omega_out_mean
 
 def mean_color_energy_per_region(omega_1_coord, image, seed_mean):
@@ -95,7 +96,7 @@ def directed_hue_color_distance(hue1, hue2):
     return dist
 
 
-def mean_color_in_region(omega_coord, image):
+def mean_color_in_region(omega_coord, hsi_image):
     '''
     Returns the mean hue color of an image from [0, 2*Pi).
     Exception: White and Black have 0 saturation. This means that they should be avoided when doing the mean.
@@ -105,7 +106,7 @@ def mean_color_in_region(omega_coord, image):
     :return:
     '''
 
-    hsi = image.hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]
+    hsi = hsi_image[omega_coord[:, 0].tolist(), omega_coord[:, 1].tolist()]
     hue = hsi[:, 0]
     saturation = hsi[:, 1]
     if len(hue[saturation > 0]) == 0:

@@ -18,14 +18,7 @@ def calculate_sorensen_dice(df):
 
 
 if __name__ == '__main__':
-    # 'segment_results_alpert_1/'--> sigma=0.5
-    # 'segment_results_alpert_2/'--> sigma=1.0
-    # 'segment_results_alpert_3/'--> sigma=0.25
-    # 'segment_results_alpert_4/'--> sigma=0.1
-    # 'segment_results_alpert_prova/'--> sigma=1.0
-    # 'segment_results_alpert_3/'--> sigma=0.25
-
-    results_folder_name = 'segment_bsds300_old_gaussian/'
+    results_folder_name = 'segment_bsds300_multivariat_gauss/'
     folder_name = results_folder_name
     first = None
 

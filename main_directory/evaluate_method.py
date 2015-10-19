@@ -24,7 +24,7 @@ def calculate_scores(df):
 
 
 if __name__ == '__main__':
-    results_folder_name = 'segment_bsds300_old_gaussian/'
+    results_folder_name = 'segment_alpert_multivariat_gauss/'
     folder_name = results_folder_name
     first = None
 
@@ -102,6 +102,5 @@ if __name__ == '__main__':
         stds.append(test_std)
 
     print 'Final mean:', np.array(scores).mean(), np.array(scores).std()
-
     print 'Best Features:', final_images_t.T.mean().argmax()
 

@@ -42,9 +42,11 @@ class MultivariateGaussianCAC(CAC):
 
 
 if __name__ == '__main__':
+    input_filename = 'synthetic_input.txt'
+    output_folder = 'other/'
     multivariate_gaussian_gray_cac = CACSegmenter(MultivariateGaussianCAC)
     parameter_list = multivariate_gaussian_gray_cac.get_parameters()
 
-    dataset = multivariate_gaussian_gray_cac.load_dataset('synthetic_input.txt')
-    results_folder = 'other/' + multivariate_gaussian_gray_cac.CAC.__name__
+    dataset = multivariate_gaussian_gray_cac.load_dataset(input_filename)
+    results_folder = output_folder + multivariate_gaussian_gray_cac.CAC.__name__ +'/'
     multivariate_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

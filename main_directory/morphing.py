@@ -168,9 +168,17 @@ if __name__ == '__main__':
         'num_points': [len(destination_cage.cage)],
         'ratio': [1.05],
     }
-    folder_name = '../../morphing_results/car_1_interpol_2/'
+    folder_name = '../../morphing_results/car_1_interpol_3/'
     weight = 0.01
-    color_power = 1.5
+    color_power = 2
+
+    # WARPING
+    morphed_image = morphing_intermediate(origin_image, origin_cage, destination_image, destination_cage, weight,
+                                              parameters=new_parameters, color_power=color_power)
+    # morphed_image.plot_image()
+    # morphed_image=smoothen_image(morphed_image, min(min(weight, 1-weight),0.2))
+    morphed_image.save_image(folder_name + 'results' + ''.join(str(weight).split('.')) + '.png')
+
     while weight < 1.:
         morphed_image = morphing_intermediate(origin_image, origin_cage, destination_image, destination_cage, weight,
                                               parameters=new_parameters, color_power=color_power)

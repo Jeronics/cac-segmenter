@@ -29,31 +29,33 @@ if __name__ == '__main__':
     # print GBP.std()
     # print NIPS.std()
 
-    # # Turn grayer
-    filename= '../../TesinaFinalJeroni/images/image_in_question.png'
-    image = ImageClass()
-    image.read_png(filename)
-    im=image.image.copy()
-    boolean = im < np.ones(im.shape)*10
-    im[boolean] = np.ones(im.shape)[boolean]*80.
-    image.image = im
-    filename_save = '../../TesinaFinalJeroni//images/image_in_question_lighter_2.png'
-    image.save_image(filename_save)
+    # # # Turn grayer
+    # filename= '../../TesinaFinalJeroni/images/gaussian_image_15_original.png'
+    # image = ImageClass()
+    # image.read_png(filename)
+    # im=image.image.copy()
+    # boolean = im < np.ones(im.shape)*10
+    # im[boolean] = np.ones(im.shape)[boolean]*80.
+    # image.image = im
+    # filename_save = '../../TesinaFinalJeroni/images/gaussian_image_15_original_noise.png'
+    # image.save_image(filename_save)
+
+
 
     # # apply noise
-    # filename = '../../synthetic_images/images/gaussian_image_4.png'
+    # filename = '../../synthetic_images/images/color_image_original.png'
     # image = ImageClass()
     # image.read_png(filename)
     # image.plot_image()
     # x = np.copy(image.image)
-    # mu, sigma = 0, 5.0
+    # mu, sigma = 0, 10.0
     # y = x + np.random.normal(mu, sigma, size=x.shape)
     # y[y > 255.] = 255.
     # y[y < 0.] = 0.
     # image.image = y
     # print image.image
     # image.plot_image()
-    # filename = '../../synthetic_images/images/gaussian_image_4_noise.png'
+    # filename = '../../TesinaFinalJeroni/images/qualitative_tests/color_image_original.png'
     # image.save_image(filename=filename)
 
     # # other

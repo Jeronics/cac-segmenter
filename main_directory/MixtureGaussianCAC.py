@@ -43,16 +43,18 @@ class MixtureGaussianCAC(CAC):
 
 
 if __name__ == '__main__':
+    input_filename = 'BSDS300_input.txt'
+    output_folder = 'experiment2/'
     mixture_gaussian_gray_cac = CACSegmenter(MixtureGaussianCAC)
     new_parameters = {
-        'num_points': [20],
+        'num_points': [24],
         'ratio': [1.05],
         'smallest_number': [np.exp(-200)],
     }
     mixture_gaussian_gray_cac.parameters = new_parameters
-    mixture_gaussian_gray_cac.sigma = 0.01
+    mixture_gaussian_gray_cac.sigma = 1.25
 
     parameter_list = mixture_gaussian_gray_cac.get_parameters()
-    dataset = mixture_gaussian_gray_cac.load_dataset('morphing_cars_input.txt')
-    results_folder = 'segment_morphing_cars/' + mixture_gaussian_gray_cac.CAC.__name__+'/'
+    dataset = mixture_gaussian_gray_cac.load_dataset(input_filename)
+    results_folder = output_folder + mixture_gaussian_gray_cac.CAC.__name__+'/'
     mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

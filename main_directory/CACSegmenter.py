@@ -1,5 +1,6 @@
 import os
 import pickle
+import time
 
 from sklearn.grid_search import ParameterGrid
 import pandas as pd
@@ -76,7 +77,8 @@ class CACSegmenter():
         utils.mkdir(results_folder)
         results_file = results_folder + '/' + 'sorensen_dice_coeff' + '.txt'
         utils.mkdir(results_folder)
-        pickle.dump(params, open(results_folder + 'parameters.p', 'wb'))
+        with open(results_folder + 'parameters.p', 'wb') as fp:
+            pickle.dump(params, fp)
         for i, x in dataset.iterrows():
             # if i < 94 or i in [42, 86, 98] or i in []:
             # continue
@@ -85,12 +87,15 @@ class CACSegmenter():
 
             image_obj, mask_obj, cage_obj, gt_mask = self._load_model(x, params)
             print 'Start Segmentation  of ', 'Num:', str(i), image_obj.spec_name, '..'
+
+            start_time = time.time()
             cac_object = self.CAC(image_obj, mask_obj, cage_obj, gt_mask, type=self.type, weight=self.weight,
                                   band_size=500)
             if 'smallest_number' in params.keys():
                 cac_object.smallest_number = params['smallest_number']
             image_obj = self.preprocess_image(image_obj)
             result = cac_object.segment(plot_evolution=plot_evolution)
+            print("--- %s seconds ---" % (time.time() - start_time))
             # try:
             # result = cac_object.segment(image_obj, mask_obj, cage_obj, None, model='mean_model',
             # plot_evolution=plot_evolution)
@@ -100,8 +105,8 @@ class CACSegmenter():
             if result:
                 sorensen_dice_coeff, TP, TN, FP, FN = self.evaluate_results(image_obj, cage_obj, mask_obj, result,
                                                                             gt_mask)
-                with open(results_file, 'a') as f:
-                    f.write(image_obj.spec_name + '\t' + str(sorensen_dice_coeff) +
+                with open(results_file, 'a') as fr:
+                    fr.write(image_obj.spec_name + '\t' + str(sorensen_dice_coeff) +
                             '\t' + str(TP) + '\t' + str(TN) + '\t' + str(FP) + '\t' + str(FN) + '\n')
                 result.save_cage(results_folder + '/' + image_obj.spec_name + '.txt')
         return 0

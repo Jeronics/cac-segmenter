@@ -4,13 +4,15 @@ from CACSegmenter import CACSegmenter
 from CAC import CAC
 import energy_utils_multimixture_gaussian as g_energies
 import utils
-
+import time
 
 class MultiMixtureGaussianCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
+        start_time = time.time()
         inside_gmm, outside_gmm = g_energies.multivariate_initialize_seed(self, maximum_n_components=7)
+        print("Calculating Seed: --- %s seconds ---" % (time.time() - start_time))
         self.smallest_number = np.exp(-200)
         self.inside_gmm = inside_gmm
         self.outside_gmm = outside_gmm
@@ -44,16 +46,18 @@ class MultiMixtureGaussianCAC(CAC):
 
 
 if __name__ == '__main__':
+    input_filename = 'AlpertGBB07_input_subtest.txt'
+    output_folder = 'seg_im/'
     multi_mixture_gaussian_gray_cac = CACSegmenter(MultiMixtureGaussianCAC)
     new_parameters = {
-        'num_points': [16],
-        'ratio': [1.05],
+        'num_points': [20],
+        'ratio': [1.1],
         'smallest_number': [np.exp(-200)],
     }
     multi_mixture_gaussian_gray_cac.parameters = new_parameters
-    multi_mixture_gaussian_gray_cac.sigma = 0.75
+    multi_mixture_gaussian_gray_cac.sigma = 0.25
     parameter_list = multi_mixture_gaussian_gray_cac.get_parameters()
 
-    dataset = multi_mixture_gaussian_gray_cac.load_dataset('AlpertGBB07_input_subtest.txt')
-    results_folder = 'segment_subtests_new/' + multi_mixture_gaussian_gray_cac.CAC.__name__ + '_16_105_075_200/'
-    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = multi_mixture_gaussian_gray_cac.load_dataset(input_filename)
+    results_folder = output_folder + multi_mixture_gaussian_gray_cac.CAC.__name__ + '/'
+    multi_mixture_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

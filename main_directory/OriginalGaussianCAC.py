@@ -36,9 +36,18 @@ class OriginalGaussianCAC(CAC):
 
 
 if __name__ == '__main__':
+    input_filename = 'synthetic_locality_input.txt'
+    output_folder = 'experiment1/'
     original_gaussian_gray_cac = CACSegmenter(OriginalGaussianCAC)
     parameter_list = original_gaussian_gray_cac.get_parameters()
+    new_parameters = {
+        'num_points': [12],
+        'ratio': [1.05],
+    }
+    original_gaussian_gray_cac.parameters = new_parameters
+    original_gaussian_gray_cac.sigma = 0.5
 
-    dataset = original_gaussian_gray_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_3/' + original_gaussian_gray_cac.CAC.__name__
-    original_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    parameter_list = original_gaussian_gray_cac.get_parameters()
+    dataset = original_gaussian_gray_cac.load_dataset(input_filename)
+    results_folder = output_folder + original_gaussian_gray_cac.CAC.__name__ + '/'
+    original_gaussian_gray_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

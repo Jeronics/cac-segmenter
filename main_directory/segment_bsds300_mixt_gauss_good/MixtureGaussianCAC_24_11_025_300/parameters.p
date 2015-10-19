@@ -1,0 +1,11 @@
+(dp0
+S'num_points'
+p1
+I24
+sS'smallest_number'
+p2
+I-300
+sS'ratio'
+p3
+F1.1
+s.

@@ -28,7 +28,7 @@ class CAC():
         plotContourOnImage(contour_coord, self.image_obj.image, points=current_cage_obj.cage, color=color,
                            points2=current_cage_obj.cage - alpha * 10 * grad_k)
 
-    def segment(self, plot_evolution=False, save_resulting_mask=None):
+    def segment(self, plot_evolution=False, save_resulting_mask=False): #'../../mask_results/seg_im/'
         current_cage_obj = deepcopy(self.cage_obj)
         if cage_out_of_the_picture(current_cage_obj.cage, self.image_obj.shape):
             print 'Cage is out of the image! Not converged. Try a smaller cage'
@@ -37,6 +37,9 @@ class CAC():
         contour_coord, contour_size = get_contour(self.mask_obj)
         affine_contour_coordinates = get_affine_contour_coordinates(contour_coord, current_cage_obj.cage)
 
+        if save_resulting_mask:
+            self.mask_obj.save_image(filename=save_resulting_mask+'/initial_mask_'+'_'.join([str(cg) for cg in self.cage_obj.cage[0]])+'.png')
+            current_cage_obj.save_cage(save_resulting_mask + '/initial_cage_'+'_'.join([str(cg) for cg in self.cage_obj.cage[0]])+ '.txt')
         if plot_evolution:
             plotContourOnImage(contour_coord, self.image_obj.image, points=current_cage_obj.cage, color=[0., 0., 255.])
 
@@ -129,18 +132,9 @@ class CAC():
                         return None
                 alpha = alpha_new
 
-            # Calculate alpha
-            # grad_k = normalize_vectors(grad_k)
-            # print grad_k[2], curr_cage_file[2]
-            # print curr_cage_file[-2], grad_k[-2]
-            # find_optimal_alpha(beta, curr_cage_file, grad_k)
-
-            # if iter % 20 == 0:
-            # plotContourOnImage(contour_coord, self.mask_obj.image, points=cage_obj.cage, color=[0., 0., 255.],
-            # points2=cage_obj.cage - alpha * 10 * grad_k)
-
-            if plot_evolution and iter % 1 == 0:
-                self._plotContourOnImage(contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.])
+            # DO NOT PLOT
+            # if plot_evolution and iter % 1 == 0:
+            #     self._plotContourOnImage(contour_coord, current_cage_obj, alpha, grad_k, color=[0., 0., 255.])
 
             # Update File current cage
             current_cage_obj.cage += - alpha * grad_k
@@ -163,8 +157,11 @@ class CAC():
             mask_final[omega_1_coord[:,0].astype(int), omega_1_coord[:,1].astype(int)] = 255.
             final_mask = MaskClass()
             final_mask.mask = mask_final
-            final_mask.plot_image()
-            final_mask.save_image(filename=save_resulting_mask+self.image_obj.spec_name+'.png')
+            # final_mask.plot_image()
+            final_mask.save_image(filename=save_resulting_mask+'/final_mask_'+self.image_obj.spec_name+'.png')
+            # final_mask.save_image(filename=save_resulting_mask+'/final_mask_'+'_'.join([str(cg) for cg in self.cage_obj.cage[0]])+'.png')
+            # current_cage_obj.save_cage(save_resulting_mask + '/final_cage_'+'_'.join([str(cg) for cg in self.cage_obj.cage[0]])+ '.txt')
+            current_cage_obj.save_cage(save_resulting_mask + '/final_cage_' + self.image_obj.spec_name + '.txt')
         return current_cage_obj
 
 

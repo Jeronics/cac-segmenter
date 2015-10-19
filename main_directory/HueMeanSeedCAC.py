@@ -1,11 +1,11 @@
 from CACSegmenter import CACSegmenter
 from CAC import CAC
 import energy_utils_mean_hue_seed as energy_ut
-
+import numpy as np
 import utils
 
 
-class HueMeanCAC(CAC):
+class HueMeanSeedCAC(CAC):
     def __init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=None, weight=None, band_size=500):
         CAC.__init__(self, image_obj, mask_obj, cage_obj, ground_truth_obj, type=type, weight=weight,
                      band_size=band_size)
@@ -27,7 +27,8 @@ class HueMeanCAC(CAC):
         return grad_energy_1 + grad_energy_2
 
     def _plotContourOnImage(self, contour_coord, cage_obj, alpha, grad_k, color=[0., 0., 255.]):
-        utils.plotContourOnImage(contour_coord, self.image_obj.hsi_image[:, :, 0] / (2 * 3.14) * 255.,
+        # hsi_image[:, :, 0] / (2 * 3.14) * 255.
+        utils.plotContourOnImage(contour_coord, self.image_obj.image,
                                  points=cage_obj.cage,
                                  color=color,
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
@@ -35,9 +36,21 @@ class HueMeanCAC(CAC):
 
 
 if __name__ == '__main__':
-    color_cac = CACSegmenter(HueMeanCAC)
+    input_filename = 'BSDS300_input.txt'
+    output_folder = 'seg_im/'
+    color_cac = CACSegmenter(HueMeanSeedCAC)
     parameter_list = color_cac.get_parameters()
+    new_parameters = {
+        'num_points': [12],
+        'ratio': [1.05],
+        'smallest_number': [np.exp(-200)],
+    }
+    color_cac.parameters = new_parameters
+    color_cac.sigma = 0.25
     parameter_list = color_cac.get_parameters()
-    dataset = color_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_3/' + color_cac.CAC.__name__
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+
+
+
+    dataset = color_cac.load_dataset(input_filename)
+    results_folder = output_folder + color_cac.CAC.__name__+ '/'
+    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

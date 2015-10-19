@@ -24,11 +24,12 @@ class HueMeanCAC(CAC):
                                  points2=cage_obj.cage - alpha * 10 * grad_k)
         # self.image_obj.plot_hsi_image()
 
-
 if __name__ == '__main__':
+    input_filename = 'AlpertGBB07_input.txt'
+    output_folder='segment_results_alpert_3/'
     color_cac = CACSegmenter(HueMeanCAC)
     parameter_list = color_cac.get_parameters()
     parameter_list = color_cac.get_parameters()
-    dataset = color_cac.load_dataset('AlpertGBB07_input.txt')
-    results_folder = 'segment_results_alpert_3/' + color_cac.CAC.__name__
-    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=False)
+    dataset = color_cac.load_dataset(input_filename)
+    results_folder = output_folder + color_cac.CAC.__name__+ '/'
+    color_cac.test_model(dataset, parameter_list[0], results_folder, plot_evolution=True)

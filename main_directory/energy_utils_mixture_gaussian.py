@@ -1,9 +1,13 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 import utils
 import opencv_utils as opencv_ut
 from MaskClass import MaskClass
 import mixture_gaussian
+from astroML.plotting import hist
+from astroML.plotting import setup_text_plots
+setup_text_plots(fontsize=14, usetex=True)
 
 
 '''
@@ -52,10 +56,11 @@ def mixture_initialize_seed(CAC, from_gt=True):
     outside_coordinates = np.argwhere(outside_seed == 255.)
 
     print 'Number of components:'
-    inside_gmm = get_values_in_region(inside_coordinates, image)
+    inside_gmm, in_values_in_region = get_values_in_region(inside_coordinates, image)
     print 'Interior:\t', inside_gmm.n_components
-    outside_gmm = get_values_in_region(outside_coordinates, image)
+    outside_gmm, out_values_in_region = get_values_in_region(outside_coordinates, image)
     print 'Exterior:\t', outside_gmm.n_components
+    plot_gmm(inside_gmm, in_values_in_region, outside_gmm, out_values_in_region, name=CAC.image_obj.spec_name)
     return inside_gmm, outside_gmm
 
 
@@ -64,11 +69,60 @@ def get_values_in_region(omega_coord, image):
     omega_coord_aux = omega_coord[omega_boolean]
     values_in_region = image[[omega_coord_aux[:, 0].tolist(), omega_coord_aux[:, 1].tolist()]]
     values_in_region = np.array([values_in_region]).T
-    # plt.figure()
-    # p, bins, hist = plt.hist(values_in_region, 255)
-    # plt.show()
     gmm = mixture_gaussian.get_number_of_components(values_in_region, maximum_n_components=7)
-    return gmm
+
+    return gmm, values_in_region
+
+
+def plot_gmm(inside_gmm, in_values_in_region, outside_gmm, out_values_in_region, name=''):
+
+    fig = plt.figure()#figsize=(5, 5))
+    # fig.subplots_adjust(bottom=0.08, top=0.95, right=0.95, hspace=0.1)
+    N_values = (500, 5000)
+    subplots = (211, 212)
+    values = (in_values_in_region, out_values_in_region)
+    gmms = [inside_gmm, outside_gmm]
+    ax = fig.add_subplot(111)
+    colors=('blue','red')
+    region = ('interior region','exterior region')
+    prop = [len(in_values_in_region), len(out_values_in_region)]
+    prop = np.array(prop) /float(np.sum(prop))
+
+    for gmm, col, val, reg, p in zip(gmms, colors, values, region, prop):
+        # ax = fig.add_subplot(subplot)
+        xN = values
+
+
+        # Compute density via Gaussian Mixtures
+        # we'll try several numbers of clusters
+        t = np.array([np.linspace(0,255, 1000)])
+        logprob, responsibilities = gmm.score_samples(t.T)
+        # import pdb;pdb.set_trace()
+
+        # plot the results
+        # ax.plot(xN, -0.005 * np.ones(len(xN)), '|k', lw=1.5)
+        # hist(values, bins='blocks', ax=ax, normed=True, zorder=1,
+        #      histtype='stepfilled', lw=1.5, color='k', alpha=0.2,
+        #      label="Bayesian Blocks")
+        t = np.linspace(0, 255, 1000)
+        ax.plot(t, np.exp(logprob)*p, '-', color=col,
+                label="Mixture Model of the %s \n(%i components)" % (reg, gmm.n_components))
+
+        # label the plot
+        # ax.text(0.02, 0.95, "%i points" % len(val), ha='left', va='top',
+        #         transform=ax.transAxes)
+        ax.set_ylabel('Probability over the both seeds.')
+        ax.set_xlabel('Intensity value')
+        ax.legend(loc='upper right')
+
+        # if subplot == 212:
+        #     ax.set_xlabel('$x$')
+
+        ax.set_xlim(0, 255)
+        ax.set_ylim(-0.01, 0.06)
+    foldername='../../mask_results/experiment2/gmm/'+name+'_'
+    plt.savefig(foldername+'density_function.png')
+    # plt.show()
 
 
 def gauss_energy_per_region(omega_coord, affine_omega_coord, gmm, image):

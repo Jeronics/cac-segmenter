@@ -95,7 +95,7 @@ if __name__ == '__main__':
     if dataset_name == 'synthetic':
         file_name = '../../synthetic_mixture_images.txt'
         gt_file_name = '../../synthetic_gt.txt'
-        output_file_name = 'synthetic_mixture_input.txt'
+        output_file_name = 'synthetic_brightness_input.txt'
         create_dataset(file_name, gt_file_name, output_file_name, only_with_gt=True)
     if dataset_name == 'mri_images':
         file_name = '../../mri_images.txt'
