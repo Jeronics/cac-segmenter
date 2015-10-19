@@ -27,23 +27,36 @@ Usage
   Now a the input file is obtained to be able to apply the segmentation
   
 2. Running the Segmentation Procedure
+
     a) Open one of the following classes with the desired energy:
+    
       i) MeanCAC
+      
       ii) OriginalGaussianCAC
+      
       iii) GaussianCAC
+      
       iv) MixtureGaussianCAC
+      
       v) MultivariateGaussianCAC
+      
       vi) MultiMixtureGaussianCAC
+      
       vii) HueMeanCAC
+      
     b) Change the input file with the one generated previously
+    
     c) Run
 
 Requirements
 ====
+
 1. OpenCV
+
 2. Python 2.7
 
 In the main_directory/apicac/ folder, do the following:
 
   clean make
+  
   make
