@@ -1,6 +1,8 @@
 cac-segmenter
 =============
-This project provides a method for image object segmentation called Cage Active Contours. They are able so segment single connected regions with no holes.
+Image Segmentation using Cage Active Contours(CAC). This project provides a complementary open-source code for the published results in the paper [Cage Active Contours for image warping
+and morphing](https://link.springer.com/content/pdf/10.1186%2Fs13640-018-0248-z.pdf) published in EURASIP journal on Image and Video Processing.
+
 
 
 Usage
